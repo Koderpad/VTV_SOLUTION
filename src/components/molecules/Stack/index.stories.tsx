@@ -3,7 +3,7 @@ import { Stack } from ".";
 import { Box } from "@/components/atoms/Box";
 
 const meta: Meta<typeof Stack> = {
-  title: "Layout/Stack",
+  title: "Molecules/Stack",
   component: Stack,
   parameters: {
     layout: "centered",
