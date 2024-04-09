@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "../Box";
+import { Box, BoxProps } from "@/components/atoms/Box";
 import { cn } from "@/utils/cn";
 
 type StackProps = BoxProps;
