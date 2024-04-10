@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ReusableForm } from ".";
+import { Form } from ".";
 
-const meta: Meta<typeof ReusableForm> = {
+const meta: Meta<typeof Form> = {
   title: "Organisms/Form",
-  component: ReusableForm,
+  component: Form,
   parameters: {
     layout: "centered",
   },
@@ -52,6 +52,19 @@ export const LoginForm: Story = {
     },
     // onSubmit: (data) => console.log(data),
   },
+  render: (args) => (
+    <Form {...args}>
+      {/* error message example */}
+      <div className="text-red-500 text-sm -mt-4">
+        Username or password is incorrect
+      </div>
+      <div className="text-center">
+        <a href="#" className="text-blue-500">
+          Forgot password?
+        </a>
+      </div>
+    </Form>
+  ),
 };
 
 export const RegisterForm: Story = {

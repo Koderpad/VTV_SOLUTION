@@ -16,29 +16,31 @@ import { Button, ButtonProps } from "@/components/atoms/Button";
 //   initialValue?: string;
 // }
 
-interface FieldConfig {
+export interface FieldConfig {
   id: string;
   inputProps: InputProps;
   labelProps: LabelProps;
   stackProps: BoxProps;
 }
 
-// Props cho ReusableForm
-interface ReusableFormProps {
+// Props of Form
+export interface FormProps {
   fields: FieldConfig[];
   stackProps?: BoxProps;
   labelProps?: LabelProps;
   inputProps?: InputProps;
   buttonProps?: ButtonProps;
-  onSubmit: (data: { [key: string]: any }) => void; // Function xử lý submit
+  children?: React.ReactNode;
+  onSubmit: (data: { [key: string]: any }) => void; //
 }
 
-export const ReusableForm: React.FC<ReusableFormProps> = ({
+export const Form: React.FC<FormProps> = ({
   fields,
   stackProps = {},
   labelProps = {},
   inputProps = {},
   buttonProps = {},
+  children,
   onSubmit,
 }) => {
   // Tạo trạng thái ban đầu cho form data dựa vào fields
@@ -79,12 +81,7 @@ export const ReusableForm: React.FC<ReusableFormProps> = ({
             stackProps={field.stackProps}
           />
         ))}
-        {/* <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Submit
-        </button> */}
+        {children}
         <Button
           type="submit"
           variant="solid"

@@ -1,70 +1,80 @@
-interface LoginFormProps {
-  username: string;
-  password: string;
-  errMsg: string;
-  handleUserInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handlePwdInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (e: React.FormEvent) => void;
+import { FieldConfig, Form, FormProps } from "@/components/organisms/Form";
+import { FC } from "react";
+
+interface LoginFormProps extends Omit<FormProps, "fields" | "onSubmit"> {
+  onSubmit: (data: { [key: string]: any }) => void;
+  errMsg?: string;
 }
-export const LoginForm: React.FC<LoginFormProps> = ({
-  username,
-  password,
+
+export const LoginForm: FC<LoginFormProps> = ({
+  onSubmit,
   errMsg,
-  handleUserInput,
-  handlePwdInput,
-  handleSubmit,
-}) => (
-  <form onSubmit={handleSubmit}>
-    <div className="mb-4">
-      <label htmlFor="email" className="block text-sm font-semibold mb-2">
-        Email/Số điện thoại/Tên đăng nhập
-      </label>
-      <input
-        type="text"
-        id="email"
-        className="border w-full p-2 rounded"
-        value={username}
-        onChange={handleUserInput}
-      />
-    </div>
-    <div className="mb-4">
-      <label htmlFor="password" className="block text-sm font-semibold mb-2">
-        Mật khẩu
-      </label>
-      <input
-        type="password"
-        id="password"
-        className="border w-full p-2 rounded"
-        value={password}
-        onChange={handlePwdInput}
-      />
-    </div>
-    {errMsg && <div>{errMsg}</div>}
-    <div className="flex items-center justify-between mb-4">
-      <button type="submit" className="bg-orange-400 text-white p-2 rounded">
-        ĐĂNG NHẬP
-      </button>
-      <a href="#" className="text-xs text-blue-600">
-        Quên mật khẩu?
-      </a>
-    </div>
-    <div className="flex items-center justify-center mb-4">
-      <span className="text-sm">Hoặc</span>
-    </div>
-    <div className="flex gap-4">
-      <button className="bg-blue-800 text-white p-2 rounded w-full">
-        Facebook
-      </button>
-      <button className="bg-red-600 text-white p-2 rounded w-full">
-        Google
-      </button>
-    </div>
-    <div className="text-center mt-4">
-      <span className="text-sm">Bạn mới biết đến Shoppee?</span>
-      <a href="#" className="text-blue-600 text-sm">
-        {" "}
-        Đăng ký
-      </a>
-    </div>
-  </form>
-);
+  stackProps,
+  labelProps,
+  inputProps,
+  buttonProps,
+}) => {
+  const loginFields: FieldConfig[] = [
+    {
+      id: "username",
+      inputProps: {
+        name: "username",
+        type: "text",
+        placeholder: "Email/Số điện thoại/Tên đăng nhập",
+        defaultValue: "",
+      },
+      labelProps: { children: "Email/Số điện thoại/Tên đăng nhập" },
+      stackProps: {},
+    },
+    {
+      id: "password",
+      inputProps: {
+        name: "password",
+        type: "password",
+        placeholder: "Mật khẩu",
+        defaultValue: "",
+      },
+      labelProps: { children: "Mật khẩu" },
+      stackProps: { className: "w-full" },
+    },
+  ];
+
+  labelProps = { ...labelProps, className: "block text-xl font-semibold mb-2" };
+  inputProps = {
+    ...inputProps,
+    className: "w-full p-2 border border-gray-300",
+  };
+
+  return (
+    <Form
+      fields={loginFields}
+      onSubmit={onSubmit}
+      stackProps={stackProps}
+      labelProps={labelProps}
+      inputProps={inputProps}
+      buttonProps={buttonProps}
+    >
+      {errMsg && (
+        <div
+          className="
+      text-xl text-red-500
+      border border-red-500
+      mb-4
+      p-2
+      mt-4
+      "
+        >
+          {errMsg}
+        </div>
+      )}
+      <div className="flex items-center justify-between mb-4">
+        <button type="submit" className="bg-orange-400 text-white p-2 rounded">
+          Register
+        </button>
+        <a href="#" className="text-xs text-blue-600">
+          Quên mật khẩu?
+        </a>
+      </div>
+    </Form>
+  );
+};

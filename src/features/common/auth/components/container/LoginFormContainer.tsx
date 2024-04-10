@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { LoginForm } from "../presentational/LoginForm";
@@ -15,21 +15,16 @@ export const LoginFormContainer = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg, setErrMsg] = useState<string>("");
 
   const [login] = useLoginMutation();
   const dispatch = useDispatch();
-  // const navigate = useNavigate();
 
-  const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setUsername(e.target.value);
-  const handlePwdInput = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setPassword(e.target.value);
+  const handleSubmit_ = async (formData: { [key: string]: any }) => {
+    //retrieve username and password from form data
+    const username = formData["username"];
+    const password = formData["password"];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     try {
       const userData = await login({
         username,
@@ -37,11 +32,10 @@ export const LoginFormContainer = () => {
         fcmToken: username.toString(),
       }).unwrap();
       console.log("userData: ", userData);
+
       const { access_token, refresh_token, customerDTO } = userData;
       dispatch(setCredentials({ access_token, refresh_token, customerDTO }));
 
-      setUsername("");
-      setPassword("");
       //Check user role and navigate to the corresponding page
       if (customerDTO.roles.includes("ADMIN")) {
         navigate("/admin", { replace: true });
@@ -50,10 +44,6 @@ export const LoginFormContainer = () => {
       } else {
         navigate(from, { replace: true });
       }
-      // navigate(from, { replace: true });
-
-      // navigate("/user/account");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const error = err as Error;
       if (!error.status) {
@@ -71,14 +61,5 @@ export const LoginFormContainer = () => {
     console.log("DONE HandleSubmit");
   };
 
-  return (
-    <LoginForm
-      username={username}
-      password={password}
-      errMsg={errMsg}
-      handleUserInput={handleUserInput}
-      handlePwdInput={handlePwdInput}
-      handleSubmit={handleSubmit}
-    />
-  );
+  return <LoginForm onSubmit={handleSubmit_} errMsg={errMsg} />;
 };
