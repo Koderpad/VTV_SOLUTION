@@ -1,3 +1,4 @@
+import { Home } from "./pages/common/Home";
 import LoginPage from "./pages/common/Login";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -7,6 +8,7 @@ function App() {
       <Routes>
         {/* public routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Home />} />
 
         {/* private routes */}
       </Routes>
