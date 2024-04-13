@@ -1,4 +1,6 @@
-import { NotificationTooltip } from "@/components/molecules/NotificationTooltip";
+import { CustomLink } from "@/components/atoms/Link";
+import { NotificationTooltip } from "@/components/molecules/Tooltips/NotificationTooltip";
+import { Link } from "react-router-dom";
 
 export const Home = () => {
   return (
@@ -6,9 +8,9 @@ export const Home = () => {
       <nav className="bg-red-600 text-white">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <a href="#" className="hover:underline">
+            <Link to="/vendor" className="hover:underline">
               Kênh Người Bán
-            </a>
+            </Link>
             <a href="#" className="hover:underline">
               Trở thành người bán Shopee
             </a>
@@ -78,6 +80,17 @@ export const Home = () => {
         </div>
 
         <NotificationTooltip />
+        <CustomLink to="/login" className="hover:underline">
+          Đăng nhập
+          <div className="text-red-500 text-sm -mt-4">
+            Username or password is incorrect
+            <div className="text-center">
+              <a href="#" className="text-blue-500">
+                Forgot password?
+              </a>
+            </div>
+          </div>
+        </CustomLink>
       </div>
     </div>
   );
