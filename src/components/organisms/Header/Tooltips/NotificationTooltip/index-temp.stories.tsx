@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { NotificationTooltip } from "./index-temp";
 
 const meta: Meta<typeof NotificationTooltip> = {
-  title: "Organisms/Tooltips/NotificationTooltip",
+  title: "Organisms/Header/Tooltips/NotificationTooltip",
   component: NotificationTooltip,
   parameters: {
     layout: "centered",
