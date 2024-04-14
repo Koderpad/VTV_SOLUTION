@@ -15,16 +15,16 @@ export const SearchBar: React.FC = () => {
 
   return (
     <div className="bg-blue-400 p-2 flex justify-between items-center">
-      {/* <span className="text-white text-sm px-4">
-        Shopee bao ship 0Đ - Đăng ký ngay!
-      </span> */}
-      <form onSubmit={handleSearchSubmit} className="flex items-center">
+      <form
+        onSubmit={handleSearchSubmit}
+        className="flex flex-grow items-center"
+      >
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="VTV bao ship 0Đ - Đăng ký ngay!..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="rounded-full px-4 py-2 w-[30rem] focus:outline-none"
+          className="rounded-full flex-grow px-4 py-2 focus:outline-none"
         />
         <button type="submit" className="text-white p-2">
           <SearchIcon className="h-6 w-6" />
