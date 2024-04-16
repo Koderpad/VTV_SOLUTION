@@ -15,13 +15,13 @@ const cartContent = [
 
 export const Header = () => {
   return (
-    <header className="bg-blue-500 shadow-md w-screen">
+    <div className="bg-blue-500 shadow-md w-screen">
       {/* Navbar Wrapper */}
       <NavbarWrapper />
 
       {/* Header with Search and Cart */}
       <HeaderWithSearchWrapper />
-    </header>
+    </div>
   );
 };
 
