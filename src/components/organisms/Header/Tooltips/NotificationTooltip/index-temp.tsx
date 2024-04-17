@@ -17,7 +17,7 @@ export const NotificationTooltip: FC<NotificationTooltipProps> = ({
   return (
     <>
       <div className="px-3 text-left md:cursor-pointer group">
-        <h1 className="py-7 flex justify-between items-center md:pr-0 pr-5 group">
+        <h1 className=" flex justify-between items-center md:pr-0 pr-5 group">
           Thông Báo
           <span className="text-xl md:mt-1 md:ml-2 md:block hidden">
             <NotificationIcon />

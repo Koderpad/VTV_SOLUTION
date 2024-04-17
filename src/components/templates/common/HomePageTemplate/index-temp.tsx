@@ -1,14 +1,16 @@
 import { Footer } from "@/components/organisms/Footer";
+import { Header } from "@/components/organisms/Header/index-temp";
 
 export const HomePageTemplate = () => {
   return (
     <div className="max-w-6xl mx-auto lg:max-w-7xl xl:max-w-full">
       <div className="flex flex-col justify-between min-h-screen">
-        <header className="sticky top-0 z-50 bg-white border-b">
+        {/* <header className="sticky top-0 z-50 bg-white border-b">
           <div className="flex items-center justify-between max-w-xl px-4 pt-4 pb-2 mx-auto lg:flex-row md:px-8 lg:max-w-screen-xl">
             Header
           </div>
-        </header>
+        </header> */}
+        <Header />
         <main>
           <div className="flex flex-col justify-between max-w-xl pt-0 px-4 mx-auto lg:pt-24 lg:flex-row md:px-8 lg:max-w-screen-xl z-10">
             <div className="pt-24 pb-12 mb-16 lg:mb-0 lg:pt-12 lg:max-w-lg lg:pr-5 text-center md:text-left">

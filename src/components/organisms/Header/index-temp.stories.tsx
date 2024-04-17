@@ -5,9 +5,9 @@ import { Header } from "./index-temp";
 const meta: Meta<typeof Header> = {
   title: "Organisms/Header",
   component: Header,
-  parameters: {
-    layout: "centered",
-  },
+  // parameters: {
+  //   layout: "centered",
+  // },
   tags: ["autodocs"],
 };
 
