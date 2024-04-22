@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { FilterRating } from "./index-temp";
+import { FilterRating } from ".";
 
 const meta: Meta<typeof FilterRating> = {
   title: "Organisms/ProductGrid/FilterPanel/FilterGroup/FilterRating",

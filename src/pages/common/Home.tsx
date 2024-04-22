@@ -1,5 +1,5 @@
 import { CustomLink } from "@/components/atoms/Link";
-import { NotificationTooltip } from "@/components/molecules/Tooltips/NotificationTooltip";
+import { NotificationTooltip } from "@/components/organisms/Header/Tooltips/NotificationTooltip";
 import { Link } from "react-router-dom";
 
 export const Home = () => {
