@@ -79,7 +79,7 @@ export const Home = () => {
           </button>
         </div>
 
-        <NotificationTooltip />
+        {/* <NotificationTooltip /> */}
         <CustomLink to="/login" className="hover:underline">
           Đăng nhập
           <div className="text-red-500 text-sm -mt-4">

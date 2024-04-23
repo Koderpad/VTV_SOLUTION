@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { ProductGrid } from ".";
+import { MemoryRouter } from "react-router-dom";
 
 const meta: Meta<typeof ProductGrid> = {
   title: "Organisms/ProductGrid",
@@ -8,6 +9,13 @@ const meta: Meta<typeof ProductGrid> = {
   //   parameters: {
   //     layout: "centered",
   //   },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   tags: ["autodocs"],
 };
 

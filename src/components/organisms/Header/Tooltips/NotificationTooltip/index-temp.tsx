@@ -24,7 +24,7 @@ export const NotificationTooltip: FC<NotificationTooltipProps> = ({
           </span>
         </h1>
         <div className="relative">
-          <div className="absolute -top-10 right-0 hidden group-hover:block w-screen max-w-md">
+          <div className="absolute -top-2 right-0 hidden group-hover:block w-screen max-w-md">
             <div className="py-3">
               <div className="w-4 h-4 right-16 absolute mt-1 bg-white rotate-45"></div>
             </div>
