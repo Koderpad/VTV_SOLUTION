@@ -1,4 +1,5 @@
 import { ProductGrid } from "./components/organisms/ProductGrid";
+import { ProductDetailTemplate } from "./components/templates/common/ProductDetailTemplate";
 import { SearchResultsTemplate } from "./components/templates/common/SearchResultsTemplate";
 import { Home } from "./pages/common/Home";
 import LoginPage from "./pages/common/Login";
@@ -13,7 +14,8 @@ function App() {
         <Route path="/" element={<Home />} />
 
         {/* TEST */}
-        <Route path="/test" element={<SearchResultsTemplate />} />
+        {/* <Route path="/test" element={<SearchResultsTemplate />} /> */}
+        <Route path="/test" element={<ProductDetailTemplate />} />
 
         {/* private routes */}
       </Routes>
