@@ -37,45 +37,6 @@ export const ProductDetailContainer = () => {
     );
   }
 
-  //   const getProductAttributes = (product: ProductDTO) => {
-  //     const attributes: { [key: string]: Set<string> } = {};
-  //     const outOfStockAttributes: { [key: string]: Set<string> } = {};
-
-  //     product.productVariantDTOs.forEach((variant) => {
-  //       variant.attributeDTOs.forEach((attribute) => {
-  //         const { name, value } = attribute;
-
-  //         if (!attributes[name]) {
-  //           attributes[name] = new Set();
-  //         }
-  //         attributes[name].add(value);
-
-  //         if (variant.quantity === 0) {
-  //           if (!outOfStockAttributes[name]) {
-  //             outOfStockAttributes[name] = new Set();
-  //           }
-  //           outOfStockAttributes[name].add(value);
-  //         }
-  //       });
-  //     });
-
-  //     const attributeList = Object.entries(attributes).map(([name, values]) => ({
-  //       name,
-  //       values: Array.from(values as Set<string>),
-  //     }));
-
-  //     const outOfStockAttributeList = Object.entries(outOfStockAttributes).map(
-  //       ([name, values]) => ({
-  //         name,
-  //         values: Array.from(values as Set<string>),
-  //       })
-  //     );
-
-  //     return {
-  //       attributeList,
-  //       outOfStockAttributeList,
-  //     };
-  //   };
   const getProductAttributes = (product: ProductDTO) => {
     const attributes: { [key: string]: Set<string> } = {};
     const outOfStockAttributeList: string[][] = [];

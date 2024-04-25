@@ -11,6 +11,7 @@ export const ProductDetailTemplate = () => {
           <div className="flex justify-between max-w-7xl mx-auto lg:flex-col lg:max-w-screen-2xl">
             {/* <ProductGrid /> */}
             <ProductDetailContainer />
+            <h1>Hello next!!!</h1>
             {/* <ProductDetail /> */}
           </div>
         </main>

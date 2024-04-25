@@ -1,23 +1,8 @@
-import { ProductResponse } from "@/utils/DTOs/common/Product/Response/ProductResponse";
+import {
+  ProductDTO,
+  ProductResponse,
+} from "@/utils/DTOs/common/Product/Response/ProductResponse";
 import { useState } from "react";
-
-const product = {
-  id: 1,
-  name: "Áo thun Acme",
-  price: 20,
-  images: [
-    "https://down-vn.img.susercontent.com/file/1234b2a2d4ccbcdc4357c818cf58a1f7",
-    "https://down-vn.img.susercontent.com/file/abcd1234efgh5678ijkl9012mnop3456",
-    "https://down-vn.img.susercontent.com/file/qrst7890uvwx1234yzab5678cdef9012",
-    "https://down-vn.img.susercontent.com/file/qrst7890uvwx1234yzab5678cdef9012",
-    "https://down-vn.img.susercontent.com/file/qrst7890uvwx1234yzab5678cdef9012",
-    "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lp4x04de52zfbc",
-    "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lp4x04de52zfbc",
-    "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lp4x04de52zfbc",
-    "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lp4x04de52zfbc",
-  ],
-  colors: ["Black", "Blue", "Pink", "White"],
-};
 
 interface ProductDetailProps {
   data: ProductResponse;
@@ -103,40 +88,28 @@ const isAttributeCombinationOutOfStock = (
   );
 };
 
-// export const getOutOfStockAttributes = (
-//   selectedAttributes: {
-//     [key: string]: string;
-//   },
-//   attributeList: { name: string; values: string[] }[],
-//   outOfStockAttributeList: string[][]
-// ) => {
-//   const outOfStockAttributes: string[] = [];
+const getAllImageFromProduct = (product: ProductDTO): string[] => {
+  const images: string[] = [];
 
-//   attributeList.forEach(({ name, values }) => {
-//     values.forEach((value) => {
-//       const combination = Object.entries(selectedAttributes).map(
-//         ([attrName, attrValue]) => (attrName === name ? value : attrValue)
-//       );
+  // Thêm hình ảnh chính của sản phẩm
+  if (product.image) {
+    images.push(product.image);
+  }
 
-//       if (
-//         isAttributeCombinationOutOfStock(combination, outOfStockAttributeList)
-//       ) {
-//         outOfStockAttributes.push(value);
-//       }
-//     });
-//   });
+  // Lấy hình ảnh từ các biến thể sản phẩm
+  if (product.productVariantDTOs) {
+    product.productVariantDTOs.forEach((variant) => {
+      if (variant.image) {
+        images.push(variant.image);
+      }
+    });
+  }
 
-//   return outOfStockAttributes;
-// };
+  // Loại bỏ các hình ảnh trùng lặp
+  const uniqueImages = [...new Set(images)];
 
-// const isAttributeCombinationOutOfStock = (
-//   attributeCombination: string[],
-//   outOfStockAttributeList: string[][]
-// ) => {
-//   return outOfStockAttributeList.some((outOfStockCombination) =>
-//     outOfStockCombination.every((value) => attributeCombination.includes(value))
-//   );
-// };
+  return uniqueImages;
+};
 
 export const ProductDetail = ({ ...props }: ProductDetailProps) => {
   console.log("Data: ", props.data);
@@ -149,6 +122,10 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
   const [selectedAttributes, setSelectedAttributes] = useState<{
     [key: string]: string;
   }>({});
+
+  const dataImage = getAllImageFromProduct(data.productDTO);
+
+  console.log(dataImage);
 
   const handleAttributeClick = (attributeName: string, value: string) => {
     setSelectedAttributes((prevSelectedAttributes) => ({
@@ -163,13 +140,13 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
 
   const handlePrevImage = () => {
     setSelectedImage((prevIndex: number) =>
-      prevIndex === 0 ? product.images.length - 1 : prevIndex - 1
+      prevIndex === 0 ? dataImage.length - 1 : prevIndex - 1
     );
   };
 
   const handleNextImage = () => {
     setSelectedImage((prevIndex: number) =>
-      prevIndex === product.images.length - 1 ? 0 : prevIndex + 1
+      prevIndex === dataImage.length - 1 ? 0 : prevIndex + 1
     );
   };
 
@@ -185,7 +162,7 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
             className="h-full w-full object-contain"
             sizes="(min-width: 1024px) 66vw, 100vw"
             // src="https://down-vn.img.susercontent.com/file/1234b2a2d4ccbcdc4357c818cf58a1f7"
-            src={product.images[selectedImage]}
+            src={dataImage[selectedImage]}
             style={{
               // position: "absolute",
               height: "100%",
@@ -249,7 +226,7 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
         {/* <ul className="my-12 flex flex-nowrap items-center justify-center gap-2 overflow-x-auto py-1 lg:mb-0 max-w-full relative"> */}
         <ul className="my-12 flex flex-nowrap items-center justify-center gap-2 overflow-x-scroll py-1 lg:mb-0 max-w-full">
           <li className="h-20 w-40 flex-shrink-0"></li>
-          {product.images.map((image, index) => (
+          {dataImage.map((image, index) => (
             <li
               key={index}
               // className="h-20 w-20 flex-shrink-0 "
@@ -276,7 +253,7 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
                   }`}
                 >
                   <img
-                    alt={`${product.name} - ${product.colors[0]}`}
+                    alt={`${data.productDTO.name} - ${dataImage[0]}`}
                     loading="lazy"
                     width="80"
                     height="80"
@@ -406,6 +383,7 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
           <p aria-live="polite" className="sr-only" role="status"></p>
         </form>
       </div>
+      {/* info and description of product */}
     </div>
   );
 };
