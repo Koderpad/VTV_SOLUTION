@@ -1,6 +1,6 @@
 // File: ProductResponse.ts
 
-interface ProductResponse {
+export interface ProductResponse {
   status: string;
   message: string;
   code: number;
@@ -15,7 +15,7 @@ interface ProductResponse {
   productDTO: ProductDTO;
 }
 
-interface ProductDTO {
+export interface ProductDTO {
   productId: number;
   name: string;
   image: string;
@@ -33,7 +33,7 @@ interface ProductDTO {
   productVariantDTOs: ProductVariantDTO[];
 }
 
-interface ProductVariantDTO {
+export interface ProductVariantDTO {
   productVariantId: number;
   sku: string;
   image: string;
@@ -49,11 +49,9 @@ interface ProductVariantDTO {
   attributeDTOs: AttributeDTO[];
 }
 
-interface AttributeDTO {
+export interface AttributeDTO {
   attributeId: number;
   name: string;
   value: string;
   active: boolean;
 }
-
-export type { ProductResponse, ProductDTO, ProductVariantDTO, AttributeDTO };

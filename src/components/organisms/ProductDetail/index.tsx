@@ -1,3 +1,4 @@
+import { ProductResponse } from "@/utils/DTOs/common/Product/Response/ProductResponse";
 import { useState } from "react";
 
 const product = {
@@ -18,8 +19,143 @@ const product = {
   colors: ["Black", "Blue", "Pink", "White"],
 };
 
-export const ProductDetail = () => {
+interface ProductDetailProps {
+  data: ProductResponse;
+  attributeList: { name: string; values: string[] }[];
+  outOfStockAttributeList: string[][];
+}
+
+export const isAttributeValueAlwaysOutOfStock = (
+  attributeName: string,
+  value: string,
+  attributeList: { name: string; values: string[] }[],
+  outOfStockAttributeList: string[][]
+): boolean => {
+  const otherAttributes = attributeList.filter(
+    (attr) => attr.name !== attributeName
+  );
+
+  if (otherAttributes.length === 0) {
+    return outOfStockAttributeList.some(
+      (combination) => combination[0] === value
+    );
+  }
+
+  const allCombinations = otherAttributes.reduce<string[][]>(
+    (combinations, attr) => {
+      const newCombinations = attr.values.flatMap((val) =>
+        combinations.map((combo) => [...combo, val])
+      );
+      return newCombinations;
+    },
+    [[]]
+  );
+
+  return allCombinations.every((combination: string[]) =>
+    outOfStockAttributeList.some(
+      (outOfStockCombination: string[]) =>
+        outOfStockCombination[0] === value &&
+        combination.every(
+          (val: string, index: number) =>
+            val === outOfStockCombination[index + 1]
+        )
+    )
+  );
+};
+
+export const getOutOfStockAttributes = (
+  selectedAttributes: {
+    [key: string]: string;
+  },
+  attributeList: { name: string; values: string[] }[],
+  outOfStockAttributeList: string[][]
+) => {
+  const outOfStockAttributes: string[] = [];
+
+  attributeList.forEach(({ name, values }) => {
+    values.forEach((value) => {
+      const combination = attributeList.map(({ name: attrName }) => {
+        if (attrName === name) {
+          return value;
+        }
+        return selectedAttributes[attrName];
+      });
+
+      if (
+        isAttributeCombinationOutOfStock(combination, outOfStockAttributeList)
+      ) {
+        outOfStockAttributes.push(value);
+      }
+    });
+  });
+
+  return outOfStockAttributes;
+};
+
+const isAttributeCombinationOutOfStock = (
+  attributeCombination: string[],
+  outOfStockAttributeList: string[][]
+) => {
+  return outOfStockAttributeList.some((outOfStockCombination) =>
+    outOfStockCombination.every(
+      (value, index) => value === attributeCombination[index]
+    )
+  );
+};
+
+// export const getOutOfStockAttributes = (
+//   selectedAttributes: {
+//     [key: string]: string;
+//   },
+//   attributeList: { name: string; values: string[] }[],
+//   outOfStockAttributeList: string[][]
+// ) => {
+//   const outOfStockAttributes: string[] = [];
+
+//   attributeList.forEach(({ name, values }) => {
+//     values.forEach((value) => {
+//       const combination = Object.entries(selectedAttributes).map(
+//         ([attrName, attrValue]) => (attrName === name ? value : attrValue)
+//       );
+
+//       if (
+//         isAttributeCombinationOutOfStock(combination, outOfStockAttributeList)
+//       ) {
+//         outOfStockAttributes.push(value);
+//       }
+//     });
+//   });
+
+//   return outOfStockAttributes;
+// };
+
+// const isAttributeCombinationOutOfStock = (
+//   attributeCombination: string[],
+//   outOfStockAttributeList: string[][]
+// ) => {
+//   return outOfStockAttributeList.some((outOfStockCombination) =>
+//     outOfStockCombination.every((value) => attributeCombination.includes(value))
+//   );
+// };
+
+export const ProductDetail = ({ ...props }: ProductDetailProps) => {
+  console.log("Data: ", props.data);
+  console.log("Attribute List: ", props.attributeList);
+  console.log("Out of Stock Attribute List: ", props.outOfStockAttributeList);
+  const { data, attributeList, outOfStockAttributeList } = props;
+
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const [selectedAttributes, setSelectedAttributes] = useState<{
+    [key: string]: string;
+  }>({});
+
+  const handleAttributeClick = (attributeName: string, value: string) => {
+    setSelectedAttributes((prevSelectedAttributes) => ({
+      ...prevSelectedAttributes,
+      [attributeName]: value,
+    }));
+  };
 
   const handleImageClick = (index: number) => {
     setSelectedImage(index);
@@ -43,7 +179,7 @@ export const ProductDetail = () => {
         <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden">
           <img
             alt="Acme T-Shirt - t-shirt-color-black"
-            fetchPriority="high"
+            fetchpriority="high"
             decoding="async"
             data-nimg="fill"
             className="h-full w-full object-contain"
@@ -70,15 +206,15 @@ export const ProductDetail = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   aria-hidden="true"
                   data-slot="icon"
                   className="h-5"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
                   ></path>
                 </svg>
@@ -87,22 +223,21 @@ export const ProductDetail = () => {
               <button
                 aria-label="Next product image"
                 className="h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black dark:hover:text-white flex items-center justify-center"
-                // href="/product/acme-t-shirt?size=M&amp;color=Black&amp;image=1"
                 onClick={handleNextImage}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   aria-hidden="true"
                   data-slot="icon"
                   className="h-5"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
                   ></path>
                 </svg>
@@ -162,14 +297,15 @@ export const ProductDetail = () => {
       <div className="mx-1 h-full w-px bg-neutral-200"></div>
       <div className="basis-full  lg:basis-2/6">
         <div className="mb-6 flex flex-col border-b pb-6">
-          <h1 className="mb-2 text-5xl font-medium">Ten sp</h1>
+          <h1 className="mb-2 text-5xl font-medium">{data.productDTO.name}</h1>
           <div className="mr-auto w-auto rounded-full bg-blue-600 p-2 text-sm text-white">
             <p>
-              $20.00<span className="ml-1 inline">VND</span>
+              ${data.productDTO.minPrice} - ${data.productDTO.maxPrice}
+              <span className="ml-1 inline">VND</span>
             </p>
           </div>
         </div>
-        <dl className="mb-8">
+        {/* <dl className="mb-8">
           <dt className="mb-4 text-sm uppercase tracking-wide">Color</dt>
           <dd className="flex flex-wrap gap-3">
             <button
@@ -189,21 +325,58 @@ export const ProductDetail = () => {
 
             <button
               aria-disabled="true"
-              disabled=""
+              // disabled=""
               title="Color Pink (Out of Stock)"
               className="flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm dark:border-neutral-800  relative z-10 cursor-not-allowed overflow-hidden text-neutral-500 ring-1 ring-neutral-300 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-neutral-300 before:transition-transform"
             >
               Pink
             </button>
-            <button
-              aria-disabled="false"
-              title="Color White"
-              className="flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm dark:border-neutral-800 dark:bg-neutral-900 ring-1 ring-transparent transition duration-300 ease-in-out hover:scale-110 hover:ring-blue-600"
-            >
-              White
-            </button>
           </dd>
-        </dl>
+        </dl> */}
+        {attributeList.map(({ name, values }) => (
+          <dl key={name} className="mb-8">
+            <dt className="mb-4 text-sm uppercase tracking-wide">{name}</dt>
+            <dd className="flex flex-wrap gap-3">
+              {values.map((value) => {
+                const isAlwaysOutOfStock = isAttributeValueAlwaysOutOfStock(
+                  name,
+                  value,
+                  attributeList,
+                  outOfStockAttributeList
+                );
+                const outOfStockAttributes = getOutOfStockAttributes(
+                  selectedAttributes,
+                  attributeList,
+                  outOfStockAttributeList
+                );
+                const isOutOfStock =
+                  isAlwaysOutOfStock || outOfStockAttributes.includes(value);
+                const isSelected = selectedAttributes[name] === value;
+
+                return (
+                  <button
+                    key={value}
+                    aria-disabled={isOutOfStock}
+                    title={`${name} ${value}${isOutOfStock ? " (Out of Stock)" : ""}`}
+                    className={`flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm ${
+                      isOutOfStock
+                        ? "dark:border-neutral-800 relative z-10 cursor-not-allowed overflow-hidden text-neutral-500 ring-1 ring-neutral-300 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-neutral-300 before:transition-transform"
+                        : isSelected
+                          ? "cursor-default ring-2 ring-blue-600"
+                          : "ring-1 ring-transparent transition duration-300 ease-in-out hover:scale-110 hover:ring-blue-600"
+                    }`}
+                    onClick={() =>
+                      !isOutOfStock && handleAttributeClick(name, value)
+                    }
+                  >
+                    {value}
+                  </button>
+                );
+              })}
+            </dd>
+          </dl>
+        ))}
+
         <form action="">
           <button
             aria-label="Add to cart"
@@ -215,15 +388,15 @@ export const ProductDetail = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="currentColor"
                 aria-hidden="true"
                 data-slot="icon"
                 className="h-5"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M12 4.5v15m7.5-7.5h-15"
                 ></path>
               </svg>

@@ -1,6 +1,6 @@
 import { Footer } from "@/components/organisms/Footer";
 import { Header } from "@/components/organisms/Header/index-temp";
-import { ProductDetail } from "@/components/organisms/ProductDetail";
+import { ProductDetailContainer } from "@/features/common/product/productdetail/components/container/ProductDetailContainer";
 
 export const ProductDetailTemplate = () => {
   return (
@@ -8,9 +8,10 @@ export const ProductDetailTemplate = () => {
       <div className="flex flex-col justify-between ">
         <Header />
         <main>
-          <div className="flex justify-between max-w-7xl mx-auto lg:flex-row lg:max-w-screen-2xl">
+          <div className="flex justify-between max-w-7xl mx-auto lg:flex-col lg:max-w-screen-2xl">
             {/* <ProductGrid /> */}
-            <ProductDetail />
+            <ProductDetailContainer />
+            {/* <ProductDetail /> */}
           </div>
         </main>
         <Footer />
