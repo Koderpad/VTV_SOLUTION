@@ -5,6 +5,7 @@ import { Home } from "./pages/common/Home";
 import LoginPage from "./pages/common/Login";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ProductDetailPage } from "./pages/common/ProductDetailPage";
+import { CartPage } from "./pages/common/Cart";
 
 function App() {
   return (
@@ -16,6 +17,9 @@ function App() {
 
         {/* product */}
         <Route path="product/:productId" element={<ProductDetailPage />} />
+
+        {/* cart */}
+        <Route path="/cart" element={<CartPage />} />
 
         {/* TEST */}
         {/* <Route path="/test" element={<SearchResultsTemplate />} /> */}

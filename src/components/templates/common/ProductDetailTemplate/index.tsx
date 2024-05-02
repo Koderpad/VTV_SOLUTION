@@ -1,5 +1,6 @@
 import { Footer } from "@/components/organisms/Footer";
 import { Header } from "@/components/organisms/Header/index-temp";
+import { ProductReviews } from "@/components/organisms/ProductDetail/ProductReviews";
 import { ProductDetailContainer } from "@/features/common/product/productdetail/components/container/ProductDetailContainer";
 
 export const ProductDetailTemplate = () => {
@@ -11,7 +12,7 @@ export const ProductDetailTemplate = () => {
           <div className="flex justify-between max-w-7xl mx-auto lg:flex-col lg:max-w-screen-2xl">
             {/* <ProductGrid /> */}
             <ProductDetailContainer />
-            <h1>Hello next!!!</h1>
+            <ProductReviews />
             {/* <ProductDetail /> */}
           </div>
         </main>

@@ -12,6 +12,7 @@ const persistConfig = {
   version: 1,
   storage,
   // blacklist: ["productInAddProduct", "productDetailApi", "api"], // add this line
+  blacklist: ["api"], // add this line
 };
 
 const rootReducer = combineReducers({
