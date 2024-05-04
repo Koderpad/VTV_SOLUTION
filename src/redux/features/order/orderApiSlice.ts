@@ -1,4 +1,5 @@
 import { apiSlice } from "@/redux/api";
+import { MultipleOrderResponse } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
 
 export const orderApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -88,8 +89,8 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    createMultiOrder: builder.mutation({
-      query: (cartIds: string[]) => ({
+    createMultiOrder: builder.mutation<MultipleOrderResponse, string[]>({
+      query: (cartIds) => ({
         url: `/customer/order/create/multiple/by-cartIds`,
         method: "POST",
         body: cartIds,

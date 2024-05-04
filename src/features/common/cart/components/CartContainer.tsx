@@ -1,12 +1,15 @@
 import { Cart } from "@/components/organisms/Cart";
 import { useGetListCartByUsernameQuery } from "@/redux/features/cart/cartApiSlice";
 import { useCreateMultiOrderMutation } from "@/redux/features/order/orderApiSlice";
+import { MultipleOrderResponse } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AES } from "crypto-js";
+import { SerializedError } from "@reduxjs/toolkit";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 export const CartContainer = () => {
   const { data, isLoading, refetch } = useGetListCartByUsernameQuery();
-
   const [
     createOrder,
     { isLoading: isLoadingOrder, isError: isErrorOrder, data: orderData },
@@ -19,29 +22,46 @@ export const CartContainer = () => {
 
   const handleCreateOrder = async (cartIds: string[]) => {
     try {
-      setLoading(true); // Hiển thị modal loading
+      const orderCreationResult:
+        | { data: MultipleOrderResponse }
+        | { error: FetchBaseQueryError | SerializedError } =
+        await createOrder(cartIds);
 
-      // Simulate a delay for 3 seconds
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      // const orderDetails = Object.values(selectedProducts).flat();
-      const res = await createOrder(cartIds);
-      if (res.error) {
-        if (
-          res.error.data.message ===
-            "Thông báo: Khách hàng chưa có địa chỉ nào." &&
-          res.error.status === 404
-        ) {
-          alert("Địa chỉ của bạn chưa có, vui lòng thêm địa chỉ!");
-          navigate("/user/account/address");
-          return;
+      if ("data" in orderCreationResult) {
+        const result = orderCreationResult.data;
+        // handle error in server response
+        if (result.code !== 200) {
+          if (
+            result.message === "Thông báo: Khách hàng chưa có địa chỉ nào." &&
+            result.status === "404 NOT_FOUND"
+          ) {
+            alert("Địa chỉ của bạn chưa có, vui lòng thêm địa chỉ!");
+            navigate("/user/account/address");
+            return;
+          }
         }
-      }
-      console.log("res", res);
-      setSuccess(true); // Hiển thị thành công
-      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      navigate("/checkout", { state: { res: res } });
+        // handle encrypt state
+        const stateString = JSON.stringify(result);
+        const encryptedState = AES.encrypt(
+          stateString,
+          "vtv-secret-key-2024"
+        ).toString();
+        const urlSafeEncryptedState = encodeURIComponent(encryptedState);
+        console.log("urlSafeEncryptedState: ", urlSafeEncryptedState);
+        // navigate to checkout page with encrypted state
+        navigate(`/checkout?state=${urlSafeEncryptedState}`);
+      } else {
+        // handle error in fetching data
+        const error = orderCreationResult.error;
+        alert("Error: " + error);
+      }
+
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // encrypt state
+
+      // navigate("/checkout", { state: { res: orderCreationResult } });
     } catch (error) {
       console.error(error);
     } finally {

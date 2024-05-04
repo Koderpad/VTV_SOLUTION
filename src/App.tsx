@@ -6,6 +6,8 @@ import LoginPage from "./pages/common/Login";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ProductDetailPage } from "./pages/common/ProductDetailPage";
 import { CartPage } from "./pages/common/Cart";
+import { orderContainer } from "./features/common/order/components/OrderContainer";
+import { Checkout } from "./pages/common/Checkout";
 
 function App() {
   return (
@@ -20,6 +22,11 @@ function App() {
 
         {/* cart */}
         <Route path="/cart" element={<CartPage />} />
+
+        {/* order */}
+        <Route path="/checkout" element={<Checkout />} />
+
+        {/* search */}
 
         {/* TEST */}
         {/* <Route path="/test" element={<SearchResultsTemplate />} /> */}
