@@ -7,6 +7,7 @@ interface VoucherDetailsProps {
 }
 
 const VoucherDetails: React.FC<VoucherDetailsProps> = ({ voucher }) => {
+  console.log("{voucher}: ", voucher);
   return (
     <div className="bg-white flex flex-col shadow-md rounded p-4 mb-4">
       <div>

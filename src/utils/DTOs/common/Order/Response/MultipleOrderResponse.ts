@@ -92,7 +92,7 @@ export interface VoucherOrderDTO {
   voucherOrderId: number;
   voucherId: number;
   voucherName: string;
-  type: boolean;
+  type: boolean; //true: shop, false: system
   orderId: string;
 }
 

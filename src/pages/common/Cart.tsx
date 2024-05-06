@@ -1,5 +1,6 @@
 import { CartTemplate } from "@/components/templates/common/CartTemplate";
 
-export const CartPage = () => {
+const CartPage = () => {
   return <CartTemplate />;
 };
+export default CartPage;

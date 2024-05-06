@@ -5,20 +5,30 @@
 
 import { BASE_URL_VTC } from "@/constants/urls";
 import { ListVoucherResponse } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
+import { VoucherResponse } from "@/utils/DTOs/common/Voucher/Response/VoucherResponse";
 import axios from "axios";
 
 // // const API_URL = "http://localhost:8585/api";
 
-// export const getProductDetail = async (
-//   productId: number
-// ): Promise<ProductResponse> => {
-//   const response = await axios.get(
-//     `${BASE_URL_VTC}/product/detail/${productId}`
-//   );
-//   return response.data;
-// };
-
 export const getSystemVoucher = async (): Promise<ListVoucherResponse> => {
   const response = await axios.get(`${BASE_URL_VTC}/voucher/list-on-system`);
+  return response.data;
+};
+
+export const getShopVoucher = async (
+  id: number
+): Promise<ListVoucherResponse> => {
+  const response = await axios.get(
+    `${BASE_URL_VTC}/voucher/list-on-shop/${id}`
+  );
+  return response.data;
+};
+
+export const getVoucherByVoucherId = async (
+  voucherId: number
+): Promise<VoucherResponse> => {
+  const response = await axios.get(
+    `${BASE_URL_VTC}/voucher/detail/${voucherId}`
+  );
   return response.data;
 };

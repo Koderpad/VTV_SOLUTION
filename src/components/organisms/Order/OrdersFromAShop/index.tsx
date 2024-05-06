@@ -1,77 +1,92 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import VoucherDetails from "../Voucher/VoucherDetails";
 import Vouchers from "../Voucher/vouchers";
 import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
-import { OrderItemDTO } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
+import { OrderResponse } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
 import { FaTruck } from "react-icons/fa";
+import { OrderRequestWithCart } from "@/utils/DTOs/common/Order/Request/MultipleOrderRequestWithCart";
+import { useShopVoucher } from "@/hooks/useShopVoucher";
 
 interface OrderDetailsProps {
-  orderItemDTOs: OrderItemDTO[];
-  shopFromVoucher: VoucherDTO[];
+  order: OrderResponse;
+  updateOrderRequest: (updates: Partial<OrderRequestWithCart>) => void;
   formatPrice: (price: number) => string;
 }
 
-export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({
-  orderItemDTOs,
-  shopFromVoucher,
-  formatPrice,
-}) => {
+export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
+  const { order, updateOrderRequest, formatPrice } = props;
+  const { shopVouchers, isLoading, error, fetchShopVoucher } = useShopVoucher(
+    order.orderDTO.shopDTO.shopId
+  );
   const [showVoucherForm, setShowVoucherForm] = useState(false);
   const [selectedVouchersOfShop, setSelectedVouchersOfShop] = useState<
-    number[]
-  >([]);
-  const [selectedVouchersOfSystem, setSelectedVouchersOfSystem] = useState<
     number[]
   >([]);
 
   const [shippingMethod, setShippingMethod] = useState<string | null>(null);
   const [modalIsOpen, setIsOpen] = useState(false);
 
+  const [voucherCode, setVoucherCode] = useState<string>("");
+
   const handleToggleVoucherForm = () => {
     setShowVoucherForm(!showVoucherForm);
   };
 
-  const handleVouchersOfShop = (voucherId: number) => {
+  const handleVouchersOfShop = (voucherId: number, voucherCode: string) => {
     if (selectedVouchersOfShop.includes(voucherId)) {
-      setSelectedVouchersOfShop(
-        selectedVouchersOfShop.filter((id) => id !== voucherId)
-      );
+      setVoucherCode("CANCEL");
     } else {
-      setSelectedVouchersOfShop([...selectedVouchersOfShop, voucherId]);
+      setVoucherCode(voucherCode);
+      setSelectedVouchersOfShop((prev) => [...prev, voucherId]);
     }
   };
 
-  const caculShopVoucher = () => {
-    const voucher = shopFromVoucher.find(
-      (v) => v.voucherId === selectedVouchersOfShop[0]
-    );
-    const type = voucher?.type;
-    if (type === "percentage") {
-      return orderItemDTOs.reduce(
-        (acc, item) =>
-          acc + (item.price * item.quantity * voucher?.discount!) / 100,
-        0
-      );
-    } else {
-      return voucher?.discount;
-    }
-  };
+  useEffect(() => {
+    const fetchData = () => {
+      try {
+        //get shop voucher from order
+        const shopVoucher = order.orderDTO.voucherOrderDTOs.find(
+          (v) => v.type === true
+        );
+        console.log("shopVoucher: ", shopVoucher);
+        if (shopVoucher) {
+          setSelectedVouchersOfShop([shopVoucher.voucherId]);
+        }
+      } catch (error) {
+        // setError("Failed to fetch data"); // Lưu thông báo lỗi nếu có
+      }
+    };
 
-  const caculTransportFee = () => {
-    if (shippingMethod === "GHN") {
-      return 20000;
-    } else if (shippingMethod === "GHTK") {
-      return 15000;
-    } else if (shippingMethod === "EXPRESS") {
-      return 30000;
-    } else {
-      return 0;
-    }
-  };
+    fetchData();
+  }, []);
 
-  const caculProductQuantity = () => {
-    return orderItemDTOs.reduce((acc) => acc + 1, 0);
-  };
+  useEffect(() => {
+    if (voucherCode === "CANCEL") {
+      setSelectedVouchersOfShop([]);
+    }
+  }, [voucherCode]);
+
+  useEffect(() => {
+    console.log("voucher code01010101: ", voucherCode);
+    if (
+      selectedVouchersOfShop.length > 0 &&
+      voucherCode !== "CANCEL" &&
+      voucherCode !== ""
+    ) {
+      updateOrderRequest({
+        shopVoucherCode: voucherCode,
+      });
+    } else if (voucherCode === "CANCEL") {
+      console.log("into cancel");
+      updateOrderRequest({
+        shopVoucherCode: "CANCEL",
+      });
+    }
+  }, [selectedVouchersOfShop]);
+
+  // isLoading, error
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div
@@ -82,6 +97,15 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
       }}
     >
+      {/* Shop Name */}
+      <div className="bg-white flex flex-row justify-between px-4 py-2">
+        <span className="text-2xl font-medium">
+          {order.orderDTO.shopDTO.name}
+        </span>
+        {/* <span className="text-gray-700 text-2xl font-medium">
+          {order.orderDTO.shopDTO.address}
+        </span> */}
+      </div>
       {/* Order Items */}
       <table className="w-full border-collapse mt-4">
         <thead>
@@ -95,7 +119,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({
           </tr>
         </thead>
         <tbody>
-          {orderItemDTOs.map((item) => (
+          {order.orderDTO.orderItemDTOs.map((item) => (
             <tr key={item.cartId}>
               <td className="flex px-4 py-2">
                 <strong>{item.productVariantDTO.productName}</strong>
@@ -146,59 +170,22 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({
       </div>
       {showVoucherForm && (
         <Vouchers
-          key={1}
-          vouchers={shopFromVoucher}
+          key={order.orderDTO.shopDTO.shopId}
+          vouchers={shopVouchers}
           onClose={() => setShowVoucherForm(false)}
-          onVoucherSelect={handleVouchersOfShop}
+          onVoucherSelect_fix={handleVouchersOfShop}
           selectedVouchers={selectedVouchersOfShop}
         />
       )}
       {selectedVouchersOfShop.length > 0 && (
         <VoucherDetails
           voucher={
-            shopFromVoucher.find(
+            shopVouchers!.find(
               (v) => v.voucherId === selectedVouchersOfShop[0]
-            ) as VoucherDTO
+            )!
           }
         />
       )}
-
-      {/* sys voucher */}
-      {/* <div className="flex justify-between px-4 items-center mb-4">
-        <div className="flex items-center">
-          <img
-            src="/public/voucher.png"
-            alt="Voucher Icon"
-            className="mr-2"
-            style={{ width: "30px", height: "28px" }}
-          />
-          <span className="text-red-500">Voucher VTC</span>
-        </div>
-        <button
-          className="text-blue-500 hover:underline cursor-pointer"
-          onClick={() => setShowSystemVoucherForm(true)}
-        >
-          Chọn voucher
-        </button>
-      </div>
-      {showSystemVoucherForm && (
-        <Vouchers
-          key={2}
-          vouchers={systemFromVouchers}
-          onClose={() => setShowSystemVoucherForm(false)}
-          onVoucherSelect={handleVouchersOfSystem}
-          selectedVouchers={selectedVouchersOfSystem}
-        />
-      )}
-      {selectedVouchersOfSystem.length > 0 && (
-        <VoucherDetails
-          voucher={
-            systemFromVouchers.find(
-              (v) => v.voucherId === selectedVouchersOfSystem[0]
-            ) as VoucherDTO
-          }
-        />
-      )} */}
 
       {/* box */}
       <div className="border-t my-4 border-black-200"></div>
@@ -277,7 +264,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({
           <span className="text-lg">Tạm tính</span>
           <span className="text-lg">
             {formatPrice(
-              orderItemDTOs.reduce(
+              order.orderDTO.orderItemDTOs.reduce(
                 (acc, item) => acc + item.price * item.quantity,
                 0
               )
@@ -287,28 +274,42 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({
         </div>
         <div className="flex justify-between px-4 py-2">
           <span className="text-lg">Phí vận chuyển</span>
-          <span className="text-lg">{caculTransportFee()} VNĐ</span>
+          <span className="text-lg">
+            {caculTransportFee(shippingMethod || "")} VNĐ
+          </span>
         </div>
         <div className="flex justify-between px-4 py-2">
           <span className="text-lg">Giảm giá</span>
           <span className="text-lg">
             {selectedVouchersOfShop.length > 0
-              ? formatPrice(caculShopVoucher() || 0) + " VNĐ"
+              ? formatPrice(
+                  caculShopVoucher(
+                    order,
+                    shopVouchers,
+                    selectedVouchersOfShop
+                  ) || 0
+                ) + " VNĐ"
               : "0 VNĐ"}
           </span>
         </div>
         <div className="flex justify-between px-4 py-2">
           <span className="text-lg">
-            Tổng cộng ({caculProductQuantity()} san pham)
+            Tổng cộng ({caculProductQuantity(order)} san pham)
           </span>
           <span className="text-lg">
             {formatPrice(
-              orderItemDTOs.reduce(
+              order.orderDTO.orderItemDTOs.reduce(
                 (acc, item) => acc + item.price * item.quantity,
                 0
               ) -
-                (caculShopVoucher() || 0) -
-                caculTransportFee()
+                (caculShopVoucher(
+                  order,
+                  shopVouchers,
+                  selectedVouchersOfShop
+                ) || 0) -
+                caculTransportFee(
+                  shippingMethod || order.orderDTO.shippingMethod
+                )
             )}{" "}
             VNĐ
           </span>
@@ -316,4 +317,39 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({
       </div>
     </div>
   );
+};
+const caculShopVoucher = (
+  order: OrderResponse,
+  shopVouchers: VoucherDTO[],
+  selectedVouchersOfShop: number[]
+) => {
+  const voucher = shopVouchers.find(
+    (v) => v.voucherId === selectedVouchersOfShop[0]
+  );
+  const type = voucher?.type;
+  if (type === "PERCENTAGE_SHOP") {
+    return order.orderDTO.orderItemDTOs.reduce(
+      (acc, item) =>
+        acc + (item.price * item.quantity * voucher?.discount!) / 100,
+      0
+    );
+  } else {
+    return voucher?.discount;
+  }
+};
+
+const caculTransportFee = (shippingMethod: string) => {
+  if (shippingMethod === "GHN") {
+    return 20000;
+  } else if (shippingMethod === "GHTK") {
+    return 15000;
+  } else if (shippingMethod === "EXPRESS") {
+    return 30000;
+  } else {
+    return 0;
+  }
+};
+
+const caculProductQuantity = (order: OrderResponse) => {
+  return order.orderDTO.orderItemDTOs.reduce((acc) => acc + 1, 0);
 };

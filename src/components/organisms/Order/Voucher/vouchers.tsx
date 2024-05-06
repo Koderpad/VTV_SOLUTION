@@ -4,14 +4,14 @@ import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResp
 interface VouchersProps {
   vouchers: VoucherDTO[] | undefined;
   onClose: () => void;
-  onVoucherSelect: (voucherId: number) => void;
-  selectedVouchers: number[]; // Add a prop for selected vouchers
+  onVoucherSelect_fix: (voucherId: number, voucherCode: string) => void;
+  selectedVouchers: number[] | undefined; // Add a prop for selected vouchers
 }
 
 const Vouchers: React.FC<VouchersProps> = ({
   vouchers,
   onClose,
-  onVoucherSelect,
+  onVoucherSelect_fix,
   selectedVouchers,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -63,8 +63,14 @@ const Vouchers: React.FC<VouchersProps> = ({
                       <input
                         type="checkbox"
                         className="ml-36 h-4 w-4"
-                        onChange={() => onVoucherSelect(voucher.voucherId)}
-                        checked={selectedVouchers.includes(voucher.voucherId)}
+                        onChange={() =>
+                          onVoucherSelect_fix(voucher.voucherId, voucher.code)
+                        }
+                        checked={
+                          selectedVouchers
+                            ? selectedVouchers.includes(voucher.voucherId)
+                            : false
+                        }
                       />
                     </div>
                   ))}

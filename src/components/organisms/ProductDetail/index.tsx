@@ -236,6 +236,9 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
         // Handle unexpected response structure
         toast.error("Failed to add to cart. Please try again.");
       }
+      if (!response) {
+        toast.error("Failed to add to cart. Please try again.");
+      }
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("An error occurred. Please try again later.");

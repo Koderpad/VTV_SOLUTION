@@ -4,8 +4,8 @@ export interface MultipleOrderRequestWithCart {
 
 export interface OrderRequestWithCart {
   addressId: number;
-  systemVoucherCode: string;
-  shopVoucherCode: string;
+  systemVoucherCode?: string | null;
+  shopVoucherCode?: string;
   paymentMethod: string;
   shippingMethod: string;
   note: string;

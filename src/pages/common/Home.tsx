@@ -2,7 +2,7 @@ import { CustomLink } from "@/components/atoms/Link";
 import { NotificationTooltip } from "@/components/organisms/Header/Tooltips/NotificationTooltip";
 import { Link } from "react-router-dom";
 
-export const Home = () => {
+const Home = () => {
   return (
     <div>
       <nav className="bg-red-600 text-white">
@@ -95,3 +95,5 @@ export const Home = () => {
     </div>
   );
 };
+
+export default Home;
