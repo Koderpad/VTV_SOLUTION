@@ -1,4 +1,4 @@
-import { useAppSelector } from "../redux/store";
+import { RootState, useAppSelector } from "../redux/store";
 // import { IUser } from "../../utils/interfaces";
 
 interface IUser {
@@ -16,3 +16,12 @@ export const useUser = () => {
 
   return user;
 };
+// export const useUser = (): IUser | null => {
+//   const { user } = useAppSelector<RootState>((state) => state.auth.user);
+
+//   if (!user) {
+//     return null;
+//   }
+
+//   return user as IUser;
+// };
