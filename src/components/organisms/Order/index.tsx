@@ -23,6 +23,7 @@ interface OrderProps {
     index: number,
     updates: Partial<OrderRequestWithCart>
   ) => void;
+  handlePlaceOrder: () => void;
 }
 
 export const Order: FC<OrderProps> = ({ ...props }) => {
@@ -39,11 +40,15 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
   const [isLoading_, setIsLoading] = useState<boolean>(false); // Thêm trạng thái loading
   const [error_, setError] = useState<string | null>(null); // Thêm trạng thái lỗi
 
+  const [usePoints, setUsePoints] = useState<boolean>();
+
   console.log("props: ", props.priceDataFromMultipleOrderResponse);
   const systemVoucherNameAndIdMemo = useMemo(
     () => props.systemVoucherNameAndId,
     [props.systemVoucherNameAndId]
   );
+
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +68,14 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
           console.log("systemVoucherNameAndId: ", systemVoucherNameAndIdMemo);
           setSelectedVouchersOfSystem([systemVoucherNameAndIdMemo.id]);
         }
+
+        //check loyalty point and update
+        // if (
+        //   props.priceDataFromMultipleOrderResponse.orderResponses[0].orderDTO
+        //     .loyaltyPointHistoryDTO
+        // ) {
+        //   setUsePoints(true);
+        // }
       } catch (error) {
         setError("Failed to fetch data"); // Lưu thông báo lỗi nếu có
       } finally {
@@ -71,6 +84,10 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
     };
 
     fetchData();
+    // Đánh dấu rằng đây không phải là lần render đầu tiên
+    if (isFirstRender) {
+      setIsFirstRender(false);
+    }
   }, []);
 
   //format price
@@ -119,6 +136,17 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
       });
     }
   }, [selectedVouchersOfSystem]);
+
+  useEffect(() => {
+    console.log("usePoints: ", usePoints);
+    if (usePoints !== undefined && usePoints !== null) {
+      console.log("into usePoint: ", usePoints);
+      props.updateOrderRequest(0, {
+        useLoyaltyPoint: usePoints,
+      });
+    }
+  }, [usePoints]);
+
   // Hiển thị thông báo tương ứng dựa trên trạng thái
   if (isLoading_) {
     return <div>Loading...</div>;
@@ -139,7 +167,7 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
 
   return (
     <>
-      <div className="bg-gray">
+      <div className="bg-gray-600">
         {/* shop label */}
         <div className="flex bg-white h-full w-full py-8 mt-44 items-center">
           {/* Image */}
@@ -179,7 +207,45 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
 
         <div className="w-4/5 mx-auto mt-4 bg-white flex flex-col">
           <div className="bg-white flex flex-col shadow-md rounded px-8 py-6 mb-4">
-            {/* transf method */}
+            {/* LoyaltyPoint */}
+            <div className="bg-white flex justify-between mb-4">
+              <span className="text-gray-700 text-2xl font-medium">
+                Điểm tích lũy
+              </span>
+
+              {/* toggle */}
+
+              <label className="inline-flex items-center cursor-pointer">
+                {/* <input type="checkbox" value="" className="sr-only peer" /> */}
+                <span className="ms-3 text-sm pr-4 font-medium text-red-900 dark:text-gray-300">
+                  Use point{" "}
+                  {
+                    props.priceDataFromMultipleOrderResponse.orderResponses[0]
+                      .totalPoint
+                  }
+                </span>
+                <input
+                  type="checkbox"
+                  value=""
+                  className="sr-only peer"
+                  checked={
+                    props.priceDataFromMultipleOrderResponse.orderResponses[0]
+                      .orderDTO.loyaltyPointHistoryDTO
+                      ? true
+                      : false
+                  }
+                  onChange={() => {
+                    setUsePoints(
+                      !props.priceDataFromMultipleOrderResponse
+                        .orderResponses[0].orderDTO.loyaltyPointHistoryDTO
+                        ? true
+                        : false
+                    );
+                  }}
+                />
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
 
             {/* payment method */}
             <div className="bg-white flex justify-between mb-4">
@@ -298,7 +364,7 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
             {/* dat hang */}
             <div className="w-4/5 mx-auto mb-8 flex justify-end">
               <button
-                onClick={() => {}}
+                onClick={props.handlePlaceOrder}
                 className="bg-blue-500 hover:bg-blue-800 focus:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
               >

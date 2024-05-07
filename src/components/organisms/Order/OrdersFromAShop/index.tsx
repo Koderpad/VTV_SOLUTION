@@ -6,6 +6,7 @@ import { OrderResponse } from "@/utils/DTOs/common/Order/Response/MultipleOrderR
 import { FaTruck } from "react-icons/fa";
 import { OrderRequestWithCart } from "@/utils/DTOs/common/Order/Request/MultipleOrderRequestWithCart";
 import { useShopVoucher } from "@/hooks/useShopVoucher";
+import { Input } from "@/components/atoms/Input";
 
 interface OrderDetailsProps {
   order: OrderResponse;
@@ -23,10 +24,12 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
     number[]
   >([]);
 
-  const [shippingMethod, setShippingMethod] = useState<string | null>(null);
+  const [shippingMethod, setShippingMethod] = useState<string>();
   const [modalIsOpen, setIsOpen] = useState(false);
 
   const [voucherCode, setVoucherCode] = useState<string>("");
+
+  const [note, setNote] = useState<string>();
 
   const handleToggleVoucherForm = () => {
     setShowVoucherForm(!showVoucherForm);
@@ -52,6 +55,12 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
         if (shopVoucher) {
           setSelectedVouchersOfShop([shopVoucher.voucherId]);
         }
+
+        //get shipping method from order
+        setShippingMethod(order.orderDTO.shippingMethod);
+
+        //get note from order
+        setNote(order.orderDTO.note);
       } catch (error) {
         // setError("Failed to fetch data"); // Lưu thông báo lỗi nếu có
       }
@@ -83,6 +92,25 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
       });
     }
   }, [selectedVouchersOfShop]);
+
+  useEffect(() => {
+    if (
+      shippingMethod !== undefined &&
+      shippingMethod !== order.orderDTO.shippingMethod
+    ) {
+      updateOrderRequest({
+        shippingMethod: shippingMethod,
+      });
+    }
+  }, [shippingMethod]);
+
+  useEffect(() => {
+    if (note !== order.orderDTO.note && note !== undefined) {
+      updateOrderRequest({
+        note: note,
+      });
+    }
+  }, [note]);
 
   // isLoading, error
   if (isLoading) return <div>Loading...</div>;
@@ -193,7 +221,15 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
       <div className="flex flex-row justify-between px-4 py-2">
         <div className=" flex w-1/3">
           <span className="text-lg">Ghi chú:</span>
-          <input type="text" className="bg-gray-400 flex-wrap w-full" />
+          {/* <input type="text" className="bg-white flex-wrap w-full" /> */}
+          <Input
+            placeholder="Insert text here"
+            type="text"
+            onChange={(e) => {
+              setNote(e.target.value);
+            }}
+            defaultValue={note}
+          />
         </div>
         {/* ranh gioi */}
         <div
@@ -219,7 +255,17 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
             </span>
           </div>
           <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6"
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 9999,
+              backgroundColor: "white",
+              borderRadius: "8px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+              padding: "24px",
+            }}
             hidden={!modalIsOpen}
           >
             <div className="flex flex-col bg-white p-4 rounded-md border border-gray-300">
@@ -240,10 +286,10 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
                   Giao hàng tiết kiệm
                 </button>
                 <button
-                  onClick={() => setShippingMethod("EXPRESS")}
+                  onClick={() => setShippingMethod("VTV Express")}
                   className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
-                  Giao hàng siêu tốc độ
+                  Giao hàng siêu tốc độ VTV Express
                 </button>
               </div>
             </div>
@@ -263,33 +309,31 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
         <div className="flex justify-between px-4 py-2">
           <span className="text-lg">Tạm tính</span>
           <span className="text-lg">
-            {formatPrice(
-              order.orderDTO.orderItemDTOs.reduce(
-                (acc, item) => acc + item.price * item.quantity,
-                0
-              )
-            )}{" "}
-            VNĐ
+            {formatPrice(order.orderDTO.totalPrice)}
           </span>
         </div>
         <div className="flex justify-between px-4 py-2">
           <span className="text-lg">Phí vận chuyển</span>
           <span className="text-lg">
-            {caculTransportFee(shippingMethod || "")} VNĐ
+            {formatPrice(order.orderDTO.shippingFee)}
           </span>
         </div>
+        {/* loyalpoint */}
+        {order.orderDTO.loyaltyPointHistoryDTO && (
+          <div className="flex justify-between px-4 py-2">
+            <span className="text-lg">Điểm tích lũy</span>
+            <span className="text-lg text-red-600">
+              {formatPrice(order.orderDTO.loyaltyPointHistoryDTO.point)}
+            </span>
+          </div>
+        )}
+
         <div className="flex justify-between px-4 py-2">
           <span className="text-lg">Giảm giá</span>
-          <span className="text-lg">
-            {selectedVouchersOfShop.length > 0
-              ? formatPrice(
-                  caculShopVoucher(
-                    order,
-                    shopVouchers,
-                    selectedVouchersOfShop
-                  ) || 0
-                ) + " VNĐ"
-              : "0 VNĐ"}
+          <span className="text-lg text-red-400">
+            {formatPrice(
+              order.orderDTO.discountShop + order.orderDTO.discountSystem
+            )}
           </span>
         </div>
         <div className="flex justify-between px-4 py-2">
@@ -297,21 +341,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
             Tổng cộng ({caculProductQuantity(order)} san pham)
           </span>
           <span className="text-lg">
-            {formatPrice(
-              order.orderDTO.orderItemDTOs.reduce(
-                (acc, item) => acc + item.price * item.quantity,
-                0
-              ) -
-                (caculShopVoucher(
-                  order,
-                  shopVouchers,
-                  selectedVouchersOfShop
-                ) || 0) -
-                caculTransportFee(
-                  shippingMethod || order.orderDTO.shippingMethod
-                )
-            )}{" "}
-            VNĐ
+            {formatPrice(order.orderDTO.paymentTotal)}
           </span>
         </div>
       </div>

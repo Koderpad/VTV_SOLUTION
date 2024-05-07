@@ -104,33 +104,15 @@ export const OrderContainer = () => {
             shippingMethod: updates.shippingMethod || orderDTO.shippingMethod,
             note: updates.note || orderDTO.note || "",
             useLoyaltyPoint:
-              updates.useLoyaltyPoint ||
-              (orderDTO.loyaltyPointHistoryDTO ? true : false),
+              updates.useLoyaltyPoint !== undefined
+                ? updates.useLoyaltyPoint
+                : !!orderDTO.loyaltyPointHistoryDTO,
+
             cartIds: orderDTO.orderItemDTOs.map(({ cartId }) => cartId),
           };
         })
       );
-    // const updatedOrderRequestWithCarts: OrderRequestWithCart[] =
-    //   neccessaryOrderResponses.map((orderResponse, index) => {
-    //     const { orderDTO } = orderResponse;
-    //     const updates = updatedOrderRequests[index];
 
-    //     return {
-    //       addressId: orderDTO.addressDTO.addressId,
-    //       systemVoucherCode:
-    //         updates.systemVoucherCode || getSystemVoucherCode(orderDTO),
-    //       shopVoucherCode:
-    //         updates.shopVoucherCode || getShopVoucherCode(orderDTO), // Fix: Assert that shopVoucherCode is always a string
-    //       paymentMethod: updates.paymentMethod || orderDTO.paymentMethod,
-    //       shippingMethod: updates.shippingMethod || orderDTO.shippingMethod,
-    //       note: updates.note || orderDTO.note || "",
-    //       useLoyaltyPoint:
-    //         updates.useLoyaltyPoint ||
-    //         (orderDTO.loyaltyPointHistoryDTO ? true : false),
-    //       cartIds: orderDTO.orderItemDTOs.map(({ cartId }) => cartId),
-    //     };
-    //   });
-    // const finalOrderRequestWithCarts = await updatedOrderRequestWithCarts;
     // Sử dụng finalOrderRequestWithCarts
     updatedOrderRequestWithCarts
       .then((finalOrderRequestWithCarts) => {
@@ -281,6 +263,9 @@ export const OrderContainer = () => {
           systemVoucherNameAndId={systemVoucherNameAndId}
           paymentMethod={paymentMethod}
           updateOrderRequest={updateOrderRequest}
+          handlePlaceOrder={() => {
+            handlePlaceOrder(multipleOrderResponse);
+          }}
         />
       )}
     </>
@@ -374,4 +359,41 @@ const updateURL = (orderResponsesWithCart: MultipleOrderResponse) => {
   );
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?state=${urlSafeEncryptedUpdatedState}`;
   window.history.replaceState({}, "", newUrl);
+};
+
+const getMultipleOrderRequestWithCartFromMultipleOrderResponse = async (
+  multipleOrderResponse: MultipleOrderResponse
+) => {
+  const orderRequestWithCarts = [];
+
+  for (const orderResponse of multipleOrderResponse.orderResponses) {
+    const { orderDTO } = orderResponse;
+    const shopVoucherCode = await getShopVoucherCode(orderDTO);
+    const systemVoucherCode = await getSystemVoucherCode(orderDTO);
+
+    orderRequestWithCarts.push({
+      addressId: orderDTO.addressDTO.addressId,
+      systemVoucherCode: systemVoucherCode,
+      shopVoucherCode: shopVoucherCode,
+      paymentMethod: orderDTO.paymentMethod,
+      shippingMethod: orderDTO.shippingMethod,
+      note: orderDTO.note,
+      useLoyaltyPoint: !!orderDTO.loyaltyPointHistoryDTO,
+      cartIds: orderDTO.orderItemDTOs.map(({ cartId }) => cartId),
+    });
+  }
+
+  return { orderRequestWithCarts };
+};
+
+//handle place order
+const handlePlaceOrder = async (
+  multipleOrderResponse: MultipleOrderResponse
+) => {
+  console.log(
+    "Order Request With Carts: ",
+    await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
+      multipleOrderResponse
+    )
+  );
 };
