@@ -1,5 +1,5 @@
-import { useGetUserQuery } from "@/redux/features/auth/authApiSlice";
-import { logOut } from "@/redux/features/auth/authSlice";
+import { useGetUserQuery } from "@/redux/features/common/auth/authApiSlice";
+import { logOut } from "@/redux/features/common/auth/authSlice";
 import { useAppSelector, persistor } from "@/redux/store";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -374,7 +374,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 //==============================
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useUpdateUserMutation } from "@/redux/features/customer/customerApiSlice";
+import { useUpdateUserMutation } from "@/redux/features/common/customer/customerApiSlice";
 import { ServerError } from "@/utils/DTOs/common/ServerError";
 import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
 import { ProfileCustomerResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ProfileCustomerResponse";

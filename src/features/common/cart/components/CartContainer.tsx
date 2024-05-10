@@ -1,6 +1,6 @@
 import { Cart } from "@/components/organisms/Cart";
-import { useGetListCartByUsernameQuery } from "@/redux/features/cart/cartApiSlice";
-import { useCreateMultiOrderMutation } from "@/redux/features/order/orderApiSlice";
+import { useGetListCartByUsernameQuery } from "@/redux/features/common/cart/cartApiSlice";
+import { useCreateMultiOrderMutation } from "@/redux/features/common/order/orderApiSlice";
 import { MultipleOrderResponse } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

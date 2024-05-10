@@ -1,4 +1,4 @@
-import { apiSlice } from "../../api";
+import { apiSlice } from "../../../api";
 import { ListCartResponse } from "@/utils/DTOs/common/Cart/Response/ListCartResponse";
 
 export const cartApiSlice = apiSlice.injectEndpoints({

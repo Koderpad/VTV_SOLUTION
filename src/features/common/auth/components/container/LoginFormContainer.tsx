@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { LoginForm } from "../presentational/LoginForm";
-import { setCredentials } from "../../../../../redux/features/auth/authSlice";
-import { useLoginMutation } from "../../../../../redux/features/auth/authApiSlice";
+import { setCredentials } from "../../../../../redux/features/common/auth/authSlice";
+import { useLoginMutation } from "../../../../../redux/features/common/auth/authApiSlice";
 
 interface Error {
   status?: number;

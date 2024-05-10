@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { apiSlice } from "./api";
-import authReducer from "./features/auth/authSlice";
+import authReducer from "./features/common/auth/authSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 // import { productDetailApi } from "../features/common/products/services/noAuth/productDetailApi.ts";

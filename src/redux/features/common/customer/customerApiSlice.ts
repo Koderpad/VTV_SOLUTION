@@ -1,5 +1,8 @@
 import { apiSlice } from "@/redux/api";
+import { AddressStatusRequest } from "@/utils/DTOs/common/ProfileCustomer/Request/AddressStatusRequest";
 import { ChangePasswordRequest } from "@/utils/DTOs/common/ProfileCustomer/Request/ChangePasswordRequest";
+import { AddressResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/AddressResponse";
+import { ListAddressResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ListAddressResponse";
 import { ProfileCustomerResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ProfileCustomerResponse";
 
 interface UserProfile {
@@ -34,6 +37,34 @@ export const userApi = apiSlice.injectEndpoints({
     getVouchers: builder.query({
       query: () => "/customer/voucher/list",
     }),
+    //=======Address APIs==================
+    getAllAddress: builder.query<ListAddressResponse, void>({
+      query: () => `/customer/address/all`,
+    }),
+    addAddress: builder.mutation({
+      query: (data) => ({
+        url: `/customer/address/add`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateStatusAddress: builder.mutation<
+      AddressResponse,
+      AddressStatusRequest
+    >({
+      query: (data) => ({
+        url: `/customer/address/update/status`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
+    updateAddress: builder.mutation({
+      query: (data) => ({
+        url: `/customer/address/update`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -42,4 +73,9 @@ export const {
   useUpdateUserMutation,
   useChangePasswordMutation,
   useGetVouchersQuery,
+  //=======Address APIs==================
+  useGetAllAddressQuery,
+  useAddAddressMutation,
+  useUpdateStatusAddressMutation,
+  useUpdateAddressMutation,
 } = userApi;

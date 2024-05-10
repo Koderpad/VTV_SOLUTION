@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { useAddNewCartMutation } from "../../../redux/features/cart/cartApiSlice";
+import { useAddNewCartMutation } from "../../../redux/features/common/cart/cartApiSlice";
 import { InputQuantity } from "../../molecules/Inputs/InputQuantity";
 
 interface ProductDetailProps {

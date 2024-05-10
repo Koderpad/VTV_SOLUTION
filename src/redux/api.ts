@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
 import { BASE_URL_VTC } from "../constants/urls";
-import { logOut, setCredentials } from "./features/auth/authSlice";
+import { logOut, setCredentials } from "./features/common/auth/authSlice";
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL_VTC,

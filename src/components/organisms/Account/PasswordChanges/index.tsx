@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useChangePasswordMutation } from "@/redux/features/customer/customerApiSlice";
+import { useChangePasswordMutation } from "@/redux/features/common/customer/customerApiSlice";
 import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
 import { ProfileCustomerResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ProfileCustomerResponse";
 import { ServerError } from "@/utils/DTOs/common/ServerError";
+import { useAppSelector } from "@/redux/store";
 
 const PasswordChanges = () => {
   const [oldpw, setOldpw] = useState("");
@@ -10,7 +11,9 @@ const PasswordChanges = () => {
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [changePassword, { isLoading }] = useChangePasswordMutation();
-
+  const username = useAppSelector(
+    (state) => (state.auth.user as unknown as { username: string })?.username
+  );
   //get username from store
 
   useEffect(() => {
@@ -51,6 +54,7 @@ const PasswordChanges = () => {
     handleApiCall<ProfileCustomerResponse, ServerError>({
       callbackFn: async () => {
         return await changePassword({
+          username: username,
           oldPassword: oldpw,
           newPassword: newpw,
         });
