@@ -1,4 +1,5 @@
 import { apiSlice } from "@/redux/api";
+import { AddressRequest } from "@/utils/DTOs/common/ProfileCustomer/Request/AddressRequest";
 import { AddressStatusRequest } from "@/utils/DTOs/common/ProfileCustomer/Request/AddressStatusRequest";
 import { ChangePasswordRequest } from "@/utils/DTOs/common/ProfileCustomer/Request/ChangePasswordRequest";
 import { AddressResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/AddressResponse";
@@ -41,7 +42,7 @@ export const userApi = apiSlice.injectEndpoints({
     getAllAddress: builder.query<ListAddressResponse, void>({
       query: () => `/customer/address/all`,
     }),
-    addAddress: builder.mutation({
+    addAddress: builder.mutation<AddressResponse, AddressRequest>({
       query: (data) => ({
         url: `/customer/address/add`,
         method: "POST",

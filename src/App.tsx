@@ -1,12 +1,11 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
-import TestAddProduct from "./components/organisms/Account/Address/TestAddProduct";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage")
+  () => import("./pages/common/ProductDetailPage"),
 );
 
 // ROLE: CUSTOMER
@@ -15,7 +14,7 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges")
+  () => import("./components/organisms/Account/PasswordChanges"),
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 
@@ -39,9 +38,7 @@ function App() {
 
           {/* search */}
 
-          <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}>
-            <Route path="/test" element={<TestAddProduct />} />
-          </Route>
+          <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
 
           {/* private routes */}
           <Route element={<RequireAuth allowedRoles={["CUSTOMER"]} />}>

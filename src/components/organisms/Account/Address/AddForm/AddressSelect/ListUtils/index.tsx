@@ -1,16 +1,22 @@
-import { ListDistrictResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ListDistrictResponse";
-import { ListProvinceResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ListProvinceResponse";
+import {
+  DistrictDTO,
+  ListDistrictResponse,
+} from "@/utils/DTOs/common/ProfileCustomer/Response/ListDistrictResponse";
+import {
+  ListProvinceResponse,
+  ProvinceDTO,
+} from "@/utils/DTOs/common/ProfileCustomer/Response/ListProvinceResponse";
+import {
+  ListWardResponse,
+  WardDTO,
+} from "@/utils/DTOs/common/ProfileCustomer/Response/ListWardResponse";
 
 export const ListProvince = (props: {
   setProvince: (value: string) => void;
   setShowList: (value: number) => void;
   data: ListProvinceResponse;
+  handleProvinceClick: (item: ProvinceDTO) => void;
 }): React.ReactElement => {
-  const handClick = (item: any) => {
-    props.setProvince(item);
-    props.setShowList(1);
-  };
-
   return (
     <div className="w-full p-2 px-4 max-h-[200px] overflow-y-scroll">
       <ul className="divide-y divide-gray-200 h-full overflow-auto">
@@ -18,7 +24,7 @@ export const ListProvince = (props: {
           <li
             className="py-4 px-4 hover:bg-gray-100 cursor-pointer"
             key={item.provinceCode}
-            onClick={() => handClick(item)}
+            onClick={() => props.handleProvinceClick(item)}
           >
             {item.name}
           </li>
@@ -31,11 +37,8 @@ export const ListDistrict = (props: {
   setDistrict: (value: string) => void;
   setShowList: (value: number) => void;
   data: ListDistrictResponse;
+  handleDistrictClick: (item: DistrictDTO) => void;
 }): React.ReactElement => {
-  const handClick = (item: any) => {
-    props.setDistrict(item);
-    props.setShowList(2);
-  };
   return (
     <div className="w-full p-2 px-4 max-h-[200px] overflow-y-scroll">
       <ul className="divide-y divide-gray-200 h-full overflow-auto">
@@ -43,7 +46,7 @@ export const ListDistrict = (props: {
           <li
             className="py-4 px-4 hover:bg-gray-100 cursor-pointer"
             key={item.districtCode}
-            onClick={() => handClick(item)}
+            onClick={() => props.handleDistrictClick(item)}
           >
             {item.name}
           </li>
@@ -56,20 +59,17 @@ export const ListDistrict = (props: {
 export const ListWard = (props: {
   setWard: (value: string) => void;
   setShowList: (value: number) => void;
-  data: any;
+  data: ListWardResponse;
+  handleWardClick: (item: WardDTO) => void;
 }): React.ReactElement => {
-  const handClick = (item: any) => {
-    props.setWard(item);
-    props.setShowList(-1);
-  };
   return (
     <div className="w-full p-2 px-4 max-h-[200px] overflow-y-scroll">
       <ul className="divide-y divide-gray-200 h-full overflow-auto">
-        {props.data?.wards?.map((item: any) => (
+        {props.data.wardDTOs.map((item) => (
           <li
             className="py-4 px-4 hover:bg-gray-100 cursor-pointer"
-            key={item.code}
-            onClick={() => handClick(item)}
+            key={item.wardCode}
+            onClick={() => props.handleWardClick(item)}
           >
             {item.name}
           </li>

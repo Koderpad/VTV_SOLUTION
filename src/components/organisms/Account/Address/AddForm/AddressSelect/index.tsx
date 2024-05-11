@@ -1,4 +1,10 @@
-import React, { Dispatch, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   getProvinces,
   getDistrictsByProvinceCode,
@@ -13,27 +19,30 @@ import {
   ListDistrictResponse,
 } from "@/utils/DTOs/common/ProfileCustomer/Response/ListDistrictResponse";
 import { ListDistrict, ListProvince, ListWard } from "./ListUtils";
+import { WardDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListWardResponse";
 
 interface AddressSelectProps {
   setProvince: Dispatch<React.SetStateAction<string | undefined>>;
   setDistrict: Dispatch<React.SetStateAction<string | undefined>>;
   setWard: Dispatch<React.SetStateAction<string | undefined>>;
+  setWardCode: Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const AddressSelect = ({
   setProvince,
   setDistrict,
   setWard,
+  setWardCode,
 }: AddressSelectProps) => {
   const [open, setOpen] = useState(false);
   const [showList, setShowList] = useState(0);
   const [address, setAddress] = useState(
-    "Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã"
+    "Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã",
   );
   const ref = useRef<HTMLDivElement>(null);
   const [province, setProvinceState] = useState<ProvinceDTO>();
   const [district, setDistrictState] = useState<DistrictDTO>();
-  const [ward, setWardState] = useState<any>(null);
+  const [ward, setWardState] = useState<WardDTO>();
   const [provinces, setProvinces] = useState<ListProvinceResponse>();
   const [districts, setDistricts] = useState<ListDistrictResponse>();
   const [wards, setWards] = useState();
@@ -48,16 +57,16 @@ const AddressSelect = ({
     fetchProvinces();
   }, []);
 
-  useEffect(() => {
+  useCallback(() => {
     setAddress(
       `${province ? province.name : "Tỉnh/ Thành phố"}, ${district ? district.name : "Quận/Huyện"}, ${
         ward ? ward.name : "Phường/Xã"
-      }`
+      }`,
     );
     setProvince(province ? province.name : "Tỉnh/ Thành phố");
     setDistrict(district ? district.name : "Quận/Huyện");
     setWard(ward ? ward.name : "Phường/Xã");
-  }, [province, district, ward]);
+  }, [province, district, ward, setProvince, setDistrict, setWard]);
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -76,31 +85,35 @@ const AddressSelect = ({
   const handleProvinceClick = async (province: ProvinceDTO) => {
     setProvinceState(province);
     setShowList(1);
-    const data = await getDistrictsByProvinceCode(province.code);
+    const data = await getDistrictsByProvinceCode(province.provinceCode);
     setDistricts(data);
   };
 
-  const handleDistrictClick = async (district: any) => {
+  const handleDistrictClick = async (district: DistrictDTO) => {
     setDistrictState(district);
     setShowList(2);
-    const data = await getWardsByDistrictCode(district.code);
+    const data = await getWardsByDistrictCode(district.districtCode);
     setWards(data);
   };
 
-  const handleWardClick = (item: any) => {
+  const handleWardClick = (item: WardDTO) => {
     setWardState(item);
     setShowList(-1);
+    setWardCode(item.wardCode);
+    setOpen(false);
   };
 
   if (!provinces) {
     return <>Loading province.....</>;
   }
 
-  if ((!districts && showList === 1) || (!wards && showList === 2)) {
-    return <>Loading district and ward.....</>;
+  if (!districts && showList === 1) {
+    return <>Loading district.....</>;
   }
 
-  console.log("count: ++");
+  if (!wards && showList === 2) {
+    return <>Loading ward.....</>;
+  }
 
   return (
     <div className="mb-4">
@@ -197,7 +210,7 @@ const AddressSelect = ({
             <ListWard
               setWard={setWard}
               setShowList={setShowList}
-              data={wards}
+              data={wards!}
               handleWardClick={handleWardClick}
             />
           )}
@@ -208,81 +221,3 @@ const AddressSelect = ({
 };
 
 export default AddressSelect;
-
-// const ListProvince = (props: {
-//   setProvince: (value: string) => void;
-//   setShowList: (value: number) => void;
-//   data: ListProvinceResponse;
-// }): React.ReactElement => {
-//   const handClick = (item: any) => {
-//     props.setProvince(item);
-//     props.setShowList(1);
-//   };
-
-//   return (
-//     <div className="w-full p-2 px-4 max-h-[200px] overflow-y-scroll">
-//       <ul className="divide-y divide-gray-200 h-full overflow-auto">
-//         {props.data.map((item) => (
-//           <li
-//             className="py-4 px-4 hover:bg-gray-100 cursor-pointer"
-//             key={item.code}
-//             onClick={() => handClick(item)}
-//           >
-//             {item.name}
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
-// const ListDistrict = (props: {
-//   setDistrict: (value: string) => void;
-//   setShowList: (value: number) => void;
-//   data: any;
-// }): React.ReactElement => {
-//   const handClick = (item: any) => {
-//     props.setDistrict(item);
-//     props.setShowList(2);
-//   };
-//   return (
-//     <div className="w-full p-2 px-4 max-h-[200px] overflow-y-scroll">
-//       <ul className="divide-y divide-gray-200 h-full overflow-auto">
-//         {props.data?.districts?.map((item: any) => (
-//           <li
-//             className="py-4 px-4 hover:bg-gray-100 cursor-pointer"
-//             key={item.code}
-//             onClick={() => handClick(item)}
-//           >
-//             {item.name}
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// const ListWard = (props: {
-//   setWard: (value: string) => void;
-//   setShowList: (value: number) => void;
-//   data: any;
-// }): React.ReactElement => {
-//   const handClick = (item: any) => {
-//     props.setWard(item);
-//     props.setShowList(-1);
-//   };
-//   return (
-//     <div className="w-full p-2 px-4 max-h-[200px] overflow-y-scroll">
-//       <ul className="divide-y divide-gray-200 h-full overflow-auto">
-//         {props.data?.wards?.map((item: any) => (
-//           <li
-//             className="py-4 px-4 hover:bg-gray-100 cursor-pointer"
-//             key={item.code}
-//             onClick={() => handClick(item)}
-//           >
-//             {item.name}
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
