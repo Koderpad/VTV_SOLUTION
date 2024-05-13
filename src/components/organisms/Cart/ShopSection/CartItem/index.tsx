@@ -2,21 +2,25 @@ import {
   useDeleteCartMutation,
   useUpdateCartMutation,
 } from "@/redux/features/common/cart/cartApiSlice";
-import { Cart } from "@/utils/DTOs/common/Cart/Response/ListCartResponse";
+import {
+  Cart,
+  ListCartByShopDTO,
+} from "@/utils/DTOs/common/Cart/Response/ListCartResponse";
 import { useState } from "react";
 
 interface CartItemProps {
   cart: Cart;
-  setCartItems: React.Dispatch<React.SetStateAction<Cart[]>>;
   isSelected: boolean;
   onToggleProductCheckbox: (cartId: string) => void;
+  setRenderData: React.Dispatch<React.SetStateAction<ListCartByShopDTO>>;
+  setDeletedCartIds: React.Dispatch<React.SetStateAction<string>>;
 }
-
 export const CartItem: React.FC<CartItemProps> = ({
   cart,
-  setCartItems,
   isSelected,
   onToggleProductCheckbox,
+  setRenderData,
+  setDeletedCartIds,
 }) => {
   const [deleteCart] = useDeleteCartMutation();
   const [updateCart] = useUpdateCartMutation();
@@ -40,20 +44,29 @@ export const CartItem: React.FC<CartItemProps> = ({
     }
   };
 
+  const toggleSelection = () => {
+    onToggleProductCheckbox(cart.cartId);
+  };
+
   const handleDeleteCartItem = async () => {
     try {
-      await deleteCart(cart.cartId);
-      // Handle successful deletion, e.g., refresh the cart list
-      setCartItems((prevItems) =>
-        prevItems.filter((item) => item.cartId !== cart.cartId)
-      );
+      // await deleteCart(cart.cartId);
+      console.log("Deleted cart item with id:", cart.cartId);
+      setDeletedCartIds(cart.cartId);
+      // setRenderData((prevRenderData) => {
+      //   console.log("prevRenderData trong handle delete: ", prevRenderData);
+      //   const updatedCarts = prevRenderData.carts.filter(
+      //     (cartItem) => cartItem.cartId !== cart.cartId
+      //   );
+      //   console.log("updatedCarts trong handle delete: ", updatedCarts);
+      //   return {
+      //     ...prevRenderData,
+      //     carts: updatedCarts,
+      //   };
+      // });
     } catch (error) {
       console.error("Error deleting cart item:", error);
     }
-  };
-
-  const toggleSelection = () => {
-    onToggleProductCheckbox(cart.cartId);
   };
 
   return (
