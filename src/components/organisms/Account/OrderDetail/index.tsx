@@ -3,7 +3,7 @@ import { useGetOrderByOrderIdQuery } from "@/redux/features/common/customer/cust
 import { FaTruck } from "react-icons/fa";
 import { TransportHandleDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/OrderResponse.ts";
 
-export const OrderDetail = () => {
+const OrderDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { data: orderResponse } = useGetOrderByOrderIdQuery(id!);
   const navigate = useNavigate();
@@ -270,3 +270,5 @@ export const OrderDetail = () => {
     </div>
   );
 };
+
+export default OrderDetail;

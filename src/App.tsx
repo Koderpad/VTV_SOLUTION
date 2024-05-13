@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
 import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
 import CategoryList from "./components/organisms/Home";
-import { OrderDetail } from "./components/organisms/Account/OrderDetail";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -20,6 +19,12 @@ const PasswordChanges = lazy(
   () => import("./components/organisms/Account/PasswordChanges")
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
+const OrderDetail = lazy(
+  () => import("./components/organisms/Account/OrderDetail")
+);
+const CategoryResultsPage = lazy(
+  () => import("./pages/common/CategoryResultsPage")
+);
 
 function App() {
   return (
@@ -27,9 +32,16 @@ function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           {/* public routes */}
+
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Home />} />
           <Route path="/test" element={<CategoryList />} />
+
+          {/* category results */}
+          <Route
+            path="/category/:categoryId"
+            element={<CategoryResultsPage />}
+          />
 
           {/* product */}
           <Route path="product/:productId" element={<ProductDetailPage />} />

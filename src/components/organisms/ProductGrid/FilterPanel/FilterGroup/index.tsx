@@ -1,4 +1,5 @@
-import { FC, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
+import { FilterContext } from "../../FilterContext";
 
 interface FilterGroupProps {
   name: string;
@@ -6,7 +7,25 @@ interface FilterGroupProps {
 }
 
 export const FilterGroup: FC<FilterGroupProps> = ({ name, children }) => {
+  const { filters } = useContext(FilterContext);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const shouldOpen = () => {
+      switch (name) {
+        case "PRICE":
+          return filters.fromPrice !== null || filters.toPrice !== null;
+        case "PRODUCT RATE":
+          return filters.rating.length > 0;
+        case "SORT BY":
+          return filters.sortBy !== null;
+        default:
+          return false;
+      }
+    };
+
+    setIsOpen(shouldOpen());
+  }, [filters, name]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
