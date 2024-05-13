@@ -22,13 +22,19 @@ import { ListDistrict, ListProvince, ListWard } from "./ListUtils";
 import { WardDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListWardResponse";
 
 interface AddressSelectProps {
-  setProvince: Dispatch<React.SetStateAction<string | undefined>>;
-  setDistrict: Dispatch<React.SetStateAction<string | undefined>>;
-  setWard: Dispatch<React.SetStateAction<string | undefined>>;
-  setWardCode: Dispatch<React.SetStateAction<string | undefined>>;
+  initialProvince: ProvinceDTO;
+  initialDistrict: DistrictDTO;
+  initialWard: WardDTO;
+  setProvince: Dispatch<React.SetStateAction<string>>;
+  setDistrict: Dispatch<React.SetStateAction<string>>;
+  setWard: Dispatch<React.SetStateAction<string>>;
+  setWardCode: Dispatch<React.SetStateAction<string>>;
 }
 
 const AddressSelect = ({
+  initialProvince,
+  initialDistrict,
+  initialWard,
   setProvince,
   setDistrict,
   setWard,
@@ -37,12 +43,14 @@ const AddressSelect = ({
   const [open, setOpen] = useState(false);
   const [showList, setShowList] = useState(0);
   const [address, setAddress] = useState(
-    "Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã"
+    `${initialProvince?.name || "Tỉnh/ Thành phố"}, ${initialDistrict?.name || "Quận/Huyện"}, ${
+      initialWard?.name || "Phường/Xã"
+    }`,
   );
   const ref = useRef<HTMLDivElement>(null);
-  const [province, setProvinceState] = useState<ProvinceDTO>();
-  const [district, setDistrictState] = useState<DistrictDTO>();
-  const [ward, setWardState] = useState<WardDTO>();
+  const [province, setProvinceState] = useState<ProvinceDTO>(initialProvince);
+  const [district, setDistrictState] = useState<DistrictDTO>(initialDistrict);
+  const [ward, setWardState] = useState<WardDTO>(initialWard);
   const [provinces, setProvinces] = useState<ListProvinceResponse>();
   const [districts, setDistricts] = useState<ListDistrictResponse>();
   const [wards, setWards] = useState();
@@ -57,16 +65,20 @@ const AddressSelect = ({
     fetchProvinces();
   }, []);
 
-  useEffect(() => {
+  const updateAddress = useCallback(() => {
     setAddress(
       `${province ? province.name : "Tỉnh/ Thành phố"}, ${district ? district.name : "Quận/Huyện"}, ${
         ward ? ward.name : "Phường/Xã"
-      }`
+      }`,
     );
-    setProvince(province ? province.name : "Tỉnh/ Thành phố");
-    setDistrict(district ? district.name : "Quận/Huyện");
-    setWard(ward ? ward.name : "Phường/Xã");
+    setProvince(province.name);
+    setDistrict(district.name);
+    setWard(ward.name);
   }, [province, district, ward, setProvince, setDistrict, setWard]);
+
+  useEffect(() => {
+    updateAddress();
+  }, [updateAddress]);
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -84,38 +96,38 @@ const AddressSelect = ({
 
   const handleProvinceClick = async (province: ProvinceDTO) => {
     setProvinceState(province);
-    setProvince(province.name);
     setShowList(1);
     const data = await getDistrictsByProvinceCode(province.provinceCode);
     setDistricts(data);
+    setProvince(province.name);
   };
 
   const handleDistrictClick = async (district: DistrictDTO) => {
     setDistrictState(district);
-    setDistrict(district.name);
     setShowList(2);
     const data = await getWardsByDistrictCode(district.districtCode);
     setWards(data);
+    setDistrict(district.name);
   };
 
   const handleWardClick = (item: WardDTO) => {
     setWardState(item);
-    setWard(item.name);
     setShowList(-1);
     setWardCode(item.wardCode);
+    setWard(item.name);
     setOpen(false);
   };
 
   if (!provinces) {
-    return <>Loading province.....</>;
+    return <>Loading province...</>;
   }
 
   if (!districts && showList === 1) {
-    return <>Loading district.....</>;
+    return <>Loading district...</>;
   }
 
   if (!wards && showList === 2) {
-    return <>Loading ward.....</>;
+    return <>Loading ward...</>;
   }
 
   return (
@@ -124,7 +136,7 @@ const AddressSelect = ({
         htmlFor="address"
         className="block text-gray-700 text-sm font-medium mb-2"
       >
-        Địa chỉ
+        Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã
       </label>
 
       <div className="relative">

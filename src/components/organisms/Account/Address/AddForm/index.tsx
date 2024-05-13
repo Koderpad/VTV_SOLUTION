@@ -40,6 +40,15 @@ const AddForm: React.FC<AddFormProps> = ({ handleCloseForm, showForm }) => {
   const handleSubmit = async () => {
     try {
       if (!province || !district || !ward || !name || !phone || !detail) {
+        console.log("address before ADD: ", {
+          province,
+          district,
+          ward,
+          detail,
+          name,
+          phone,
+          wardCode,
+        });
         toast.error("Vui lòng điền đầy đủ thông tin!");
         return;
       }
@@ -53,6 +62,7 @@ const AddForm: React.FC<AddFormProps> = ({ handleCloseForm, showForm }) => {
         phone,
         wardCode: wardCode,
       };
+      console.log("address before ADD: ", address);
       const response = await addAddress(address);
 
       console.log("address response", response);

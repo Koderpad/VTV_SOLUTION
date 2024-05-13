@@ -1,11 +1,13 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
+import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
+import CategoryList from "./components/organisms/Home";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage"),
+  () => import("./pages/common/ProductDetailPage")
 );
 
 // ROLE: CUSTOMER
@@ -14,7 +16,7 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges"),
+  () => import("./components/organisms/Account/PasswordChanges")
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 
@@ -26,6 +28,7 @@ function App() {
           {/* public routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Home />} />
+          <Route path="/test" element={<CategoryList />} />
 
           {/* product */}
           <Route path="product/:productId" element={<ProductDetailPage />} />
@@ -52,9 +55,9 @@ function App() {
               <Route path="profile" element={<Profile />} />
               <Route path="pw_changes" element={<PasswordChanges />} />
               <Route path="address" element={<Address />} />
+              <Route path="history-purchase" element={<HistoryPurchase />} />
               {/* <Route path="favorite-products" element={<FavoriteProducts />} />
               <Route path="voucher-wallet" element={<VoucherList />} />
-              <Route path="history-purchase" element={<HistoryPurchase />} />
               <Route
                 path="checkout/add/review/order-item/:id"
                 element={<AddReview />}

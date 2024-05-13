@@ -7,6 +7,10 @@ import {
 
 import UpdateForm from "./UpdateForm";
 import { AddressDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListAddressResponse";
+import {
+  AddressStatus,
+  AddressStatusRequest,
+} from "@/utils/DTOs/common/ProfileCustomer/Request/AddressStatusRequest";
 
 const Address = () => {
   const [showForm, setShowForm] = useState(false);
@@ -22,7 +26,7 @@ const Address = () => {
 
   //update address
   const [showUpdateForm, setShowUpdateForm] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState(null);
+  const [currentAddress, setCurrentAddress] = useState<AddressDTO>();
 
   useEffect(() => {
     refetch();
@@ -55,11 +59,12 @@ const Address = () => {
   const handleUpdateStatus = async ({ addressId }: { addressId: number }) => {
     try {
       const addressIdString = addressId.toString();
-      const res = await updateStatusAddress({
-        addressId: addressIdString,
-        status: "ACTIVE",
-      });
-      console.log(res.data.message);
+      const reqData: AddressStatusRequest = {
+        addressId: parseInt(addressIdString),
+        status: AddressStatus.ACTIVE,
+      };
+      const res = await updateStatusAddress(reqData).unwrap();
+      console.log("thanh cong: ", res.message);
     } catch (error) {
       alert(error);
     }
@@ -76,10 +81,18 @@ const Address = () => {
     const addressToUpdate: AddressDTO | undefined = addressDTOList.find(
       (address) => address.addressId === addressId
     );
+
+    if (!addressToUpdate) {
+      return;
+    }
+
     setCurrentAddress(addressToUpdate);
     setShowUpdateForm(true);
   };
 
+  // if (!currentAddress) {
+  //   return <>LOading current address..... </>;
+  // }
   return (
     <div className="h-full">
       <div className="h-full w-full p-10 bg-white overflow-y-auto">
@@ -103,8 +116,6 @@ const Address = () => {
                 <AddForm
                   handleCloseForm={handleCloseForm}
                   showForm={showForm}
-                  // listAddress={listAddress}
-                  // setListAddress={setListAddress}
                 />
               )}
             </div>

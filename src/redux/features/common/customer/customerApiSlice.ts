@@ -59,11 +59,25 @@ export const userApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    updateAddress: builder.mutation({
+    updateAddress: builder.mutation<AddressResponse, AddressRequest>({
       query: (data) => ({
         url: `/customer/address/update`,
         method: "PUT",
         body: data,
+      }),
+    }),
+
+    //=================Order APIs==================
+    getOrdersByStatusVer2: builder.query({
+      query: (status: string) => {
+        const base = "/customer/order/list";
+        return status === "ALL" ? base : `${base}/status/${status}`;
+      },
+    }),
+    cancelOrder: builder.mutation({
+      query: (orderId: number) => ({
+        url: `/customer/order/cancel/${orderId}`,
+        method: "POST",
       }),
     }),
   }),
@@ -79,4 +93,7 @@ export const {
   useAddAddressMutation,
   useUpdateStatusAddressMutation,
   useUpdateAddressMutation,
+  //=================Order APIs==================
+  useGetOrdersByStatusVer2Query,
+  useCancelOrderMutation,
 } = userApi;
