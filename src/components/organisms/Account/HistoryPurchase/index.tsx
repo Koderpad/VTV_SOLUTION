@@ -175,7 +175,7 @@ export const HistoryPurchase = () => {
             >
               {purchase.orderItemDTOs.map((item: OrderItemDTO) => (
                 <NavLink
-                  to={`/checkout/${purchase.orderId}`}
+                  to={`/user/account/order/${purchase.orderId}`}
                   className="flex"
                   key={item.cartId}
                 >

@@ -4,6 +4,7 @@ import { AddressStatusRequest } from "@/utils/DTOs/common/ProfileCustomer/Reques
 import { ChangePasswordRequest } from "@/utils/DTOs/common/ProfileCustomer/Request/ChangePasswordRequest";
 import { AddressResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/AddressResponse";
 import { ListAddressResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ListAddressResponse";
+import { OrderResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/OrderResponse";
 import { ProfileCustomerResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ProfileCustomerResponse";
 
 interface UserProfile {
@@ -75,10 +76,13 @@ export const userApi = apiSlice.injectEndpoints({
       },
     }),
     cancelOrder: builder.mutation({
-      query: (orderId: number) => ({
+      query: (orderId: string) => ({
         url: `/customer/order/cancel/${orderId}`,
         method: "POST",
       }),
+    }),
+    getOrderByOrderId: builder.query<OrderResponse, string>({
+      query: (orderId) => `/customer/order/detail/${orderId}`,
     }),
   }),
 });
@@ -96,4 +100,5 @@ export const {
   //=================Order APIs==================
   useGetOrdersByStatusVer2Query,
   useCancelOrderMutation,
+  useGetOrderByOrderIdQuery,
 } = userApi;

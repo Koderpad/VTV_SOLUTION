@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
 import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
 import CategoryList from "./components/organisms/Home";
+import { OrderDetail } from "./components/organisms/Account/OrderDetail";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -56,6 +57,7 @@ function App() {
               <Route path="pw_changes" element={<PasswordChanges />} />
               <Route path="address" element={<Address />} />
               <Route path="history-purchase" element={<HistoryPurchase />} />
+              <Route path="order/:id" element={<OrderDetail />} />
               {/* <Route path="favorite-products" element={<FavoriteProducts />} />
               <Route path="voucher-wallet" element={<VoucherList />} />
               <Route
