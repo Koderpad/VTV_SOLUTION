@@ -125,6 +125,7 @@ export const HistoryPurchase = () => {
     // } catch (error) {
     //   alert("Trả lại đơn hàng thất bại");
     // }
+    console.log("Return order");
   };
 
   const formatPrice = (price: number) => {
