@@ -25,10 +25,10 @@ const OrderDetail = lazy(
 const CategoryResultsPage = lazy(
   () => import("./pages/common/CategoryResultsPage")
 );
-
+const basename = '/vtv-solution';
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           {/* public routes */}
