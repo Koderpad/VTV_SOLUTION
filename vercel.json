@@ -1,7 +1,8 @@
 {
-  "build": {
-    "env": {
-      "NEXT_PUBLIC_IGNORE_TYPESCRIPT_ERRORS": "true"
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
-  }
+  ]
 }
