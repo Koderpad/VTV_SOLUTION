@@ -2,7 +2,7 @@ import {
   AddressDTO,
   MultipleOrderResponse,
 } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { AddressInfo } from "./AddressInfo";
 import { ToastContainer } from "react-toastify";
 import Vouchers from "./Voucher/vouchers";
@@ -28,7 +28,7 @@ interface OrderProps {
 
 export const Order: FC<OrderProps> = ({ ...props }) => {
   //state
-  const { systemVouchers, isLoading, error, fetchSystemVoucher } =
+  const { systemVouchers, isLoading, error } =
     useSystemVoucher();
   const [showSystemVoucherForm, setShowSystemVoucherForm] = useState(false);
   // const [systemFromVouchers, setSystemFromVouchers] = useState<VoucherDTO[]>();

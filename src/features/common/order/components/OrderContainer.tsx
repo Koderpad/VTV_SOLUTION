@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
-  useCreateOrderMutation,
-  useCreateUpdateOrderMutation,
   useUpdateMultiOrderMutation,
 } from "../../../../redux/features/common/order/orderApiSlice";
 import { Order } from "@/components/organisms/Order";
@@ -20,9 +17,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { getVoucherByVoucherId } from "@/services/common/VoucherService";
 
 export const OrderContainer = () => {
-  const navigate = useNavigate();
-  const [createOrder] = useCreateOrderMutation();
-  const [createUpdateOrder] = useCreateUpdateOrderMutation();
+  // const navigate = useNavigate();
+  // const [createOrder] = useCreateOrderMutation();
+  // const [createUpdateOrder] = useCreateUpdateOrderMutation();
   const [updateMultiOrder] = useUpdateMultiOrderMutation();
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -128,6 +125,7 @@ export const OrderContainer = () => {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
+        console.error("Lỗi khi cập nhật đơn hàng: ", error);
       });
   }, [updatedOrderRequests]);
 
@@ -188,6 +186,7 @@ export const OrderContainer = () => {
         (orderRequestWithCart) => {
           const { systemVoucherCode, shopVoucherCode, ...rest } =
             orderRequestWithCart;
+          console.log(rest);
 
           let updatedOrderRequest = orderRequestWithCart;
 
@@ -268,6 +267,7 @@ export const OrderContainer = () => {
           }}
         />
       )}
+      <ToastContainer />
     </>
   );
 };
@@ -304,19 +304,19 @@ const getNeccessaryOrderResponses = (
 };
 
 // Hàm lấy tên và ID voucher hệ thống
-const getSystemVoucherNameAndId = (orderDTO) => {
-  const systemVoucher = orderDTO?.voucherOrderDTOs?.find(
-    (voucher) => voucher.type
-  );
-  return systemVoucher
-    ? { name: systemVoucher.voucherName, id: systemVoucher.voucherId }
-    : undefined;
-};
+// const getSystemVoucherNameAndId = (orderDTO) => {
+//   const systemVoucher = orderDTO?.voucherOrderDTOs?.find(
+//     (voucher) => voucher.type
+//   );
+//   return systemVoucher
+//     ? { name: systemVoucher.voucherName, id: systemVoucher.voucherId }
+//     : undefined;
+// };
 
 // Hàm lấy mã voucher hệ thống
-const getSystemVoucherCode = async (orderDTO) => {
+const getSystemVoucherCode = async (orderDTO:any) => {
   const systemVoucher = orderDTO.voucherOrderDTOs?.find(
-    (voucher) => voucher.type === false
+    (voucher:any) => voucher.type === false
   );
   const id = systemVoucher?.voucherId.toString() || "";
   if (id !== "" && id) {
@@ -331,9 +331,9 @@ const getSystemVoucherCode = async (orderDTO) => {
   return undefined;
 };
 
-const getShopVoucherCode = async (orderDTO) => {
+const getShopVoucherCode = async (orderDTO:any) => {
   const shopVoucher = orderDTO.voucherOrderDTOs?.find(
-    (voucher) => voucher.type === true
+    (voucher:any) => voucher.type === true
   );
   const id = shopVoucher?.voucherId.toString() || "";
   if (id !== "" && id) {

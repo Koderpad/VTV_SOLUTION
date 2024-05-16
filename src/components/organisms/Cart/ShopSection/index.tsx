@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
 import { CartItem } from "./CartItem";
 import {
-  Cart,
   ListCartByShopDTO,
 } from "@/utils/DTOs/common/Cart/Response/ListCartResponse";
-import { set } from "react-hook-form";
 
 interface VoucherComponentProps {
   data: ListCartByShopDTO;

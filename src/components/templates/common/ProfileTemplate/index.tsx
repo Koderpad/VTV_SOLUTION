@@ -1,8 +1,6 @@
 import { Footer } from "@/components/organisms/Footer";
 import { Header } from "@/components/organisms/Header/index-temp";
-import { Account, MyAccount } from "@/components/organisms/Account";
-import { ProductReviews } from "@/components/organisms/ProductDetail/ProductReviews";
-import { ProductDetailContainer } from "@/features/common/product/productdetail/components/container/ProductDetailContainer";
+import { Account } from "@/components/organisms/Account";
 
 export const AccountTemplate = () => {
   return (

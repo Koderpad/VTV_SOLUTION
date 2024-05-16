@@ -1,17 +1,6 @@
 import { NavbarWrapper } from "./Navbar/NavbarWrapper/index-temp";
 import { HeaderWithSearchWrapper } from "./HeaderWithSearch/HeaderWithSearchWrapper/index-temp";
 
-const cartContent = [
-  {
-    name: "Sản phẩm 1",
-    link: "/san-pham-1",
-  },
-  {
-    name: "Sản phẩm 2",
-    link: "/san-pham-2",
-  },
-  // ...các sản phẩm khác
-];
 
 export const Header = () => {
   return (

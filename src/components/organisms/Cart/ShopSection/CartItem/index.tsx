@@ -19,7 +19,6 @@ export const CartItem: React.FC<CartItemProps> = ({
   cart,
   isSelected,
   onToggleProductCheckbox,
-  setRenderData,
   setDeletedCartIds,
 }) => {
   const [deleteCart] = useDeleteCartMutation();
@@ -50,7 +49,7 @@ export const CartItem: React.FC<CartItemProps> = ({
 
   const handleDeleteCartItem = async () => {
     try {
-      // await deleteCart(cart.cartId);
+      await deleteCart(cart.cartId);
       console.log("Deleted cart item with id:", cart.cartId);
       setDeletedCartIds(cart.cartId);
       // setRenderData((prevRenderData) => {

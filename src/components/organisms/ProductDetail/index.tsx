@@ -1,8 +1,6 @@
 import {
-  AttributeDTO,
   ProductDTO,
   ProductResponse,
-  ProductVariantDTO,
 } from "@/utils/DTOs/common/Product/Response/ProductResponse";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -253,7 +251,8 @@ export const ProductDetail = ({ ...props }: ProductDetailProps) => {
           <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden">
             <img
               alt="Acme T-Shirt - t-shirt-color-black"
-              fetchpriority="high"
+              //omit error of eslint
+              fetchPriority="high"
               decoding="async"
               data-nimg="fill"
               className="h-full w-full object-contain"

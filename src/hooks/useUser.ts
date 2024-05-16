@@ -1,4 +1,4 @@
-import { RootState, useAppSelector } from "../redux/store";
+import {  useAppSelector } from "../redux/store";
 // import { IUser } from "../../utils/interfaces";
 
 interface IUser {

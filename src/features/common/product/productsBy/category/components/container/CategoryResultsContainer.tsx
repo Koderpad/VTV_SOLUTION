@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 
 export const CategoryResultsContainer = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const { filters, updateFilters } = useContext(FilterContext);
+  const { filters  } = useContext(FilterContext);
   const { fromPrice, toPrice, sortBy, rating } = filters;
 
   const [products, setProducts] = useState<ProductDTO[]>([]);

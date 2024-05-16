@@ -102,6 +102,7 @@ const Profile = () => {
       },
       successCallback: (data) => {
         toast.success("Cập nhật thông tin thành công!");
+        console.log(data);
       },
       errorFromServerCallback: (error) => {
         if (error.status === "FORBIDDEN") {

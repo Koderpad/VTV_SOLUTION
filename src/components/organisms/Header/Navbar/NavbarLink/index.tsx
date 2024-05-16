@@ -1,6 +1,5 @@
 import { CustomLink } from "@/components/atoms/Link";
 import { NotificationTooltip } from "../../Tooltips/NotificationTooltip";
-import { A } from "@/components/atoms/Link/A";
 
 export const NavbarLink = () => {
   const content = [

@@ -1,20 +1,9 @@
-import { useState, useEffect } from "react";
 import { NotificationTooltip } from "../../Tooltips/NotificationTooltip/index-temp";
-import { A } from "@/components/atoms/Link/A";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { AccountTooltip } from "../../Tooltips/Account";
 
-interface CustomerDTO {
-  customerId: number;
-  username: string;
-  email: string;
-  gender: boolean;
-  fullName: string;
-  birthday: string; // You may want to use a Date type
-  status: string; // You may want to define a more specific type for status
-  roles: string[];
-}
+
 
 export const NavbarLink = () => {
   const content = [

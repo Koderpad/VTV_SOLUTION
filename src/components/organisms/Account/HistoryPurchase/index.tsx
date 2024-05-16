@@ -115,6 +115,7 @@ export const HistoryPurchase = () => {
     // } catch (error) {
     //   alert("Hoàn thành đơn hàng thất bại");
     // }
+    console.log(orderId);
   };
 
   const handleReturnOrder = async (orderId: string) => {
@@ -126,6 +127,7 @@ export const HistoryPurchase = () => {
     //   alert("Trả lại đơn hàng thất bại");
     // }
     console.log("Return order");
+    console.log(orderId);
   };
 
   const formatPrice = (price: number) => {

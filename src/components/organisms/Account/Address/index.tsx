@@ -14,7 +14,7 @@ import {
 
 const Address = () => {
   const [showForm, setShowForm] = useState(false);
-  const [listAddress, setListAddress] = useState([]);
+  // const [listAddress, setListAddress] = useState([]);
   const { data, error, isLoading, refetch } = useGetAllAddressQuery();
 
   const [updateStatusAddress, { isLoading: updateStatusAddressLoading }] =
@@ -41,7 +41,7 @@ const Address = () => {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: </div>;
   }
 
   if (!data) {
@@ -166,7 +166,7 @@ const Address = () => {
                       </div>
                       {showUpdateForm && (
                         <UpdateForm
-                          address={currentAddress}
+                          address={currentAddress!}
                           onClose={() => setShowUpdateForm(false)}
                         />
                       )}
@@ -175,11 +175,11 @@ const Address = () => {
                       <div className="text-gray-700 text-lg mb-4 items-center justify-end flex-grow ">
                         {addressDTO.fullAddress +
                           ", " +
-                          addressDTO.ward +
+                          addressDTO.wardFullName +
                           ", " +
-                          addressDTO.district +
+                          addressDTO.districtFullName +
                           ", " +
-                          addressDTO.province}
+                          addressDTO.provinceFullName}
                       </div>
                       <div className="flex items-center justify-end">
                         <button
@@ -212,11 +212,5 @@ const Address = () => {
     </div>
   );
 };
-
-// const AddressPageContainer = styled.div`
-//   height: 1000px;
-//   background: #dcdcdc;
-//   position: relative;
-// `;
 
 export default Address;

@@ -1,4 +1,3 @@
-import { ProductDetailTemplate } from "@/components/templates/common/ProductDetailTemplate";
 import { AccountTemplate } from "@/components/templates/common/ProfileTemplate";
 
 const AccountPage = () => {

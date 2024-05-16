@@ -73,7 +73,7 @@ const PasswordChanges = () => {
             : "Đổi mật khẩu thất bại. Vui lòng thử lại."
         );
       },
-      errorCallback: (error) => {
+      errorCallback: () => {
         setErrorMessage("Đổi mật khẩu thất bại. Vui lòng thử lại.");
       },
     });

@@ -1,5 +1,4 @@
-import { ServerError } from "@/utils/DTOs/common/ServerError";
-import { SerializedError, isAsyncThunkAction } from "@reduxjs/toolkit";
+import { SerializedError  } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 type HandleApiCallParams<DataType, ServerError> = {

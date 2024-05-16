@@ -11,7 +11,6 @@ interface CartProps {
 export const Cart = ({
   data,
   isLoading,
-  refetch,
   handleCreateOrder,
 }: CartProps) => {
   const [totalPrice, setTotalPrice] = useState(0);
@@ -39,25 +38,25 @@ export const Cart = ({
     calculateTotals();
   }, [data, selectedProducts]);
 
-  const handleProductSelection = (cartId: string, isSelected: boolean) => {
-    setSelectedProducts((prevSelectedProducts) => {
-      if (isSelected) {
-        return [...prevSelectedProducts, cartId];
-      } else {
-        return prevSelectedProducts.filter((id) => id !== cartId);
-      }
-    });
-  };
+  // const handleProductSelection = (cartId: string, isSelected: boolean) => {
+  //   setSelectedProducts((prevSelectedProducts) => {
+  //     if (isSelected) {
+  //       return [...prevSelectedProducts, cartId];
+  //     } else {
+  //       return prevSelectedProducts.filter((id) => id !== cartId);
+  //     }
+  //   });
+  // };
 
-  const handleShopSelection = (shopId: string, isSelected: boolean) => {
-    data.listCartByShopDTOs.forEach((shopData: any) => {
-      if (shopData.shopId === shopId) {
-        shopData.carts.forEach((cart: any) => {
-          handleProductSelection(cart.cartId, isSelected);
-        });
-      }
-    });
-  };
+  // const handleShopSelection = (shopId: string, isSelected: boolean) => {
+  //   data.listCartByShopDTOs.forEach((shopData: any) => {
+  //     if (shopData.shopId === shopId) {
+  //       shopData.carts.forEach((cart: any) => {
+  //         handleProductSelection(cart.cartId, isSelected);
+  //       });
+  //     }
+  //   });
+  // };
 
   return (
     <>

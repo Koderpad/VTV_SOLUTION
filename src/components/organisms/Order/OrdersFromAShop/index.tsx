@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import VoucherDetails from "../Voucher/VoucherDetails";
 import Vouchers from "../Voucher/vouchers";
-import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
 import { OrderResponse } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
 import { FaTruck } from "react-icons/fa";
 import { OrderRequestWithCart } from "@/utils/DTOs/common/Order/Request/MultipleOrderRequestWithCart";
@@ -16,7 +15,7 @@ interface OrderDetailsProps {
 
 export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
   const { order, updateOrderRequest, formatPrice } = props;
-  const { shopVouchers, isLoading, error, fetchShopVoucher } = useShopVoucher(
+  const { shopVouchers, isLoading, error  } = useShopVoucher(
     order.orderDTO.shopDTO.shopId
   );
   const [showVoucherForm, setShowVoucherForm] = useState(false);
@@ -348,37 +347,37 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
     </div>
   );
 };
-const caculShopVoucher = (
-  order: OrderResponse,
-  shopVouchers: VoucherDTO[],
-  selectedVouchersOfShop: number[]
-) => {
-  const voucher = shopVouchers.find(
-    (v) => v.voucherId === selectedVouchersOfShop[0]
-  );
-  const type = voucher?.type;
-  if (type === "PERCENTAGE_SHOP") {
-    return order.orderDTO.orderItemDTOs.reduce(
-      (acc, item) =>
-        acc + (item.price * item.quantity * voucher?.discount!) / 100,
-      0
-    );
-  } else {
-    return voucher?.discount;
-  }
-};
-
-const caculTransportFee = (shippingMethod: string) => {
-  if (shippingMethod === "GHN") {
-    return 20000;
-  } else if (shippingMethod === "GHTK") {
-    return 15000;
-  } else if (shippingMethod === "EXPRESS") {
-    return 30000;
-  } else {
-    return 0;
-  }
-};
+// const caculShopVoucher = (
+//   order: OrderResponse,
+//   shopVouchers: VoucherDTO[],
+//   selectedVouchersOfShop: number[]
+// ) => {
+//   const voucher = shopVouchers.find(
+//     (v) => v.voucherId === selectedVouchersOfShop[0]
+//   );
+//   const type = voucher?.type;
+//   if (type === "PERCENTAGE_SHOP") {
+//     return order.orderDTO.orderItemDTOs.reduce(
+//       (acc, item) =>
+//         acc + (item.price * item.quantity * voucher?.discount!) / 100,
+//       0
+//     );
+//   } else {
+//     return voucher?.discount;
+//   }
+// };
+//
+// const caculTransportFee = (shippingMethod: string) => {
+//   if (shippingMethod === "GHN") {
+//     return 20000;
+//   } else if (shippingMethod === "GHTK") {
+//     return 15000;
+//   } else if (shippingMethod === "EXPRESS") {
+//     return 30000;
+//   } else {
+//     return 0;
+//   }
+// };
 
 const caculProductQuantity = (order: OrderResponse) => {
   return order.orderDTO.orderItemDTOs.reduce((acc) => acc + 1, 0);
