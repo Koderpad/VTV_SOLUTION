@@ -1,18 +1,39 @@
-import { NotificationTooltip } from "../../Tooltips/NotificationTooltip/index-temp";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { NotificationTooltip } from "../../Tooltips/NotificationTooltip/index-temp";
 import { AccountTooltip } from "../../Tooltips/Account";
-
-
+import { onMessageListener, requestForToken } from "@/config/fcmConfig";
 
 export const NavbarLink = () => {
   const content = [
     { name: "Thong bao cua hang", link: "/thong-bao-cua-hang" },
-    { name: "Thong bao don hang", link: "/thong-bao-don-hang" },
+    { name: "Thong bao don hang11111111111111", link: "/thong-bao-don-hang" },
   ];
 
-  const auth = useSelector((state: RootState) => state.auth);
+  const [notification, setNotification] = useState("");
+  function ToastDisplay() {
+    return (
+      <div>
+      </div>
+    );
+  };
 
+  useEffect(() => {
+    if (notification) {
+      ToastDisplay();
+    }
+  }, [notification])
+
+  requestForToken();
+
+  onMessageListener()
+    .then(() => {
+      setNotification("New message received.");
+    })
+    .catch((err) => console.log('failed: ', err));
+
+  const auth = useSelector((state: RootState) => state.auth);
   const { isAuthenticated, user } = auth;
 
   return (
@@ -23,11 +44,7 @@ export const NavbarLink = () => {
       {isAuthenticated ? (
         <AccountTooltip username={user!.username} />
       ) : (
-        <div
-          className="text-white outline-none
-            text-xl font-medium p-1
-            "
-        >
+        <div className="text-white outline-none text-xl font-medium p-1">
           <a href="/common/Login">Đăng nhập</a>
           <span className="mx-2">/</span>
           <a href="/common/Register">Đăng ký</a>
@@ -36,6 +53,46 @@ export const NavbarLink = () => {
     </ul>
   );
 };
+
+
+// import { NotificationTooltip } from "../../Tooltips/NotificationTooltip/index-temp";
+// import { useSelector } from "react-redux";
+// import { RootState } from "@/redux/store";
+// import { AccountTooltip } from "../../Tooltips/Account";
+//
+//
+//
+// export const NavbarLink = () => {
+//   const content = [
+//     { name: "Thong bao cua hang", link: "/thong-bao-cua-hang" },
+//     { name: "Thong bao don hang", link: "/thong-bao-don-hang" },
+//   ];
+//
+//   const auth = useSelector((state: RootState) => state.auth);
+//
+//   const { isAuthenticated, user } = auth;
+//
+//   return (
+//     <ul className="flex gap-2 items-center">
+//       <li className="">
+//         <NotificationTooltip content={content} />
+//       </li>
+//       {isAuthenticated ? (
+//         <AccountTooltip username={user!.username} />
+//       ) : (
+//         <div
+//           className="text-white outline-none
+//             text-xl font-medium p-1
+//             "
+//         >
+//           <a href="/common/Login">Đăng nhập</a>
+//           <span className="mx-2">/</span>
+//           <a href="/common/Register">Đăng ký</a>
+//         </div>
+//       )}
+//     </ul>
+//   );
+// };
 
 // import { useState, useEffect } from "react";
 // import { NotificationTooltip } from "../../Tooltips/NotificationTooltip/index-temp";
