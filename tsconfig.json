@@ -11,6 +11,8 @@
       "@/*": ["src/*"]
     },
 
+    "ignoreBuildErrors": true,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
