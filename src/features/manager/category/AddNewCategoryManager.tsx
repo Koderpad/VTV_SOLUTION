@@ -231,6 +231,7 @@ const AddNewCategoryManager = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="container mx-auto px-4 py-8 max-w-lg border border-gray-300 bg-white rounded-lg shadow-md">
+
                 <h1 className="text-2xl font-bold mb-4 text-gray-800 text-center">Thêm Danh Mục Hệ Thống</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
@@ -311,6 +312,8 @@ const AddNewCategoryManager = () => {
                             </div>
                         </div>
                     )}
+                    <hr className="my-4"/>
+
                     <button
                         type="submit"
                         disabled={isAdding}
@@ -359,6 +362,16 @@ const AddNewCategoryManager = () => {
                         </div>
                     </div>
                 )}
+
+                <hr className="my-4"/>
+                <div className="text-center mb-4">
+                    <button
+                        onClick={() => navigate('/manager/categories')}
+                        className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        Quay lại
+                    </button>
+                </div>
                 <ToastContainer/>
             </div>
         </div>
