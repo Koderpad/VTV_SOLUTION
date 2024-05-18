@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useAddNewCategoryByManagerMutation } from '@/redux/features/manager/category/categoryManagerApiSlice';
-import { CategoryRequest } from '@/utils/DTOs/manager/Category/Request/CategoryRequest';
-import { getAllCategories } from '@/services/manager/CategoryService';
+import { useAddNewCategoryByManagerMutation } from '@/redux/features/manager/category/categoryManagerApiSlice.ts';
+import { CategoryRequest } from '@/utils/DTOs/manager/Category/Request/CategoryRequest.ts';
+import { getAllCategories } from '@/services/manager/CategoryService.ts';
 import { toast } from 'react-toastify';
 
-const AddNewCategoryManagerPage = () => {
+const AddNewCategoryManager = () => {
   const [addNewCategoryByManager, { isLoading: isAdding }] = useAddNewCategoryByManagerMutation();
   const [categoryData, setCategoryData] = useState<CategoryRequest>({
     name: '',
@@ -318,7 +318,7 @@ const AddNewCategoryManagerPage = () => {
   );
 };
 
-export default AddNewCategoryManagerPage;
+export default AddNewCategoryManager;
 // import React, { useState } from 'react';
 // import { useAddNewCategoryByManagerMutation } from '@/redux/features/manager/category/categoryManagerApiSlice';
 // import { CategoryRequest } from '@/utils/DTOs/manager/Category/Request/CategoryRequest';
