@@ -37,8 +37,8 @@ export const LoginFormContainer = () => {
       dispatch(setCredentials({ access_token, refresh_token, customerDTO }));
 
       //Check user role and navigate to the corresponding page
-      if (customerDTO.roles.includes("ADMIN")) {
-        navigate("/admin", { replace: true });
+      if (customerDTO.roles.includes("MANAGER")) {
+        navigate("/manager", { replace: true });
       } else if (customerDTO.roles.includes("CUSTOMER")) {
         navigate("/home", { replace: true });
       } else {

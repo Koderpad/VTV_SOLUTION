@@ -3,6 +3,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
 import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
 import CategoryList from "./components/organisms/Home";
+import { DashboardManager } from "./pages/manager/DashboardManager";
+import AddNewCategoryManagerPage from "./pages/manager/AddNewCategoryManagerPage";
+import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
+// import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -25,6 +29,8 @@ const OrderDetail = lazy(
 const CategoryResultsPage = lazy(
   () => import("./pages/common/CategoryResultsPage")
 );
+//ROLE: MANAGER
+
 function App() {
   return (
     <BrowserRouter >
@@ -43,7 +49,7 @@ function App() {
           />
 
           {/* product */}
-          <Route path="product/:productId" element={<ProductDetailPage />} />
+          <Route path="/product/:productId" element={<ProductDetailPage />} />
 
           {/* cart */}
           <Route path="/cart" element={<CartPage />} />
@@ -52,6 +58,18 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
 
           {/* search */}
+
+          <Route element={<RequireAuth allowedRoles={["MANAGER"]} />}>
+            <Route path="/manager" element={<DashboardManager />}>
+              {/* <Route path="category" element={<CategoryManagerPage />} />
+              // <Route path="product" element={<ProductManagerPage />} />
+              // <Route path="order" element={<OrderManagerPage />} />
+              // <Route path="user" element={<UserManagerPage />} /> */}
+              <Route path="categories" element={<CategoryManagerPage />} />
+              <Route path="category/add" element={<AddNewCategoryManagerPage />} />
+            </Route>
+            
+          </Route> 
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
 
