@@ -1,9 +1,12 @@
-import {getAllCategories} from "@/services/manager/CategoryService";
-import {CategoryDTO} from "@/utils/DTOs/manager/Category/Response/CategoriesResponse";
-import React, {useState, useEffect} from "react";
+import {getAllCategories} from "@/services/manager/CategoryManagerService.ts";
+
+import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
+import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {Status} from "@/utils/DTOs/extra/Status.ts";
+import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 
 const fetchCategories = async () => {
     const data = await getAllCategories();
@@ -11,17 +14,15 @@ const fetchCategories = async () => {
 };
 
 
-const CategoryRow = ({category, index, categories}) => {
+const CategoryRow = ({category, index, categories}: {
+    category: CategoryDTO,
+    index: number,
+    categories: CategoryDTO[]
+}) => {
     const navigate = useNavigate();
     const parentCategory = categories.find(categoryDTO => categoryDTO.categoryId === category.parentId);
     const parentName = parentCategory ? parentCategory.name : 'N/A';
-    const statusMapping = {
-        'ACTIVE': 'Đang hoạt động',
-        'INACTIVE': 'Không hoạt động',
-        'DELETED': 'Đã xóa',
-        'CANCEL': 'Đã hủy',
-        'LOCKED': 'Đã khóa'
-    };
+
 
     const handleUpdateClick = () => {
         navigate(`/manager/category/update/${category.categoryId}`);
@@ -35,7 +36,7 @@ const CategoryRow = ({category, index, categories}) => {
                 <img src={category.image} alt={category.name} className="w-32 h-32 object-cover"/>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{category.description}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{statusMapping[category.status]}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{statusToString[category.status as Status]}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{parentName}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex items-center justify-center">
                 <button onClick={handleUpdateClick}

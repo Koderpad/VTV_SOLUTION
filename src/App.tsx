@@ -4,8 +4,9 @@ import RequireAuth from "./libs/RequireAuth";
 import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
 import CategoryList from "./components/organisms/Home";
 import { DashboardManager } from "./pages/manager/DashboardManager";
-import AddNewCategoryManager from "./features/manager/category/AddNewCategoryManager.tsx";
+import AddNewCategory from "./features/manager/category/AddNewCategory.tsx";
 import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
+import UpdateCategory from "@/features/manager/category/UpdateCategory.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -66,7 +67,8 @@ function App() {
               // <Route path="order" element={<OrderManagerPage />} />
               // <Route path="user" element={<UserManagerPage />} /> */}
               <Route path="categories" element={<CategoryManagerPage />} />
-              <Route path="category/add" element={<AddNewCategoryManager />} />
+              <Route path="category/add" element={<AddNewCategory />} />
+              <Route path="category/update/:categoryId" element={<UpdateCategory />} />
             </Route>
             
           </Route> 

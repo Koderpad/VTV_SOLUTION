@@ -1,20 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import {useAddNewCategoryByManagerMutation} from '@/redux/features/manager/category/categoryManagerApiSlice.ts';
-import {CategoryRequest} from '@/utils/DTOs/manager/Category/Request/CategoryRequest.ts';
-import {getAllCategories} from '@/services/manager/CategoryService.ts';
+import {CategoryRequest} from '@/utils/DTOs/manager/request/CategoryRequest.ts';
+import {getAllCategories} from '@/services/manager/CategoryManagerService.ts';
 import {toast, ToastContainer} from 'react-toastify';
 import {handleApiCall} from '@/utils/HandleAPI/common/handleApiCall';
-import {CategoryDTO, CategoryResponse} from '@/utils/DTOs/manager/Category/Response/CategoryResponse';
+import { CategoryResponse} from '@/utils/DTOs/manager/response/CategoryResponse';
 import {ServerError} from '@/utils/DTOs/common/ServerError';
 import {useNavigate} from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
+import {convertCategoryRequestToFormData} from "@/utils/DTOs/manager/request/convertCategoryRequestToFormData.ts";
+import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 
 
-const AddNewCategoryManager = () => {
+
+
+
+const AddNewCategory = () => {
     const [addNewCategoryByManager, {isLoading: isAdding}] = useAddNewCategoryByManagerMutation();
-    const [categoryData, setCategoryData] = useState<CategoryRequest>({
+    const [categoryRequest, setCategoryRequest] = useState<CategoryRequest>({
         name: '',
         description: '',
         image: '',
@@ -37,13 +42,14 @@ const AddNewCategoryManager = () => {
             const response = await getAllCategories();
             setCategories(response.categoryDTOs);
         } catch (error) {
-            console.error('Error getting categories:', error);
+            // @ts-ignore
+            toast.error(error.response.data.message);
         }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
-        setCategoryData((prevData) => ({
+        setCategoryRequest((prevData) => ({
             ...prevData,
             [name]: value,
         }));
@@ -52,7 +58,7 @@ const AddNewCategoryManager = () => {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setCategoryData((prevData) => ({
+            setCategoryRequest((prevData) => ({
                 ...prevData,
                 image: file,
                 changeImage: true,
@@ -62,7 +68,7 @@ const AddNewCategoryManager = () => {
     };
 
     const handleRemoveImage = () => {
-        setCategoryData((prevData) => ({
+        setCategoryRequest((prevData) => ({
             ...prevData,
             image: '',
             changeImage: false,
@@ -70,70 +76,18 @@ const AddNewCategoryManager = () => {
         setPreviewImage(null);
     };
 
-    const createFormData = (categoryData: CategoryRequest): FormData => {
-        const formData = new FormData();
-        formData.append('name', categoryData.name);
-        formData.append('description', categoryData.description);
-        formData.append('changeImage', String(categoryData.changeImage));
-        if (categoryData.changeImage && categoryData.image instanceof File) {
-            formData.append('image', categoryData.image);
-        }
-        formData.append('child', String(categoryData.child));
-        formData.append('parentId', String(categoryData.parentId));
-        return formData;
-    }
-
-    const handleCategoryApiCall = async (formData: FormData) => {
-        await handleApiCall<CategoryResponse, ServerError>({
-            callbackFn: async () => {
-                return await addNewCategoryByManager(formData);
-            },
-            successCallback: (data) => {
-                setCategoryData({
-                    name: '',
-                    description: '',
-                    image: '',
-                    changeImage: false,
-                    child: false,
-                    parentId: 0,
-                });
-                setPreviewImage(null);
-                toast.success(data.message, {
-                    autoClose: 300,
-                    onClose: () => navigate('/manager/categories'),
-                });
-            },
-            errorFromServerCallback: (error) => {
-                toast.error(error.message);
-            },
-            errorSerializedCallback: (error) => {
-                toast.error(error.message);
-            },
-            errorCallback: (error) => {
-                toast.error("Thông báo: " + error);
-            },
-        })
-    }
 
 
-    const validateForm = () => {
-        if (categoryData.child && categoryData.parentId === 0) {
-            alert('Vui lòng chọn danh mục cha!');
-            return false;
-        }
 
-        return true;
-    };
+
+
 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!validateForm()) {
-            return;
-        }
-        try {
-            const formData = createFormData(categoryData);
-            await handleCategoryApiCall(formData);
+              try {
+            const formData = convertCategoryRequestToFormData(categoryRequest);
+            await handleAddNewCategoryApiCall(formData);
         } catch (error) {
             toast.error("Thông báo: " + error);
         }
@@ -147,7 +101,7 @@ const AddNewCategoryManager = () => {
     const closeCategoryModal = () => {
         if (selectedCategories.length > 0) {
             const selectedCategoryId = selectedCategories[selectedCategories.length - 1];
-            setCategoryData((prevData) => ({
+            setCategoryRequest((prevData) => ({
                 ...prevData,
                 parentId: selectedCategoryId,
             }));
@@ -226,7 +180,7 @@ const AddNewCategoryManager = () => {
 
     const getSelectedCategoryPath = (): number[] => {
         const path: number[] = [];
-        let currentCategoryId = categoryData.parentId;
+        let currentCategoryId = categoryRequest.parentId;
 
         while (currentCategoryId !== 0) {
             const category = categories.find((cat) => cat.categoryId === currentCategoryId);
@@ -253,7 +207,7 @@ const AddNewCategoryManager = () => {
                             type="text"
                             id="name"
                             name="name"
-                            value={categoryData.name}
+                            value={categoryRequest.name}
                             onChange={handleInputChange}
                             required={true}
                             // title="Tên danh mục không được để trống!"
@@ -265,7 +219,7 @@ const AddNewCategoryManager = () => {
                         <textarea
                             id="description"
                             name="description"
-                            value={categoryData.description}
+                            value={categoryRequest.description}
                             onChange={handleInputChange}
                             required
                             className="mt-1 border border-black focus:border-green-500 focus:ring-green-500 block w-full shadow-sm sm:text-sm rounded-md"
@@ -301,26 +255,26 @@ const AddNewCategoryManager = () => {
                             type="checkbox"
                             id="child"
                             name="child"
-                            checked={categoryData.child}
+                            checked={categoryRequest.child}
                             onChange={(e) => {
-                                if (e.target.checked && categoryData.parentId === 0) {
+                                if (e.target.checked && categoryRequest.parentId === 0) {
                                     alert('Vui lòng chọn danh mục cha!');
                                     return;
                                 }
-                                setCategoryData((prevData) => ({...prevData, child: e.target.checked}))
+                                setCategoryRequest((prevData) => ({...prevData, child: e.target.checked}))
                             }}
                             className="mt-1 h-5 w-5 text-green-500 border-gray-300 rounded focus:ring-green-500"
                         />
                     </div>
-                    {categoryData.child && (
+                    {categoryRequest.child && (
                         <div className="mb-4">
 
                             <div
                                 className="border border-black focus:border-green-500 focus:ring-green-500 rounded px-4 py-2 cursor-pointer mt-1 block w-full shadow-sm sm:text-sm"
                                 onClick={openCategoryModal}
                             >
-                                {categoryData.parentId ? (
-                                    categories.find((category) => category.categoryId === categoryData.parentId)?.name
+                                {categoryRequest.parentId ? (
+                                    categories.find((category) => category.categoryId === categoryRequest.parentId)?.name
                                 ) : (
                                     'Chọn danh mục'
                                 )}
@@ -394,4 +348,4 @@ const AddNewCategoryManager = () => {
 };
 
 
-export default AddNewCategoryManager;
+export default AddNewCategory;
