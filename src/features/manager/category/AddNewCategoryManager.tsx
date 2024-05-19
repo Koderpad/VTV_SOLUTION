@@ -2,13 +2,12 @@ import React, {useState, useEffect} from 'react';
 import {useAddNewCategoryByManagerMutation} from '@/redux/features/manager/category/categoryManagerApiSlice.ts';
 import {CategoryRequest} from '@/utils/DTOs/manager/Category/Request/CategoryRequest.ts';
 import {getAllCategories} from '@/services/manager/CategoryService.ts';
-import {toast} from 'react-toastify';
+import {toast, ToastContainer} from 'react-toastify';
 import {handleApiCall} from '@/utils/HandleAPI/common/handleApiCall';
 import {CategoryDTO, CategoryResponse} from '@/utils/DTOs/manager/Category/Response/CategoryResponse';
 import {ServerError} from '@/utils/DTOs/common/ServerError';
 import {useNavigate} from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
-import {ToastContainer} from "react-toastify";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
 
@@ -116,8 +115,22 @@ const AddNewCategoryManager = () => {
         })
     }
 
+
+    const validateForm = () => {
+        if (categoryData.child && categoryData.parentId === 0) {
+            alert('Vui lòng chọn danh mục cha!');
+            return false;
+        }
+
+        return true;
+    };
+
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!validateForm()) {
+            return;
+        }
         try {
             const formData = createFormData(categoryData);
             await handleCategoryApiCall(formData);
@@ -243,7 +256,7 @@ const AddNewCategoryManager = () => {
                             value={categoryData.name}
                             onChange={handleInputChange}
                             required={true}
-                            title="Tên danh mục không được để trống!"
+                            // title="Tên danh mục không được để trống!"
                             className="mt-1 border border-black focus:border-green-500 focus:ring-green-500 block w-full shadow-sm sm:text-sm rounded-md"
                         />
                     </div>
@@ -289,17 +302,19 @@ const AddNewCategoryManager = () => {
                             id="child"
                             name="child"
                             checked={categoryData.child}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                                if (e.target.checked && categoryData.parentId === 0) {
+                                    alert('Vui lòng chọn danh mục cha!');
+                                    return;
+                                }
                                 setCategoryData((prevData) => ({...prevData, child: e.target.checked}))
-                            }
-                            className="mt-1 border border-black focus:border-green-500 focus:ring-green-500 block w-full shadow-sm sm:text-sm rounded-md"
+                            }}
+                            className="mt-1 h-5 w-5 text-green-500 border-gray-300 rounded focus:ring-green-500"
                         />
                     </div>
                     {categoryData.child && (
                         <div className="mb-4">
-                            <label htmlFor="parentId" className="block mb-1 text-sm font-medium text-gray-700">
-                                Chọn danh mục:
-                            </label>
+
                             <div
                                 className="border border-black focus:border-green-500 focus:ring-green-500 rounded px-4 py-2 cursor-pointer mt-1 block w-full shadow-sm sm:text-sm"
                                 onClick={openCategoryModal}
