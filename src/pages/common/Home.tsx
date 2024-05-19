@@ -11,7 +11,7 @@ const Home = () => {
               Kênh Người Bán
             </Link>
             <a href="#" className="hover:underline">
-              Trở thành người bán Shopee
+              Trở thành người bán VTV
             </a>
             <a href="#" className="hover:underline">
               Tải ứng dụng
@@ -52,7 +52,7 @@ const Home = () => {
       <div className="bg-red-600 text-white flex items-center justify-between px-4 py-2">
         <div className="flex items-center">
           <img src="path-to-logo.svg" alt="Logo" className="mr-2 h-12" />
-          <span className="font-semibold hidden lg:block">Shopee</span>
+          <span className="font-semibold hidden lg:block">VTV</span>
         </div>
 
         <div className="flex-1 mx-4">
@@ -60,7 +60,7 @@ const Home = () => {
             <input
               type="text"
               className="w-full p-2 pl-10 pr-16 rounded-full text-gray-700"
-              placeholder="Shopee bao ship 0Đ - Đăng ký ngay!"
+              placeholder="VTV bao ship 0Đ - Đăng ký ngay!"
             />
             <button className="absolute right-0 top-0 mt-2 mr-2">
               <svg className="h-6 w-6 fill-current" viewBox="0 0 24 24">
