@@ -14,13 +14,22 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 // Initialize Firebase Cloud Messaging and get a reference to the service
-const messaging = getMessaging();
+const messaging = getMessaging(app);
 const vapidKey = "BNTT1RPzw_ET_j-4-CLiC_LKfvRACwG_3M8dzABWp-UvhgWzrfCB-eGCT4G99K_RE0JotwXPyfUSw81WYzdJ7ho";
 
-export const requestForToken = () => {
-  return getToken(messaging, { vapidKey})
+// Request permission to send notifications
+export const requestForPermission = async () => {
+  return await Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      console.log('Notification permission granted.');
+    }
+  })
+}; 
+
+export const requestForToken = async () => {
+  return await getToken(messaging, { vapidKey})
     .then((currentToken: any) => {
       if (currentToken) {
         console.log('current token for client: ', currentToken);
