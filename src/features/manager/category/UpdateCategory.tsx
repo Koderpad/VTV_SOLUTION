@@ -4,14 +4,14 @@ import React, {useEffect, useState} from "react";
 import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 import {toast, ToastContainer} from 'react-toastify';
 import {CategoryRequest} from "@/utils/DTOs/manager/request/CategoryRequest.ts";
-import {convertCategoryRequestToFormData} from "@/utils/DTOs/manager/request/convertCategoryRequestToFormData.ts";
+import {convertCategoryRequestToFormData} from "@/utils/DTOs/manager/convert/ConvertCategoryRequestToFormData.ts";
 import {handleApiCall} from "@/utils/HandleAPI/common/handleApiCall.tsx";
 import {CategoryResponse} from "@/utils/DTOs/manager/response/CategoryResponse.ts";
 import {ServerError} from "@/utils/DTOs/common/ServerError.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
-import {useUpdateCategoryByManagerMutation} from "@/redux/features/manager/category/categoryManagerApiSlice.ts";
-import {convertCategoryDTOToCategoryRequest} from "@/utils/DTOs/manager/convert/convertCategoryDTOToCategoryRequest.ts";
+import {useUpdateCategoryMutation} from "@/redux/features/manager/CategoryManagerApiSlice.ts";
+import {convertCategoryDTOToCategoryRequest} from "@/utils/DTOs/manager/convert/ConvertCategoryDTOToCategoryRequest.ts";
 
 const fetchCategoryByCategoryId = async (categoryId: string | undefined) => {
     try {
@@ -35,7 +35,7 @@ const fetchAllCategories = async () => {
 
 
 const UpdateCategory = () => {
-    const [updateCategoryByManager, {isLoading}] = useUpdateCategoryByManagerMutation();
+    const [updateCategoryByManager, {isLoading}] = useUpdateCategoryMutation();
     const {categoryId} = useParams();
     const [categoryDTO, setCategoryDTO] = useState<CategoryDTO>();
     const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);

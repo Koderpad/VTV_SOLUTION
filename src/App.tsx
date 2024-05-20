@@ -7,6 +7,10 @@ import { DashboardManager } from "./pages/manager/DashboardManager";
 import AddNewCategory from "./features/manager/category/AddNewCategory.tsx";
 import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 import UpdateCategory from "@/features/manager/category/UpdateCategory.tsx";
+import {BrandManagerPage} from "@/pages/manager/BrandManagerPage.tsx";
+import AddNewBrand from "@/features/manager/brand/AddNewBrand.tsx";
+import BrandDetail from "@/features/manager/brand/BrandDetail.tsx";
+import {UpdateBrand} from "@/features/manager/brand/UpdateBrand.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -69,6 +73,11 @@ function App() {
               <Route path="categories" element={<CategoryManagerPage />} />
               <Route path="category/add" element={<AddNewCategory />} />
               <Route path="category/update/:categoryId" element={<UpdateCategory />} />
+
+              <Route path="brands" element={<BrandManagerPage />} />
+              <Route path="brand/add" element={<AddNewBrand />} />
+              <Route path="brand/update/:brandId" element={<UpdateBrand />} />
+              <Route path="brand/:brandId" element={<BrandDetail />} />
             </Route>
             
           </Route> 

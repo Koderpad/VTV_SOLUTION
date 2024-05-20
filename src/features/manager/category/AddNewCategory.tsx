@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {useAddNewCategoryByManagerMutation} from '@/redux/features/manager/category/categoryManagerApiSlice.ts';
+import {useAddNewCategoryMutation} from '@/redux/features/manager/CategoryManagerApiSlice.ts';
 import {CategoryRequest} from '@/utils/DTOs/manager/request/CategoryRequest.ts';
 import {getAllCategories} from '@/services/manager/CategoryManagerService.ts';
 import {toast, ToastContainer} from 'react-toastify';
@@ -10,7 +10,7 @@ import {useNavigate} from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
-import {convertCategoryRequestToFormData} from "@/utils/DTOs/manager/request/convertCategoryRequestToFormData.ts";
+import {convertCategoryRequestToFormData} from "@/utils/DTOs/manager/convert/ConvertCategoryRequestToFormData.ts";
 import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 
 
@@ -18,7 +18,7 @@ import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 
 
 const AddNewCategory = () => {
-    const [addNewCategoryByManager, {isLoading: isAdding}] = useAddNewCategoryByManagerMutation();
+    const [addNewCategoryByManager, {isLoading: isAdding}] = useAddNewCategoryMutation();
     const [categoryRequest, setCategoryRequest] = useState<CategoryRequest>({
         name: '',
         description: '',

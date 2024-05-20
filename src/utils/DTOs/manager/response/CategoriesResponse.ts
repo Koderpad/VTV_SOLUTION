@@ -1,10 +1,9 @@
 
 import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
+import {ResponseAbstract} from "@/utils/DTOs/extra/ResponseAbstract.ts";
 
-export interface CategoriesResponse {
-  status: string;
-  message: string;
-  code: number;
+export interface CategoriesResponse extends ResponseAbstract{
+
   categoryDTOs: CategoryDTO[];
 }
 

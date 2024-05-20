@@ -1,9 +1,9 @@
-import {apiSlice} from "@/redux/api";
-import {CategoryResponse} from "@/utils/DTOs/manager/response/CategoryResponse";
+import {apiSlice} from "@/redux/api.ts";
+import {CategoryResponse} from "@/utils/DTOs/manager/response/CategoryResponse.ts";
 
-export const categoryManagerApiSlice = apiSlice.injectEndpoints({
+export const CategoryManagerApiSlice = apiSlice.injectEndpoints({
             endpoints: (builder) => ({
-                addNewCategoryByManager: builder.mutation<CategoryResponse, FormData>({
+                addNewCategory: builder.mutation<CategoryResponse, FormData>({
                     query: (data) => ({
                         url: `/manager/category/add`,
                         method: "POST",
@@ -16,7 +16,7 @@ export const categoryManagerApiSlice = apiSlice.injectEndpoints({
                         },
                     },
                 }),
-                updateCategoryByManager: builder.mutation<CategoryResponse, { categoryId: string, data: FormData }>({
+                updateCategory: builder.mutation<CategoryResponse, { categoryId: string, data: FormData }>({
                     query: ({categoryId, data}) => ({
                         url: `/manager/category/update/${categoryId}`,
                         method: "POST",
@@ -35,6 +35,6 @@ export const categoryManagerApiSlice = apiSlice.injectEndpoints({
 ;
 
 export const {
-    useAddNewCategoryByManagerMutation,
-    useUpdateCategoryByManagerMutation
-} = categoryManagerApiSlice;
+    useAddNewCategoryMutation,
+    useUpdateCategoryMutation
+} = CategoryManagerApiSlice;
