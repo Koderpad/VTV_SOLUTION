@@ -4,7 +4,7 @@ import {CategoryRequest} from '@/utils/DTOs/manager/request/CategoryRequest.ts';
 import {getAllCategories} from '@/services/manager/CategoryManagerService.ts';
 import {toast, ToastContainer} from 'react-toastify';
 import {handleApiCall} from '@/utils/HandleAPI/common/handleApiCall';
-import { CategoryResponse} from '@/utils/DTOs/manager/response/CategoryResponse';
+import {CategoryResponse} from '@/utils/DTOs/manager/response/CategoryResponse';
 import {ServerError} from '@/utils/DTOs/common/ServerError';
 import {useNavigate} from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
@@ -14,11 +14,8 @@ import {convertCategoryRequestToFormData} from "@/utils/DTOs/manager/convert/Con
 import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 
 
-
-
-
 const AddNewCategory = () => {
-    const [addNewCategoryByManager, {isLoading: isAdding}] = useAddNewCategoryMutation();
+    const [addNewCategory, {isLoading: isAdding}] = useAddNewCategoryMutation();
     const [categoryRequest, setCategoryRequest] = useState<CategoryRequest>({
         name: '',
         description: '',
@@ -77,21 +74,38 @@ const AddNewCategory = () => {
     };
 
 
-
-
-
-
-
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-              try {
+        try {
             const formData = convertCategoryRequestToFormData(categoryRequest);
             await handleAddNewCategoryApiCall(formData);
         } catch (error) {
             toast.error("Thông báo: " + error);
         }
     };
+
+    const handleAddNewCategoryApiCall = async (formData: FormData) => {
+        await handleApiCall<CategoryResponse, ServerError>({
+            callbackFn: async () => {
+                return await addNewCategory(formData);
+            },
+            successCallback: (data) => {
+                toast.success(data.message, {
+                    autoClose: 300,
+                    onClose: () => navigate('/manager/categories'),
+                });
+            },
+            errorFromServerCallback: (error) => {
+                toast.error(error.message);
+            },
+            errorSerializedCallback: (error) => {
+                toast.error(error.message);
+            },
+            errorCallback: (error) => {
+                toast.error("Thông báo: " + error);
+            },
+        })
+    }
 
     const openCategoryModal = () => {
         setIsCategoryModalVisible(true);
@@ -257,10 +271,6 @@ const AddNewCategory = () => {
                             name="child"
                             checked={categoryRequest.child}
                             onChange={(e) => {
-                                if (e.target.checked && categoryRequest.parentId === 0) {
-                                    alert('Vui lòng chọn danh mục cha!');
-                                    return;
-                                }
                                 setCategoryRequest((prevData) => ({...prevData, child: e.target.checked}))
                             }}
                             className="mt-1 h-5 w-5 text-green-500 border-gray-300 rounded focus:ring-green-500"
