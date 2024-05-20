@@ -13,3 +13,10 @@ export const getCategoryByCategoryId = async (categoryId: string | undefined): P
     const response = await axios.get(`${BASE_URL_VTC}/category/${categoryId}`);
     return response.data;
 }
+
+
+
+export const getCategoryChildrenByCategoryId = async (categoryId: string | undefined): Promise<CategoriesResponse> => {
+    const response = await axios.get(`${BASE_URL_VTC}/category/all-category/by-parent/${categoryId}`);
+    return response.data;
+}

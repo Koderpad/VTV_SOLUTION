@@ -12,14 +12,15 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {useUpdateCategoryMutation} from "@/redux/features/manager/CategoryManagerApiSlice.ts";
 import {convertCategoryDTOToCategoryRequest} from "@/utils/DTOs/manager/convert/ConvertCategoryDTOToCategoryRequest.ts";
+import error = toast.error;
 
 const fetchCategoryByCategoryId = async (categoryId: string | undefined) => {
     try {
         const data = await getCategoryByCategoryId(categoryId);
         return data.categoryDTO;
     } catch (error) {
-        // @ts-expect-error
-        toast.error(error.response.data.message);
+        console.log(error);
+        throw error.response.data.message;
     }
 };
 
@@ -28,8 +29,7 @@ const fetchAllCategories = async () => {
         const response = await getAllCategories();
         return response.categoryDTOs;
     } catch (error) {
-        // @ts-ignore
-        toast.error(error.response.data.message);
+        throw error.response.data.message;
     }
 };
 
@@ -54,9 +54,15 @@ const UpdateCategory = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchCategoryByCategoryId(categoryId).then((category) => {
+        fetchCategoryByCategoryId(categoryId)
+            .then((category) => {
             setCategoryDTO(category);
             setCategoryRequest(convertCategoryDTOToCategoryRequest(category));
+        }).catch(error => {
+            toast.error(error);
+            setTimeout(() => {
+                navigate('/manager/categories');
+            }, 500);
         });
         fetchAllCategories().then(setCategories);
     }, []);

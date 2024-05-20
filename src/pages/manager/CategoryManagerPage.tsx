@@ -1,9 +1,9 @@
 import {getAllCategories} from "@/services/manager/CategoryManagerService.ts";
 
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faEdit} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
 import {Status} from "@/utils/DTOs/extra/Status.ts";
 import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
@@ -38,12 +38,19 @@ const CategoryRow = ({category, index, categories}: {
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{category.description}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{statusToString[category.status as Status]}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{parentName}</td>
+
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex items-center justify-center">
-                <button onClick={handleUpdateClick}
+                <button onClick={() => navigate(`/manager/category/${category.categoryId}`)}
                         className="text-blue-500 hover:text-blue-700">
+                    <FontAwesomeIcon icon={faInfoCircle}/>
+                </button>
+                <button onClick={() => navigate(`/manager/category/update/${category.categoryId}`)}
+                        className="text-blue-500 hover:text-blue-700 ml-2">
                     <FontAwesomeIcon icon={faEdit}/>
                 </button>
             </td>
+
+
         </tr>
     );
 };
@@ -117,8 +124,8 @@ export const CategoryManagerPage = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên
                                         danh mục cha
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chỉnh
-                                        sửa
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Thao tác
                                     </th>
                                 </tr>
                                 </thead>
