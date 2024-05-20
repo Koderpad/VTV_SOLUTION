@@ -3,11 +3,11 @@ import {useAddNewCategoryMutation} from '@/redux/features/manager/CategoryManage
 import {CategoryRequest} from '@/utils/DTOs/manager/request/CategoryRequest.ts';
 import {getAllCategories} from '@/services/manager/CategoryManagerService.ts';
 import {toast, ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import {handleApiCall} from '@/utils/HandleAPI/common/handleApiCall';
 import {CategoryResponse} from '@/utils/DTOs/manager/response/CategoryResponse';
 import {ServerError} from '@/utils/DTOs/common/ServerError';
 import {useNavigate} from 'react-router-dom';
-import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import {convertCategoryRequestToFormData} from "@/utils/DTOs/manager/convert/ConvertCategoryRequestToFormData.ts";

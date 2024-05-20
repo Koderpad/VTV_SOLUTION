@@ -24,9 +24,7 @@ const CategoryRow = ({category, index, categories}: {
     const parentName = parentCategory ? parentCategory.name : 'N/A';
 
 
-    const handleUpdateClick = () => {
-        navigate(`/manager/category/update/${category.categoryId}`);
-    };
+
 
     return (
         <tr key={category.categoryId} className="bg-white even:bg-gray-50">

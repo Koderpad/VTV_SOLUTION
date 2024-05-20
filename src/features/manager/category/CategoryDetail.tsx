@@ -30,14 +30,7 @@ const fetchCategoryChildrenByCategoryId = async (categoryId: string | undefined)
     }
 }
 
-const fetchAllCategories = async () => {
-    try {
-        const response = await getAllCategories();
-        return response.categoryDTOs;
-    } catch (error) {
-        throw error.response.data.message;
-    }
-};
+
 
 const CategoryDetail: React.FC = () => {
     const {categoryId} = useParams<{ categoryId: string }>();
@@ -45,7 +38,7 @@ const CategoryDetail: React.FC = () => {
     const [category, setCategory] = useState<CategoryDTO | null>(null);
     const [parentCategory, setParentCategory] = useState<CategoryDTO | null>(null);
     const [childrenCategories, setChildrenCategories] = useState<CategoryDTO[]>([]);
-    const [allCategories, setAllCategories] = useState<CategoryDTO[]>([]);
+
     useEffect(() => {
         fetchCategory(categoryId)
             .then(category => {
@@ -65,16 +58,6 @@ const CategoryDetail: React.FC = () => {
         fetchCategoryChildrenByCategoryId(categoryId)
             .then(categories => {
                 setChildrenCategories(categories);
-                fetchAllCategories()
-                    .then(allCategories => {
-                        setAllCategories(allCategories);
-                    })
-                    .catch(error => {
-                        toast.error(error.message);
-                        setTimeout(() => {
-                            navigate('/manager/categories');
-                        }, 700);
-                    });
             })
             .catch(error => {
                 toast.error(error.message);

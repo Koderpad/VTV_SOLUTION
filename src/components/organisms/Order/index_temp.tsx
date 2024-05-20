@@ -10,7 +10,6 @@
 //   useGetVoucherByShopIdQuery,
 //   useGetVoucherSystemQuery,
 // } from "../../redux/api/voucherApi";
-// import { VoucherDTO } from "../interfaces/voucher";
 //
 // import { ToastContainer } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";

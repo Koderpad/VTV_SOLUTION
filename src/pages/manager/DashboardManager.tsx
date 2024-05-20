@@ -3,6 +3,8 @@ import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 import {logOut} from "@/redux/features/common/auth/authSlice";
 import {useDispatch} from "react-redux";
 import {persistor} from "@/redux/store";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faGift, faTicketAlt} from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardManager = () => {
     const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -17,19 +19,19 @@ export const DashboardManager = () => {
         if (currentPath === undefined) return;
 
         if (currentPath === "customers") {
-            setSelectedTitle("Quanlynguoidung");
+            setSelectedTitle("ManagerCustomer");
         }
         if (currentPath === "vouchers") {
-            setSelectedTitle("Quanlyvouchers");
+            setSelectedTitle("ManagerVoucher");
         }
         if (currentPath === "products") {
-            setSelectedTitle("Quanlysanpham");
+            setSelectedTitle("ManagerProduct");
         }
         if (currentPath === "categories") {
-            setSelectedTitle("Quanlycate");
+            setSelectedTitle("ManagerCategory");
         }
         if (currentPath === "brands") {
-            setSelectedTitle("QuanLyBrand");
+            setSelectedTitle("ManagerBrand");
         }
 
         console.log(currentPath);
@@ -92,11 +94,11 @@ export const DashboardManager = () => {
                                 to="manager/customers"
                                 // className="flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg hover:bg-green-100"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "Quanlynguoidung"
+                                    selectedTitle === "ManagerCustomer"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("Quanlynguoidung")}
+                                onClick={() => handleTitleClick("ManagerCustomer")}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -117,29 +119,15 @@ export const DashboardManager = () => {
                         <li>
                             <Link
                                 to="vouchers"
-                                // className="flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg hover:bg-green-100"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "Quanlyvouchers"
+                                    selectedTitle === "ManagerVoucher"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("Quanlyvouchers")}
+                                onClick={() => handleTitleClick("ManagerVoucher")}
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    className="mr-3 h-6 w-6"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
-                                    />
-                                </svg>
-                                Quản lý voucher
+                                <FontAwesomeIcon icon={faTicketAlt} size="sm" color="#666" />
+                                Quản lý mã giảm giá
                             </Link>
                         </li>
                         <li>
@@ -147,11 +135,11 @@ export const DashboardManager = () => {
                                 href="/admin/manager/products"
                                 // className="flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg hover:bg-green-100"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "Quanlysanpham"
+                                    selectedTitle === "ManagerProduct"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("Quanlysanpham")}
+                                onClick={() => handleTitleClick("ManagerProduct")}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -175,11 +163,11 @@ export const DashboardManager = () => {
                             <Link
                                 to="categories"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "Quanlycate"
+                                    selectedTitle === "ManagerCategory"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("Quanlycate")}
+                                onClick={() => handleTitleClick("ManagerCategory")}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -199,11 +187,11 @@ export const DashboardManager = () => {
                             <Link
                                 to="brands"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "QuanLyBrand"
+                                    selectedTitle === "ManagerBrand"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("QuanLyBrand")}
+                                onClick={() => handleTitleClick("ManagerBrand")}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
