@@ -4,7 +4,7 @@
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 // Your web app's Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyAkKXsI4zMyROmgTxc19QMxyDPTO9FY_Mc",
   authDomain: "notification-vtv.firebaseapp.com",
   projectId: "notification-vtv",
@@ -14,8 +14,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// Initialize Firebase Cloud Messaging and get a reference to the service
+export const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 const vapidKey = "BNTT1RPzw_ET_j-4-CLiC_LKfvRACwG_3M8dzABWp-UvhgWzrfCB-eGCT4G99K_RE0JotwXPyfUSw81WYzdJ7ho";
 
@@ -34,6 +33,7 @@ export const requestForToken = async () => {
       if (currentToken) {
         console.log('current token for client: ', currentToken);
         // Perform any other neccessary action with the token
+        return currentToken;
       } else {
         // Show permission request UI
         console.log('No registration token available. Request permission to generate one.');

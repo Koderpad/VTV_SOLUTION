@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { LoginForm } from "../presentational/LoginForm";
 import { setCredentials } from "../../../../../redux/features/common/auth/authSlice";
 import { useLoginMutation } from "../../../../../redux/features/common/auth/authApiSlice";
-import { requestForToken, requestForPermission } from "../../../../../config/fcmConfig";
+import { requestForToken, requestForPermission } from "../../../../../config/fcm";
 
 interface Error {
   status?: number;
