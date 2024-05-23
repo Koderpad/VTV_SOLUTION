@@ -17,6 +17,10 @@ import VoucherSystemDetail from "@/features/manager/voucher/VoucherSystemDetail.
 import UpdateVoucherSystem from "@/features/manager/voucher/UpdateVoucherSystem.tsx";
 import AddNewVoucherSystem from "@/features/manager/voucher/AddNewVoucherSystem.tsx";
 import { onMessageListener, requestForToken } from "./config/fcm.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { setNotifications } from "./redux/features/common/notifications/notificationSlice.ts";
+import { RootState } from "./redux/store.ts";
+import { useGetListNotificationQuery } from "./redux/features/common/notifications/notificationApiSlice.ts";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -44,14 +48,77 @@ const CategoryResultsPage = lazy(
 //ROLE: MANAGER
 
 function App() {
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { data: notifications, isLoading, isSuccess, refetch } = useGetListNotificationQuery(
+    { page: 1, size: 5 },
+    { skip: !isLoggedIn }
+  );
+
   useEffect(() => {
     requestForToken();
-  },[]);
+  }, []);
+
   useEffect(() => {
-    onMessageListener().then((data:any) => {
+    if (isLoggedIn) {
+      refetch();
+    }
+  }, [isLoggedIn, refetch]);
+
+  useEffect(() => {
+    if (isSuccess && notifications) {
+      dispatch(setNotifications(notifications.notificationDTOs));
+    }
+    console.log("notifications", notifications);
+  }, [dispatch, isSuccess, notifications]);
+
+  useEffect(() => {
+    onMessageListener().then(async (data: any) => {
       console.log("Receive foreground: ", data);
-    })
-  });
+      if (isLoggedIn) {
+        refetch();
+      }
+    });
+  }, [isLoggedIn, refetch]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  // const dispatch = useDispatch();
+  // const isLoggedIn = useSelector((state: RootState) => state.auth.isAuthenticated);
+  // const { data: notifications, isLoading, isSuccess, refetch } = useGetListNotificationQuery(
+  //   { page: 1, size: 5 },
+  //   { skip: !isLoggedIn }
+  // );
+  //
+  // useEffect(() => {
+  //   requestForToken();
+  // }, []);
+  //
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     refetch();
+  //   }
+  // }, [isLoggedIn, refetch]);
+  //
+  // useEffect(() => {
+  //   if (isSuccess && notifications) {
+  //     dispatch(setNotifications(notifications.notificationDTOs));
+  //   }
+  // }, [dispatch, isSuccess, notifications]);
+  //
+  // useEffect(() => {
+  //   onMessageListener().then(async (data: any) => {
+  //     console.log("Receive foreground: ", data);
+  //     if (isLoggedIn) {
+  //       refetch();
+  //     }
+  //   });
+  // }, [isLoggedIn, refetch]);
+  //
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <BrowserRouter>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  useAddMutilOrderMutation,
   useUpdateMultiOrderMutation,
 } from "../../../../redux/features/common/order/orderApiSlice";
 import { Order } from "@/components/organisms/Order";
@@ -20,6 +21,7 @@ export const OrderContainer = () => {
   // const navigate = useNavigate();
   // const [createOrder] = useCreateOrderMutation();
   // const [createUpdateOrder] = useCreateUpdateOrderMutation();
+  const [addMultipleOrderRequestthCart] = useAddMutilOrderMutation();
   const [updateMultiOrder] = useUpdateMultiOrderMutation();
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -222,17 +224,17 @@ export const OrderContainer = () => {
           ).unwrap();
 
           if (updateOrderResponse) {
-            toast("🦄 Cập nhật đơn hàng thành công!", {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
-            });
+            // toast("Cập nhật đơn hàng thành công111111!", {
+            //   position: "top-right",
+            //   autoClose: 1000,
+            //   hideProgressBar: false,
+            //   closeOnClick: false,
+            //   pauseOnHover: false,
+            //   draggable: true,
+            //   progress: undefined,
+            //   theme: "light",
+            //   transition: Bounce,
+            // });
             updateURL(updateOrderResponse);
             shouldUpdateFromURL.current = true;
           } else {
@@ -263,11 +265,11 @@ export const OrderContainer = () => {
           paymentMethod={paymentMethod}
           updateOrderRequest={updateOrderRequest}
           handlePlaceOrder={() => {
-            handlePlaceOrder(multipleOrderResponse);
+            handlePlaceOrder(multipleOrderResponse,addMultipleOrderRequestthCart);
           }}
         />
       )}
-      <ToastContainer />
+      // <ToastContainer />
     </>
   );
 };
@@ -314,9 +316,9 @@ const getNeccessaryOrderResponses = (
 // };
 
 // Hàm lấy mã voucher hệ thống
-const getSystemVoucherCode = async (orderDTO:any) => {
+const getSystemVoucherCode = async (orderDTO: any) => {
   const systemVoucher = orderDTO.voucherOrderDTOs?.find(
-    (voucher:any) => voucher.type === false
+    (voucher: any) => voucher.type === false
   );
   const id = systemVoucher?.voucherId.toString() || "";
   if (id !== "" && id) {
@@ -331,9 +333,9 @@ const getSystemVoucherCode = async (orderDTO:any) => {
   return undefined;
 };
 
-const getShopVoucherCode = async (orderDTO:any) => {
+const getShopVoucherCode = async (orderDTO: any) => {
   const shopVoucher = orderDTO.voucherOrderDTOs?.find(
-    (voucher:any) => voucher.type === true
+    (voucher: any) => voucher.type === true
   );
   const id = shopVoucher?.voucherId.toString() || "";
   if (id !== "" && id) {
@@ -388,12 +390,25 @@ const getMultipleOrderRequestWithCartFromMultipleOrderResponse = async (
 
 //handle place order
 const handlePlaceOrder = async (
-  multipleOrderResponse: MultipleOrderResponse
+  multipleOrderResponse: MultipleOrderResponse,
+  addMultipleOrderRequestWithCart: any
 ) => {
-  console.log(
-    "Order Request With Carts: ",
-    await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
-      multipleOrderResponse
-    )
-  );
+
+  try {
+    const orderRequestWithCarts =
+      await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
+        multipleOrderResponse
+      );
+    const response = await addMultipleOrderRequestWithCart(orderRequestWithCarts);
+    if (response) {
+      alert("Place Order Success");
+      console.log("Place Order Success: ", response);
+    } else {
+      console.log("Place Order Failed: ", response);
+    }
+  }
+  catch (error) {
+    console.error("Place Order Error: ", error);
+  }
+
 };

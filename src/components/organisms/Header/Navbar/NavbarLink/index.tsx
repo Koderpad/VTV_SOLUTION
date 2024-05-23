@@ -2,17 +2,7 @@ import { CustomLink } from "@/components/atoms/Link";
 import { NotificationTooltip } from "../../Tooltips/NotificationTooltip";
 
 export const NavbarLink = () => {
-  const content = [
-    {
-      name: "Thong bao cua hang",
-      link: "/thong-bao-cua-hang",
-    },
-    {
-      name: "Thong bao don hang",
-      link: "/thong-bao-don-hang",
-    },
-  ];
-
+  const content:any= [];
   return (
     <ul className="flex gap-2 items-center">
       <li className="">

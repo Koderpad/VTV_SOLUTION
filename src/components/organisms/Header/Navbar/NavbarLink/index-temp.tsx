@@ -7,8 +7,8 @@ import { AccountTooltip } from "../../Tooltips/Account";
 
 export const NavbarLink = () => {
   const content = [
-    { name: "Thong bao cua hang", link: "/thong-bao-cua-hang" },
-    { name: "Thong bao don hang", link: "/thong-bao-don-hang" },
+    { name: "Thong bao cua hang ne nha", link: "/thong-bao-cua-hang" },
+    { name: "Thong bao don hang", link: "/thong-bao-don-hang ne nha" },
   ];
 
   const auth = useSelector((state: RootState) => state.auth);
@@ -16,10 +16,8 @@ export const NavbarLink = () => {
   const { isAuthenticated, user } = auth;
 
   return (
-    <ul className="flex gap-2 items-center">
-      <li className="">
-        <NotificationTooltip content={content} />
-      </li>
+    <div className="flex gap-2 items-center">
+        <NotificationTooltip />
       {isAuthenticated ? (
         <AccountTooltip username={user!.username} />
       ) : (
@@ -33,7 +31,7 @@ export const NavbarLink = () => {
           <a href="/common/Register">Đăng ký</a>
         </div>
       )}
-    </ul>
+    </div>
   );
 };
 

@@ -107,6 +107,13 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    addMutilOrder: builder.mutation<MultipleOrderResponse, MultipleOrderRequestWithCart>({
+      query: (body) => ({
+        url: `/customer/order/add/multiple/by-request`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -124,4 +131,5 @@ export const {
   useGetOrderItemByOrderItemIdMutation,
   useCreateMultiOrderMutation,
   useUpdateMultiOrderMutation,
+  useAddMutilOrderMutation,
 } = orderApiSlice;

@@ -4,6 +4,7 @@ import { apiSlice } from "./api";
 import authReducer from "./features/common/auth/authSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
+import notificationReducer from "./features/common/notifications/notificationSlice";
 // import { productDetailApi } from "../features/common/products/services/noAuth/productDetailApi.ts";
 // import productDataInAddProductReducer from "../features/vendor/redux/reducer/addProductSlice.ts";
 
@@ -17,9 +18,11 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  notification: notificationReducer,
   // productInAddProduct: productDataInAddProductReducer,
   // [productDetailApi.reducerPath]: productDetailApi.reducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
+  // [notificationSlice.reducerPath]: notificationApiSlice.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
