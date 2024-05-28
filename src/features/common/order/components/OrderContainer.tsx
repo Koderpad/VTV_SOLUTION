@@ -16,12 +16,17 @@ import {
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getVoucherByVoucherId } from "@/services/common/VoucherService";
+import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
+import { ServerError } from "@/utils/DTOs/common/ServerError";
+import { useCreateVNPayPaymentMutation } from "@/redux/features/common/order/vnPayApiSlice";
 
 export const OrderContainer = () => {
   // const navigate = useNavigate();
   // const [createOrder] = useCreateOrderMutation();
   // const [createUpdateOrder] = useCreateUpdateOrderMutation();
   const [addMultipleOrderRequestthCart] = useAddMutilOrderMutation();
+  const [createVNPayPayment] = useCreateVNPayPaymentMutation();
+
   const [updateMultiOrder] = useUpdateMultiOrderMutation();
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -265,7 +270,7 @@ export const OrderContainer = () => {
           paymentMethod={paymentMethod}
           updateOrderRequest={updateOrderRequest}
           handlePlaceOrder={() => {
-            handlePlaceOrder(multipleOrderResponse,addMultipleOrderRequestthCart);
+            handlePlaceOrder(multipleOrderResponse, addMultipleOrderRequestthCart, createVNPayPayment);
           }}
         />
       )}
@@ -391,24 +396,108 @@ const getMultipleOrderRequestWithCartFromMultipleOrderResponse = async (
 //handle place order
 const handlePlaceOrder = async (
   multipleOrderResponse: MultipleOrderResponse,
-  addMultipleOrderRequestWithCart: any
+  addMultipleOrderRequestWithCart: any,
+  createVNPayPayment: any
 ) => {
 
-  try {
-    const orderRequestWithCarts =
-      await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
-        multipleOrderResponse
-      );
-    const response = await addMultipleOrderRequestWithCart(orderRequestWithCarts);
-    if (response) {
-      alert("Place Order Success");
-      console.log("Place Order Success: ", response);
-    } else {
-      console.log("Place Order Failed: ", response);
-    }
-  }
-  catch (error) {
-    console.error("Place Order Error: ", error);
-  }
+  handleApiCall<MultipleOrderResponse, ServerError>({
+    callbackFn: async () => {
+      const orderRequestWithCarts =
+        await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
+          multipleOrderResponse
+        );
+      return await addMultipleOrderRequestWithCart(orderRequestWithCarts);
+    },
+    successCallback: async (data) => {
+      // Kiểm tra payment method
+      if (data.orderResponses[0].orderDTO.paymentMethod === "VNPay") {
+        try {
+          // Lưu trữ thông tin state vào session storage
+          sessionStorage.setItem("checkoutState", JSON.stringify(data));
 
+          // Gọi API tạo thanh toán VNPay
+          const response = await createVNPayPayment([data.orderResponses[0].orderDTO.orderId]).unwrap();
+
+          if (response.code === 200) {
+            // Chuyển hướng đến URL thanh toán VNPay
+            // window.fmlocation.href = `${response.url}&vnp_ReturnUrl=http://localhost:5173/vnpay/return`;
+            const vnpUrl = new URL(response.url);
+            // console.log("VNPay URL: ", vnpUrl.toString());
+            // vnpUrl.searchParams.set("vnp_ReturnUrl", "http://localhost:5173/vnpay/return");
+            console.log("VNPay URL: ", vnpUrl.toString());
+            window.location.href = vnpUrl.toString();
+          } else {
+            alert("Tạo thanh toán VNPay thất bại");
+            // Chuyển về trang trước khi click đặt hàng
+            window.history.back();
+          }
+        } catch (error) {
+          alert("Lỗi khi tạo thanh toán VNPay: " + error);
+          // Chuyển về trang trước khi click đặt hàng
+          window.history.back();
+        }
+      } else {
+        alert("Đặt hàng thành công");
+        console.log("Đặt hàng thành công: ", data);
+        // Chuyển hướng đến trang đơn mua
+        window.location.href = "/order-history";
+      }
+    },
+    errorFromServerCallback: (error) => {
+      alert("Đặt hàng thất bại: " + error.message);
+    },
+    errorSerializedCallback: (error) => {
+      alert("Lỗi đặt hàng: " + error.message);
+    },
+    errorCallback: (error) => {
+      alert("Lỗi đặt hàng: " + error);
+    }
+  });
 };
+// const handlePlaceOrder = async (
+//   multipleOrderResponse: MultipleOrderResponse,
+//   addMultipleOrderRequestWithCart: any
+// ) => {
+//
+//   handleApiCall<MultipleOrderResponse, ServerError>({
+//     callbackFn: async () => {
+//       const orderRequestWithCarts =
+//         await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
+//           multipleOrderResponse
+//         );
+//       return await addMultipleOrderRequestWithCart(orderRequestWithCarts);
+//     },
+//     successCallback: (data) => {
+//       alert("Place Order Success");
+//       console.log("Place Order Success: ", data);
+//     },
+//     errorFromServerCallback: (error) => {
+//       alert("Place Order Failed: "+ error.message);
+//     },
+//     errorSerializedCallback: (error) => {
+//       alert("Place Order Error: "+ error.message);
+//     },
+//     errorCallback: (error) => {
+//       alert("Place Order Error: "+ error);
+//     }
+//   });
+//
+//   // try {
+//   //   const orderRequestWithCarts =
+//   //     await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
+//   //       multipleOrderResponse
+//   //     );
+//   //   const response = await addMultipleOrderRequestWithCart(orderRequestWithCarts);
+//   //   if (response) {
+//   //     alert("Place Order Success");
+//   //     console.log("Place Order Success: ", response);
+//   //   } else {
+//   //     console.log("Place Order Failed: ", response);
+//   //   }
+//   // }
+//   // catch (error) {
+//   //   console.error("Place Order Error: ", error);
+//   // }
+//
+//
+// };

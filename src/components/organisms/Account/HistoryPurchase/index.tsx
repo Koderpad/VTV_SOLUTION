@@ -60,6 +60,8 @@ const purchaseTabs = [
   { status: purchasesStatus.RETURNED, name: "Đã trả lại" },
   { status: purchasesStatus.CANCEL, name: "Đã hủy" },
   { status: purchasesStatus.REFUNDED, name: "Đã hoàn tiền" },
+  {status: purchasesStatus.PAID, name: "Đã thanh toán"},
+  {status: purchasesStatus.UNPAID, name: "Chưa thanh toán"},
   { status: purchasesStatus.WAITING, name: "Đang thanh toán" },
 ];
 
@@ -267,7 +269,11 @@ export const HistoryPurchase = () => {
                                       ? "Đã hoàn tiền"
                                       : purchase?.status === "CANCEL"
                                         ? "Đã hủy"
-                                        : "Đã hủy"}
+                                        : purchase?.status === "PAID"
+                                          ? "Đã thanh toán"
+                                          : purchase?.status === "UNPAID"
+                                            ? "Chưa thanh toán"
+                                        : "Không xác định"}
 
                   </span>
                 </div>

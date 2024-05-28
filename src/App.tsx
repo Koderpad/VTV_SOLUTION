@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setNotifications } from "./redux/features/common/notifications/notificationSlice.ts";
 import { RootState } from "./redux/store.ts";
 import { useGetListNotificationQuery } from "./redux/features/common/notifications/notificationApiSlice.ts";
+import VNPayReturn from "./features/common/order/components/VNPayReturn.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -185,7 +186,7 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<PayMent />} />
             <Route path="checkout/:id" element={<OrderDetailsForm />} /> */}
-
+            <Route path="/vnpay/return" element={<VNPayReturn />} />
             <Route path="user/account" element={<AccountPage />}>
               <Route path="profile" element={<Profile />} />
               <Route path="pw_changes" element={<PasswordChanges />} />

@@ -1,0 +1,45 @@
+.vnpay-return {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 18px;
+  color: #333;
+}
+
+.result-container {
+  text-align: center;
+}
+
+.success-message {
+  color: #28a745;
+}
+
+.failure-message {
+  color: #dc3545;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-in;
+}

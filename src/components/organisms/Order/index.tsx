@@ -35,6 +35,7 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
   const [selectedVouchersOfSystem, setSelectedVouchersOfSystem] = useState<
     number[]
   >([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
 
   const [voucherCode, setVoucherCode] = useState<string>("");
   const [isLoading_, setIsLoading] = useState<boolean>(false); // Thêm trạng thái loading
@@ -47,6 +48,8 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
     () => props.systemVoucherNameAndId,
     [props.systemVoucherNameAndId]
   );
+
+  const paymentMethodMemo = useMemo(() => props.paymentMethod, [props.paymentMethod]);
 
   const [isFirstRender, setIsFirstRender] = useState(true);
 
@@ -67,6 +70,10 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
         if (systemVoucherNameAndIdMemo) {
           console.log("systemVoucherNameAndId: ", systemVoucherNameAndIdMemo);
           setSelectedVouchersOfSystem([systemVoucherNameAndIdMemo.id]);
+        }
+
+        if (props.paymentMethod) {
+          setSelectedPaymentMethod(paymentMethodMemo);
         }
 
         //check loyalty point and update
@@ -110,6 +117,10 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
     }
   };
 
+  const handlePaymentMethod = (paymentMethod: string): void => {
+    setSelectedPaymentMethod(paymentMethod);
+  }
+
   useEffect(() => {
     if (voucherCode === "CANCEL") {
       setSelectedVouchersOfSystem([]);
@@ -136,6 +147,15 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
       });
     }
   }, [selectedVouchersOfSystem]);
+
+  useEffect(()=>{
+    console.log("selectedPaymentMethod: ", selectedPaymentMethod);
+    if(selectedPaymentMethod !== ""){
+      props.updateOrderRequest(-1, {
+        paymentMethod: selectedPaymentMethod,
+      });
+    };
+  },[selectedPaymentMethod]);
 
   useEffect(() => {
     console.log("usePoints: ", usePoints);
@@ -252,9 +272,17 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
               <span className="text-gray-700 text-2xl font-medium">
                 Phương thức thanh toán
               </span>
-              <span className="text-gray-700 text-2xl font-medium ml-auto">
-                {props.paymentMethod}
-              </span>
+              // <span className="text-gray-700 text-2xl font-medium ml-auto">
+              //   {props.paymentMethod}
+              // </span>
+              <select
+                className="border border-gray-300 rounded-md w-auto"
+                value={selectedPaymentMethod}
+                onChange={(e) => handlePaymentMethod(e.target.value)}
+              >
+                <option value="COD">Thanh toán khi nhận hàng</option>
+                <option value="VNPay">Thanh toán qua VNPay</option>
+              </select>
             </div>
             <div className="border-t my-4 border-black-200"></div>
 
