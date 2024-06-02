@@ -22,6 +22,7 @@ import { setNotifications } from "./redux/features/common/notifications/notifica
 import { RootState } from "./redux/store.ts";
 import { useGetListNotificationQuery } from "./redux/features/common/notifications/notificationApiSlice.ts";
 import VNPayReturn from "./features/common/order/components/VNPayReturn.tsx";
+import ChatPage from "./pages/common/ChatPage.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -85,41 +86,6 @@ function App() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  // const dispatch = useDispatch();
-  // const isLoggedIn = useSelector((state: RootState) => state.auth.isAuthenticated);
-  // const { data: notifications, isLoading, isSuccess, refetch } = useGetListNotificationQuery(
-  //   { page: 1, size: 5 },
-  //   { skip: !isLoggedIn }
-  // );
-  //
-  // useEffect(() => {
-  //   requestForToken();
-  // }, []);
-  //
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     refetch();
-  //   }
-  // }, [isLoggedIn, refetch]);
-  //
-  // useEffect(() => {
-  //   if (isSuccess && notifications) {
-  //     dispatch(setNotifications(notifications.notificationDTOs));
-  //   }
-  // }, [dispatch, isSuccess, notifications]);
-  //
-  // useEffect(() => {
-  //   onMessageListener().then(async (data: any) => {
-  //     console.log("Receive foreground: ", data);
-  //     if (isLoggedIn) {
-  //       refetch();
-  //     }
-  //   });
-  // }, [isLoggedIn, refetch]);
-  //
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
 
   return (
     <BrowserRouter>
@@ -186,6 +152,7 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<PayMent />} />
             <Route path="checkout/:id" element={<OrderDetailsForm />} /> */}
+            <Route path="/chat" element={<ChatPage />} />
             <Route path="/vnpay/return" element={<VNPayReturn />} />
             <Route path="user/account" element={<AccountPage />}>
               <Route path="profile" element={<Profile />} />
