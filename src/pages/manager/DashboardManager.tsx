@@ -4,7 +4,7 @@ import {logOut} from "@/redux/features/common/auth/authSlice";
 import {useDispatch} from "react-redux";
 import {persistor} from "@/redux/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faGift, faTicketAlt} from "@fortawesome/free-solid-svg-icons";
+import {faTicketAlt} from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardManager = () => {
     const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -91,8 +91,7 @@ export const DashboardManager = () => {
                         </li>
                         <li>
                             <Link
-                                to="manager/customers"
-                                // className="flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg hover:bg-green-100"
+                                to="customers"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
                                     selectedTitle === "ManagerCustomer"
                                         ? "bg-gray-100 hover:bg-green-100"
@@ -104,13 +103,14 @@ export const DashboardManager = () => {
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
-                                    stroke-width="1.5"
+                                    strokeWidth="1.5"
                                     stroke="currentColor"
                                     className="mr-3 h-6 w-6"
                                 >
                                     <path
-                                        stroke-linecap="round"
-                                        d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15.75 6.75a4.5 4.5 0 01-9 0 4.5 4.5 0 119 0zM15 12.75a6 6 0 00-12 0v1.5c0 2.071 1.679 3.75 3.75 3.75h4.5c2.071 0 3.75-1.679 3.75-3.75v-1.5z"
                                     />
                                 </svg>
                                 Quản lý người dùng
@@ -126,7 +126,7 @@ export const DashboardManager = () => {
                                 }`}
                                 onClick={() => handleTitleClick("ManagerVoucher")}
                             >
-                                <FontAwesomeIcon icon={faTicketAlt} size="sm" color="#666" />
+                                <FontAwesomeIcon icon={faTicketAlt} size="sm" color="#666"/>
                                 Quản lý mã giảm giá
                             </Link>
                         </li>

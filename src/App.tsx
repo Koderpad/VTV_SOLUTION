@@ -22,6 +22,8 @@ import { setNotifications } from "./redux/features/common/notifications/notifica
 import { RootState } from "./redux/store.ts";
 import { useGetListNotificationQuery } from "./redux/features/common/notifications/notificationApiSlice.ts";
 import VNPayReturn from "./features/common/order/components/VNPayReturn.tsx";
+import CustomerManagerPage from "@/pages/manager/CustomerManagerPage.tsx";
+import CustomerDetail from "@/features/manager/customer/CustomerDetail.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -172,6 +174,9 @@ function App() {
               <Route path="voucher/add" element={<AddNewVoucherSystem />} />
               <Route path="voucher/update/:voucherId" element={<UpdateVoucherSystem />} />
               <Route path="voucher/:voucherId" element={<VoucherSystemDetail />} />
+
+              <Route path="customers" element={<CustomerManagerPage />} />
+              <Route path="customer/detail/:customerId" element={<CustomerDetail />} />
 
             </Route>
 
