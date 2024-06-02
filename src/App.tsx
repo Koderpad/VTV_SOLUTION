@@ -23,12 +23,14 @@ import { RootState } from "./redux/store.ts";
 import { useGetListNotificationQuery } from "./redux/features/common/notifications/notificationApiSlice.ts";
 import VNPayReturn from "./features/common/order/components/VNPayReturn.tsx";
 import ChatPage from "./pages/common/ChatPage.tsx";
+import CustomerManagerPage from "@/pages/manager/CustomerManagerPage.tsx";
+import CustomerDetail from "@/features/manager/customer/CustomerDetail.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage")
+  () => import("./pages/common/ProductDetailPage"),
 );
 
 // ROLE: CUSTOMER
@@ -37,25 +39,29 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges")
+  () => import("./components/organisms/Account/PasswordChanges"),
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail")
+  () => import("./components/organisms/Account/OrderDetail"),
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage")
+  () => import("./pages/common/CategoryResultsPage"),
 );
 
 //ROLE: MANAGER
 
 function App() {
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const { data: notifications, isLoading, isSuccess, refetch } = useGetListNotificationQuery(
-    { page: 1, size: 5 },
-    { skip: !isLoggedIn }
+  const isLoggedIn = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
   );
+  const {
+    data: notifications,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetListNotificationQuery({ page: 1, size: 5 }, { skip: !isLoggedIn });
 
   useEffect(() => {
     requestForToken();
@@ -121,26 +127,36 @@ function App() {
               // <Route path="order" element={<OrderManagerPage />} />
               // <Route path="user" element={<UserManagerPage />} /> */}
 
-
               <Route path="categories" element={<CategoryManagerPage />} />
               <Route path="category/add" element={<AddNewCategory />} />
-              <Route path="category/update/:categoryId" element={<UpdateCategory />} />
+              <Route
+                path="category/update/:categoryId"
+                element={<UpdateCategory />}
+              />
               <Route path="category/:categoryId" element={<CategoryDetail />} />
-
 
               <Route path="brands" element={<BrandManagerPage />} />
               <Route path="brand/add" element={<AddNewBrand />} />
               <Route path="brand/update/:brandId" element={<UpdateBrand />} />
               <Route path="brand/:brandId" element={<BrandDetail />} />
 
-
               <Route path="vouchers" element={<VoucherSystemManagerPage />} />
               <Route path="voucher/add" element={<AddNewVoucherSystem />} />
-              <Route path="voucher/update/:voucherId" element={<UpdateVoucherSystem />} />
-              <Route path="voucher/:voucherId" element={<VoucherSystemDetail />} />
+              <Route
+                path="voucher/update/:voucherId"
+                element={<UpdateVoucherSystem />}
+              />
+              <Route
+                path="voucher/:voucherId"
+                element={<VoucherSystemDetail />}
+              />
 
+              <Route path="customers" element={<CustomerManagerPage />} />
+              <Route
+                path="customer/detail/:customerId"
+                element={<CustomerDetail />}
+              />
             </Route>
-
           </Route>
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
