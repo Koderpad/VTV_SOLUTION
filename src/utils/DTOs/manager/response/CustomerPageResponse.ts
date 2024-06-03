@@ -1,7 +1,7 @@
 import {CustomerDTO} from "@/utils/DTOs/manager/dto/CustomerDTO.ts";
 import {ResponseAbstract} from "@/utils/DTOs/extra/ResponseAbstract.ts";
 
-export interface PageCustomerResponse extends ResponseAbstract {
+export interface CustomerPageResponse extends ResponseAbstract {
     count: number;
     page: number;
     size: number;
