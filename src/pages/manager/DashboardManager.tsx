@@ -33,6 +33,9 @@ export const DashboardManager = () => {
         if (currentPath === "brands") {
             setSelectedTitle("ManagerBrand");
         }
+        if (currentPath === "shops") {
+            setSelectedTitle("ManagerShop");
+        }
 
         console.log(currentPath);
 
@@ -116,6 +119,36 @@ export const DashboardManager = () => {
                                 Quản lý người dùng
                             </Link>
                         </li>
+
+
+                        <Link
+                            to="shops"
+                            className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                selectedTitle === "ManagerShop"
+                                    ? "bg-gray-100 hover:bg-green-100"
+                                    : "hover:bg-green-100"
+                            }`}
+                            onClick={() => handleTitleClick("ManagerShop")}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="mr-3 h-6 w-6"
+                            >
+                                <path d="M4 6h16v12H4zM2 8a2 2 0 002-2h12a2 2 0 002 2v8a2 2 0 00-2 2H4a2 2 0 00-2-2V8z" />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M16 6a2 2 0 012 2v4h-4v-4zM8 6a2 2 0 012 2v4h-4v-4z"
+                                />
+                            </svg>
+                            Quản lý cửa hàng
+                        </Link>
+
+
                         <li>
                             <Link
                                 to="vouchers"
