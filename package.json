@@ -16,6 +16,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.1",
     "@reduxjs/toolkit": "^2.2.3",
+    "@stomp/stompjs": "^7.0.0",
     "@types/crypto-js": "^4.2.2",
     "@types/react-transition-group": "^4.4.10",
     "axios": "^1.6.8",
@@ -35,6 +36,7 @@
     "react-transition-group": "^4.4.5",
     "redux-persist": "^6.0.0",
     "socket.io-client": "^4.7.5",
+    "sockjs-client": "^1.6.1",
     "tailwind-merge": "^2.2.2"
   },
   "devDependencies": {
@@ -52,6 +54,7 @@
     "@types/react": "^18.2.66",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.2.22",
+    "@types/sockjs-client": "^1.5.4",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",

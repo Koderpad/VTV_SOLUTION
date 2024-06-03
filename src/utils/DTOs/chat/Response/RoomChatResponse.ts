@@ -1,5 +1,5 @@
 export interface RoomChatDTO {
-  romChatId: string;
+  roomChatId: string;
   senderUsername: string;
   receiverUsername: string;
   lastMessage: string;

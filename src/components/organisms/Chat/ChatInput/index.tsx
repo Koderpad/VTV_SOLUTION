@@ -1,40 +1,15 @@
 import React, { useState } from "react";
-import { useSendMessageMutation } from "@/redux/features/common/chat/chatApiSlice";
-import { sendMessage } from "@/utils/socketIO";
-import { ChatMessageRequest } from "@/utils/DTOs/chat/Request/ChatMessageRequest";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
 
 interface ChatInputProps {
-  roomChatId: string;
-  receiverUsername: string;
-  onMessageSent: (message: any) => void;
+  onSendMessage: (content: string) => void;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ roomChatId, receiverUsername, onMessageSent }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState("");
-  const [sendMessageMutation] = useSendMessageMutation();
-  const token = useSelector((state: RootState) => state.auth.token);
 
   const handleSendMessage = () => {
     if (message.trim() !== "") {
-      const chatMessage: ChatMessageRequest = {
-        content: message,
-        receiverUsername,
-        roomChatId,
-      };
-      if (!token) return;
-      // sendMessageMutation(chatMessage)
-      //   .then((response) => {
-      //     if ("data" in response) {
-      //       const sentMessage = response.data;
-      //       onMessageSent(sentMessage);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error sending message:", error);
-      //   });
-      sendMessage(chatMessage, token);
+      onSendMessage(message);
       setMessage("");
     }
   };

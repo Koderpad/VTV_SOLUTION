@@ -1,105 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { useGetMessagesByRoomQuery } from "@/redux/features/common/chat/chatApiSlice";
-import { subscribeToRoomMessages } from "@/utils/socketIO";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { initSocket, disconnectSocket, sendMessage } from "@/utils/stock";
 import ChatInput from "../ChatInput";
 import ChatMessages from "../ChatMessages";
 
 interface ChatRoomProps {
   roomChatId: string;
+  messages_: any[];
   receiverUsername: string;
 }
 
-const ChatRoom: React.FC<ChatRoomProps> = ({ roomChatId, receiverUsername }) => {
-  const { data, isLoading } = useGetMessagesByRoomQuery({
-    roomChatId,
-    page: 1,
-    size: 10,
-  });
-  const [messages, setMessages] = useState<any[]>(data?.messageDTOs || []);
+const ChatRoom: React.FC<ChatRoomProps> = ({
+  roomChatId,
+  messages_,
+  receiverUsername,
+}) => {
+  const token = useSelector((state: RootState) => state.auth.token);
 
-  useEffect(() => {
-    setMessages(data?.messageDTOs || []);
-  }, [data]);
+  const handleSendMessage = (content: string) => {
+    if (token) {
+      const message = {
+        content,
+        receiverUsername,
+        roomChatId,
+      };
 
-  useEffect(() => {
-    const onNewMessage = (newMessage: any) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    };
-
-    subscribeToRoomMessages(roomChatId, onNewMessage);
-
-    return () => {
-      // Hủy đăng ký lắng nghe sự kiện khi component unmount
-      // (Bạn có thể tạo một hàm unsubscribeFromRoomMessages trong socketIO.ts để hủy đăng ký)
-      // unsubscribeFromRoomMessages(roomChatId, onNewMessage);
-    };
-  }, [roomChatId]);
-
-  const handleMessageSent = (sentMessage: any) => {
-    setMessages((prevMessages) => [...prevMessages, sentMessage]);
+      sendMessage(message);
+    }
   };
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-grow overflow-y-auto">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <ChatMessages key={1} messages={messages} />
-        )}
+        <ChatMessages messages={messages_} />
       </div>
       <div className="mt-4">
-        <ChatInput
-          roomChatId={roomChatId}
-          receiverUsername={receiverUsername}
-          onMessageSent={handleMessageSent}
-        />
+        <ChatInput onSendMessage={handleSendMessage} />
       </div>
     </div>
   );
 };
 
 export default ChatRoom;
-// import React from "react";
-// import { useGetMessagesByRoomQuery } from "@/redux/features/common/chat/chatApiSlice";
-// import ChatInput from "../ChatInput";
-// import ChatMessages from "../ChatMessages";
-//
-//
-// interface ChatRoomProps {
-//   roomChatId: string;
-//   receiverUsername: string;
-// }
-//
-// const ChatRoom: React.FC<ChatRoomProps> = ({ roomChatId, receiverUsername }) => {
-//   const { data, isLoading } = useGetMessagesByRoomQuery({
-//     roomChatId,
-//     page: 1,
-//     size: 10,
-//   });
-//
-//   const handleMessageSent = (sentMessage: any) => {
-//     // Handle sent message logic here
-//   };
-//
-//   return (
-//     <div className="flex flex-col h-full">
-//       <div className="flex-grow overflow-y-auto">
-//         {isLoading ? (
-//           <div>Loading...</div>
-//         ) : (
-//           <ChatMessages messages={data?.messageDTOs || []} />
-//         )}
-//       </div>
-//       <div className="mt-4">
-//         <ChatInput
-//           roomChatId={roomChatId}
-//           receiverUsername={receiverUsername}
-//           onMessageSent={handleMessageSent}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-//
-// export default ChatRoom;

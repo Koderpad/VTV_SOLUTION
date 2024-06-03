@@ -6,13 +6,14 @@ interface ChatRoomListProps {
 }
 
 const ChatRoomList: React.FC<ChatRoomListProps> = ({ rooms, onRoomClick }) => {
+  let cou = 0;
   return (
     <ul className="overflow-y-auto h-full">
       {rooms.map((room) => (
         <li
-          key={room.romChatId}
+          key={cou++}
           className="p-2 cursor-pointer hover:bg-gray-100"
-          onClick={() => onRoomClick(room.romChatId)}
+          onClick={() => onRoomClick(room.roomChatId)}
         >
           <div className="flex items-center">
             <span className="font-bold">{room.receiverUsername}</span>
