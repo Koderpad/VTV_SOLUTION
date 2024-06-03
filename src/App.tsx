@@ -27,6 +27,9 @@ import CustomerManagerPage from "@/pages/manager/CustomerManagerPage.tsx";
 import CustomerDetail from "@/features/manager/customer/CustomerDetail.tsx";
 import ShopManagerPage from "@/pages/manager/ShopManagerPage.tsx";
 import ShopDetail from "@/features/manager/shop/ShopDetail.tsx";
+import ProductManagerPage from "@/pages/manager/ProductManagerPage.tsx";
+import ProductDetail from "@/features/manager/product/ProductDetail.tsx";
+import ManagerProducts from "@/features/manager/product/ManagerProducts.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -153,6 +156,11 @@ function App() {
 
                             <Route path="shops" element={<ShopManagerPage/>}/>
                             <Route path="shop/detail/:shopId" element={<ShopDetail/>}/>
+
+
+                            <Route path="products" element={<ProductManagerPage/>}/>
+                            <Route path="product/detail/:productId" element={<ProductDetail/>}/>
+                            <Route path="products/locked" element={<ManagerProducts/>}/>
 
 
                         </Route>

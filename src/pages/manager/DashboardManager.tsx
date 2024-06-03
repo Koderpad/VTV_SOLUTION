@@ -138,7 +138,8 @@ export const DashboardManager = () => {
                                 stroke="currentColor"
                                 className="mr-3 h-6 w-6"
                             >
-                                <path d="M4 6h16v12H4zM2 8a2 2 0 002-2h12a2 2 0 002 2v8a2 2 0 00-2 2H4a2 2 0 00-2-2V8z" />
+                                <path
+                                    d="M4 6h16v12H4zM2 8a2 2 0 002-2h12a2 2 0 002 2v8a2 2 0 00-2 2H4a2 2 0 00-2-2V8z"/>
                                 <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
@@ -164,9 +165,8 @@ export const DashboardManager = () => {
                             </Link>
                         </li>
                         <li>
-                            <a
-                                href="/admin/manager/products"
-                                // className="flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg hover:bg-green-100"
+                            <Link
+                                to="products"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
                                     selectedTitle === "ManagerProduct"
                                         ? "bg-gray-100 hover:bg-green-100"
@@ -185,12 +185,18 @@ export const DashboardManager = () => {
                                     <path
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
-                                        d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
+                                        d="M21 12.79V8.21a2 2 0 00-1-1.73l-7-4.02a2 2 0 00-2 0l-7 4.02A2 2 0 003 8.21v4.58a2 2 0 001 1.73l7 4.02a2 2 0 002 0l7-4.02a2 2 0 001-1.73z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3.27 6.96l8.73 5.02 8.73-5.02"
                                     />
                                 </svg>
                                 Quản lý sản phẩm
-                            </a>
+                            </Link>
                         </li>
+
 
                         <li>
                             <Link
