@@ -31,6 +31,9 @@ import ProductManagerPage from "@/pages/manager/ProductManagerPage.tsx";
 import ProductDetail from "@/features/manager/product/ProductDetail.tsx";
 import ManagerProducts from "@/features/manager/product/ManagerProducts.tsx";
 import ManagerShops from "@/features/manager/shop/ManagerShops.tsx";
+import ManagerPage from "@/pages/manager/ManagerPage.tsx";
+import ManagerDetail from "@/features/manager/manager/ManagerDetail.tsx";
+import AddNewManager from "@/features/manager/manager/AddNewManager.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -128,10 +131,7 @@ function App() {
 
                     <Route element={<RequireAuth allowedRoles={["MANAGER"]}/>}>
                         <Route path="/manager" element={<DashboardManager/>}>
-                            {/* <Route path="category" element={<CategoryManagerPage />} />
-              // <Route path="product" element={<ProductManagerPage />} />
-              // <Route path="order" element={<OrderManagerPage />} />
-              // <Route path="user" element={<UserManagerPage />} /> */}
+
 
                             <Route path="categories" element={<CategoryManagerPage/>}/>
                             <Route path="category/add" element={<AddNewCategory/>}/>
@@ -165,6 +165,10 @@ function App() {
                             <Route path="product/detail/:productId" element={<ProductDetail/>}/>
                             <Route path="products/locked" element={<ManagerProducts/>}/>
 
+
+                            <Route path="managers" element={<ManagerPage/>}/>
+                            <Route path="manager_id/:managerId" element={<ManagerDetail/>}/>
+                            <Route path="add_manager" element={<AddNewManager/>}/>
 
                         </Route>
                     </Route>

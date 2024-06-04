@@ -37,10 +37,11 @@ export const DashboardManager = () => {
             setSelectedTitle("ManagerShop");
         }
 
-        console.log(currentPath);
+        if (currentPath === "managers") {
+            setSelectedTitle("Manager");
+        }
 
-        // Cập nhật trạng thái selectedTitle
-        // setSelectedTitle(currentPath);
+
     }, [location.pathname]);
 
     const handleTitleClick = (title: string) => {
@@ -251,6 +252,33 @@ export const DashboardManager = () => {
                                 Quản lý thương hiệu
                             </Link>
                         </li>
+
+
+                        <li>
+                            <Link
+                                to="managers"
+                                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                    selectedTitle === "Manager"
+                                        ? "bg-gray-100 hover:bg-green-100"
+                                        : "hover:bg-green-100"
+                                }`}
+                                onClick={() => handleTitleClick("Manager")}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="mr-3 h-6 w-6"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M9.75 9.75A3.75 3.75 0 1113.5 13.5M19.25 21.25v-3.25a4 4 0 00-4-4h-6.5a4 4 0 00-4 4v3.25M9 13.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5zm6 0a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z"/>
+                                </svg>
+                                Quản lý quản trị viên
+                            </Link>
+                        </li>
+
+
                     </ul>
 
                     <a
