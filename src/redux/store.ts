@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { apiSlice } from "./api";
 import authReducer from "./features/common/auth/authSlice";
+import chatReducer from "./features/common/chat/chatSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import notificationReducer from "./features/common/notifications/notificationSlice";
@@ -19,6 +20,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   notification: notificationReducer,
+  chat: chatReducer,
   // productInAddProduct: productDataInAddProductReducer,
   // [productDetailApi.reducerPath]: productDetailApi.reducer,
   [apiSlice.reducerPath]: apiSlice.reducer,

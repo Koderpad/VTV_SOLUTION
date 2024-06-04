@@ -1,12 +1,20 @@
-import { Client, Stomp } from "@stomp/stompjs";
-let stompClient: Client | null = null;
+import { Client } from "@stomp/stompjs";
+import { store } from "@/redux/store";
+import {
+  addMessage,
+  updateRoomChat,
+} from "@/redux/features/common/chat/chatSlice";
+import { ChatMessageRequest } from "../DTOs/chat/Request/ChatMessageRequest";
+
 let isConnected = false;
 
-export const initSocket = (
-  token: string,
-  roomChatId: string,
-  callback: (mess: any) => void
-) => {
+export const isSocketConnected = (): boolean => {
+  return isConnected;
+};
+
+let stompClient: Client | null = null;
+
+export const initSocket = (token: string) => {
   if (!token) return;
   const host = "localhost";
   const port = 8585;
@@ -19,27 +27,17 @@ export const initSocket = (
     debug: function (str) {
       console.log(str);
     },
-    // reconnectDelay: 5000,
-    // heartbeatIncoming: 4000,
-    // heartbeatOutgoing: 4000,
   });
-  stompClient.onConnect = () => {
+
+  stompClient.onConnect = (frame) => {
     console.log("socket connected");
-    if (!stompClient || !roomChatId) {
-      return;
+    isConnected = true;
+    if (frame) {
+      console.log("frame: ", frame);
     }
-    stompClient.subscribe(
-      `/room/:roomChatId/chat?roomChatId=${roomChatId}`,
-      (message) => {
-        console.log("message in sub: ", message);
-        if (message.body) {
-          callback(JSON.parse(message.body));
-        }
-      }
-    );
   };
 
-  stompClient.onStompError = function (frame) {
+  stompClient.onStompError = (frame) => {
     console.log("Broker reported error: " + frame.headers["message"]);
     console.log("Additional details: " + frame.body);
   };
@@ -51,110 +49,182 @@ export const disconnectSocket = () => {
   if (stompClient) {
     stompClient.deactivate();
     stompClient = null;
+    isConnected = false;
   }
+};
+
+export const subscribeToRoomMessages = (roomChatId: string) => {
+  if (!stompClient) return;
+
+  const subscription = stompClient.subscribe(
+    `/room/${roomChatId}/chat`,
+    (message) => {
+      if (message.body) {
+        const newMessage = JSON.parse(message.body);
+        store.dispatch(addMessage(newMessage));
+        store.dispatch(updateRoomChat(newMessage));
+      }
+    }
+  );
+
+  return () => {
+    subscription.unsubscribe();
+  };
 };
 
 export const sendMessage = (msgRequest: any) => {
   if (stompClient && stompClient.connected) {
+    //transform msgRequest to ChatMessageRequest
+    const chatMessageRequest: ChatMessageRequest = {
+      content: msgRequest.content,
+      receiverUsername: msgRequest.receiverUsername,
+      roomChatId: msgRequest.roomChatId,
+    };
+    console.log("chatMessageRequest: ", chatMessageRequest);
     stompClient.publish({
       destination: "/app/chat",
-      body: JSON.stringify(msgRequest),
+      body: JSON.stringify(chatMessageRequest),
       headers: { Authorization: stompClient.connectHeaders.Authorization },
     });
   }
 };
+// import { Client } from "@stomp/stompjs";
+// import { store } from "@/redux/store";
+// import {
+//   addMessage,
+//   updateRoomChat,
+// } from "@/redux/features/common/chat/chatSlice";
 
-// export const subscribeToRoomMessages = (
-//   roomChatId: string,
-//   callback: (message: any) => void
-// ) => {
-//   if (stompClient) {
-//     const subscription = stompClient.subscribe(
-//       `/room/:roomChatId/chat?roomChatId=${roomChatId}`,
-//       (message) => {
-//         console.log("message in sub: ", message);
-//         if (message.body) {
-//           callback(JSON.parse(message.body));
-//         }
-//       }
-//     );
-//     return subscription;
-//   }
-// };
+// let stompClient: Client | null = null;
 
-// import { ChatMessageRequest } from "./DTOs/chat/Request/ChatMessageRequest";
-//
-// let socket: Socket | null = null;
 // export const initSocket = (token: string) => {
+//   if (!token) return;
 //   const host = "localhost";
 //   const port = 8585;
-//   const url = `ws://${host}:${port}`;
-//
-//   socket = io(url, {
-//     transports: ["websocket"],
-//     path: `/ws-stomp?token=${token}`,
+//   const url = `ws://${host}:${port}/ws-stomp?token=${token}`;
+//   stompClient = new Client({
+//     brokerURL: url,
+//     connectHeaders: {
+//       Authorization: token,
+//     },
+//     debug: function (str) {
+//       console.log(str);
+//     },
 //   });
-//   console.log("socket in initSocket: ", socket);
+
+//   stompClient.onConnect = (frame) => {
+//     console.log("socket connected");
+//     if (frame) {
+//       console.log("frame: ", frame);
+//     }
+//   };
+
+//   stompClient.onStompError = (frame) => {
+//     console.log("Broker reported error: " + frame.headers["message"]);
+//     console.log("Additional details: " + frame.body);
+//   };
+
+//   stompClient.activate();
 // };
-// // export const initSocket = (token: string) => {
-// //   const host = "localhost";
-// //   const port = 8585;
-// //   const url = `ws://${host}:${port}`;
-// //
-// //   socket = io(url, {
-// //     host: "ws",
-// //     path: "/ws-stomp",
-// //     query: {
-// //       token: token,
-// //     },
-// //   });
-// //   console.log("socket in initSocket: ", socket);
-// // }; // export const initSocket = (token: string) => {
-// //   const host = "localhost";
-// //   const port = 8585;
-// //   let url = `ws://${host}:${port}/ws-stomp`;
-// //   // url: 'ws://$host:$kPORT/ws-stomp?token=${context.read<AuthCubit>().state.auth!.accessToken}',
-// //
-// //   socket = io(url, {
-// //     auth: {
-// //       // headers: { Authorization: token },
-// //       token: token,
-// //     },
-// //   });
-// // };
-// //
-// export const connectSocket = () => {
-//   if (socket) {
-//     socket.connect();
-//   }
-// };
-//
+
 // export const disconnectSocket = () => {
-//   if (socket && socket.connected) {
-//     socket.disconnect();
-//     socket = null;
+//   if (stompClient) {
+//     stompClient.deactivate();
+//     stompClient = null;
 //   }
 // };
-//
-// export const subscribeToRoomMessages = (
-//   roomChatId: string,
-//   callback: (message: any) => void,
-// ) => {
-//   if (socket) {
-//     const roomUrl = `/room/${roomChatId}/chat`;
-//     socket.on(roomUrl, callback);
-//   }
+
+// export const subscribeToRoomMessages = (roomChatId: string) => {
+//   if (!stompClient) return;
+
+//   const subscription = stompClient.subscribe(
+//     `/room/${roomChatId}/chat`,
+//     (message) => {
+//       if (message.body) {
+//         const newMessage = JSON.parse(message.body);
+//         store.dispatch(addMessage(newMessage));
+//         store.dispatch(updateRoomChat(newMessage));
+//       }
+//     }
+//   );
+
+//   return () => {
+//     subscription.unsubscribe();
+//   };
 // };
-//
-// export const sendMessage = (data: ChatMessageRequest, token: string) => {
-//   console.log("sendMessage: ", data);
-//   console.log("socket in sendMessage: ", socket);
-//   if (socket && socket.connected) {
-//     console.log("data message: ", data);
-//     socket.emit("/app/chat", {
+
+// export const sendMessage = (msgRequest: any) => {
+//   if (stompClient && stompClient.connected) {
+//     stompClient.publish({
 //       destination: "/app/chat",
-//       body: data,
-//       headers: { Authorization: token },
+//       body: JSON.stringify(msgRequest),
+//       headers: { Authorization: stompClient.connectHeaders.Authorization },
+//     });
+//   }
+// };
+
+// import { Client, Stomp } from "@stomp/stompjs";
+// let stompClient: Client | null = null;
+
+// export const initSocket = (
+//   token: string,
+//   roomChatId: string,
+//   callbackMessage: (mess: any) => void
+// ) => {
+//   if (!token) return;
+//   const host = "localhost";
+//   const port = 8585;
+//   const url = `ws://${host}:${port}/ws-stomp?token=${token}`;
+//   stompClient = new Client({
+//     brokerURL: url,
+//     connectHeaders: {
+//       Authorization: token,
+//     },
+//     debug: function (str) {
+//       console.log(str);
+//     },
+//     // reconnectDelay: 5000,
+//     // heartbeatIncoming: 4000,
+//     // heartbeatOutgoing: 4000,
+//   });
+//   stompClient.onConnect = (frame) => {
+//     console.log("socket connected");
+//     if (!stompClient || !roomChatId) {
+//       return;
+//     }
+//     if (frame) {
+//       console.log("frame: ", frame);
+//     }
+//     stompClient.subscribe(`/room/${roomChatId}/chat`, (message) => {
+//       console.log("message in sub: ", message);
+//       if (message.body) {
+//         callbackMessage(JSON.parse(message.body));
+//       }
+//     });
+//     // stompClient.unsubscribe(`/room/${roomChatId}/chat`);
+//   };
+
+//   stompClient.onStompError = (frame) => {
+//     console.log("Broker reported error: " + frame.headers["message"]);
+//     console.log("Additional details: " + frame.body);
+//   };
+
+//   stompClient.activate();
+// };
+
+// export const disconnectSocket = () => {
+//   if (stompClient) {
+//     stompClient.deactivate();
+//     stompClient = null;
+//   }
+// };
+
+// export const sendMessage = (msgRequest: any) => {
+//   if (stompClient && stompClient.connected) {
+//     stompClient.publish({
+//       destination: "/app/chat",
+//       body: JSON.stringify(msgRequest),
+//       headers: { Authorization: stompClient.connectHeaders.Authorization },
 //     });
 //   }
 // };
