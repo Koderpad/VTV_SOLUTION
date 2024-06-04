@@ -45,10 +45,19 @@ const ProductManagerPage = () => {
                 <div className="container mx-auto px-4 sm:px-8">
                     <div className="py-8">
 
-                        <div className="flex justify-end   items-left">
+                        <div className="flex justify-between items-center">
+
+
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4"
+                                onClick={() => navigate(-1)}
+                            >
+                                Quay Lại
+                            </button>
+
                             <button
                                 onClick={() => navigate('/manager/products/locked')}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mb-4">
                                 Danh sách sản phẩm đã khóa
                             </button>
                         </div>

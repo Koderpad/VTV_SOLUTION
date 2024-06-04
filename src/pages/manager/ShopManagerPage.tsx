@@ -36,9 +36,22 @@ const ShopManagerPage = () => {
             <CSSTransition timeout={500} classNames="fade">
                 <div className="container mx-auto px-4 sm:px-8">
                     <div className="py-8">
+                        <div className="flex justify-between items-center">
 
 
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4"
+                                onClick={() => navigate(-1)}
+                            >
+                                Quay Lại
+                            </button>
 
+                            <button
+                                onClick={() => navigate('/manager/shops/locked')}
+                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mb-4">
+                                Danh sách cửa hàng bị khóa
+                            </button>
+                        </div>
 
 
                         <h1 className="text-4xl font-bold text-center text-gray-900">Quản lý cửa hàng</h1>
@@ -90,7 +103,6 @@ const ShopManagerPage = () => {
                         </div>
 
 
-
                         <div className="mb-4">
 
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="search">
@@ -112,9 +124,6 @@ const ShopManagerPage = () => {
                             />
 
                         </div>
-
-
-
 
 
                         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -258,7 +267,6 @@ const ShopManagerPage = () => {
                                     hidden={1 === page}
 
 
-
                                 >
 
                                     Trước
@@ -330,8 +338,6 @@ const ShopManagerPage = () => {
     );
 
 }
-
-
 
 
 export default ShopManagerPage;

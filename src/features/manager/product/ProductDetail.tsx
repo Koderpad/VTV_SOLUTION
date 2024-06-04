@@ -22,13 +22,11 @@ const ProductDetail = () => {
     const loadProductDetail = async () => {
         try {
             const productDetail = await fetchProductDetail(Number(productId));
-            console.log(productDetail);
             setProduct(productDetail.productDTO);
             setIsLoading(false);
         } catch (e) {
             setError(e as Error);
             setIsLoading(false);
-            // toast.error(error.message);
             setTimeout(() => {
                 navigate('/manager/products');
             }, 700);
