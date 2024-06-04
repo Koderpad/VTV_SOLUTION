@@ -3,7 +3,7 @@ import axios from "axios";
 import {VoucherResponse} from "@/utils/DTOs/manager/response/VoucherResponse.ts";
 import {ListVoucherResponse} from "@/utils/DTOs/manager/response/ListVoucherResponse.ts";
 
-export const getVoucherByVoucherId = async (voucherId: number): Promise<VoucherResponse> => {
+export const getVoucherByVoucherId = async (voucherId: string | undefined): Promise<VoucherResponse> => {
     const response = await axios.get(`${BASE_URL_VTC}/voucher/detail/${voucherId}`);
     return response.data;
 }
@@ -13,6 +13,7 @@ export const fetchVoucherByVoucherId = async (voucherId: string | undefined) => 
         const response = await getVoucherByVoucherId(voucherId);
         return response;
     }catch (e) {
+        // @ts-ignore
         throw e.response.data;
     }
 }
@@ -35,6 +36,7 @@ export const fetchVoucherSystemsResponse = async () => {
         const response = await listVoucherSystem();
         return response;
     }catch (e) {
+        // @ts-ignore
         throw e.response.data;
     }
 };
