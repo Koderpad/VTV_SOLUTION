@@ -49,7 +49,7 @@ const Chat: React.FC = () => {
         }
       });
     };
-  }, [roomChats]);
+  }, [roomChats, data, dispatch]);
 
   const handleRoomClick = (roomChatId: string) => {
     setSelectedRoomChatId(roomChatId);
