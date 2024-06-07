@@ -1,4 +1,4 @@
-import  {useState} from 'react';
+import React, {useState} from 'react';
 import {
     useGetPageCustomerByStatusAndSortQuery,
     useSearchPageCustomerByFullNameAndStatusQuery
@@ -28,6 +28,23 @@ const CustomerManagerPage = () => {
         <TransitionGroup>
             <CSSTransition timeout={500} classNames="fade">
                 <div className="container mx-auto px-4 sm:px-8">
+
+                    <div className="flex justify-between items-center">
+
+
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4"
+                            onClick={() => navigate(-1)}
+                        >
+                            Quay Lại
+                        </button>
+
+                        <button
+                            onClick={() => navigate('/manager/customers/revenue')}
+                            className="bg-green-400 text-white px-4 py-2 rounded hover:bg-green-500 mb-4">
+                            Thống kê khách hàng
+                        </button>
+                    </div>
                     <div className="py-8">
 
 

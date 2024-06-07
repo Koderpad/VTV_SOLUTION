@@ -2,6 +2,7 @@ import {apiSlice} from "@/redux/api.ts";
 import {Status} from "@/utils/DTOs/extra/Status.ts";
 import {CustomerPageResponse} from "@/utils/DTOs/manager/response/CustomerPageResponse.ts";
 import {ProfileCustomerResponse} from "@/utils/DTOs/manager/response/ProfileCustomerResponse.ts";
+import {StatisticsCustomersResponse} from "@/utils/DTOs/manager/response/StatisticsCustomersResponse.ts";
 
 export const CustomerManagerApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -23,6 +24,10 @@ export const CustomerManagerApiSlice = apiSlice.injectEndpoints({
             query: (customerId) => `/manager/customer/detail/${customerId}`,
         }),
 
+        statisticsCustomersByDateAndStatus: builder.query<StatisticsCustomersResponse, { startDate: string, endDate: string }>({
+            query: ({ startDate, endDate }) => `/manager/revenue/statistics/customers?startDate=${startDate}&endDate=${endDate}`,
+        }),
+
     }),
 });
 
@@ -30,5 +35,6 @@ export const {
     useGetPageCustomerByStatusQuery,
     useGetPageCustomerByStatusAndSortQuery,
     useSearchPageCustomerByFullNameAndStatusQuery,
-    useGetCustomerDetailByCustomerIdQuery
+    useGetCustomerDetailByCustomerIdQuery,
+    useStatisticsCustomersByDateAndStatusQuery,
 } = CustomerManagerApiSlice;
