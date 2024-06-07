@@ -34,6 +34,7 @@ import ManagerShops from "@/features/manager/shop/ManagerShops.tsx";
 import ManagerPage from "@/pages/manager/ManagerPage.tsx";
 import ManagerDetail from "@/features/manager/manager/ManagerDetail.tsx";
 import AddNewManager from "@/features/manager/manager/AddNewManager.tsx";
+import StatisticsCustomers from "@/features/manager/customer/StatisticsCustomers.tsx";
 // import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -152,7 +153,9 @@ function App() {
                             <Route path="voucher/:voucherId" element={<VoucherSystemDetail/>}/>
 
                             <Route path="customers" element={<CustomerManagerPage/>}/>
+                            <Route path="customers/revenue" element={< StatisticsCustomers/>}/>
                             <Route path="customer/detail/:customerId" element={<CustomerDetail/>}/>
+
 
 
                             <Route path="shops" element={<ShopManagerPage/>}/>

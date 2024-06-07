@@ -10,7 +10,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
 
 
-
 const ShopManagerPage = () => {
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -21,14 +20,11 @@ const ShopManagerPage = () => {
     const navigate = useNavigate();
 
 
-
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
 
-
     const totalPages = data.totalPage;
-
 
 
     return (
@@ -37,12 +33,9 @@ const ShopManagerPage = () => {
                 <div className="container mx-auto px-4 sm:px-8">
                     <div className="py-8">
                         <div className="flex justify-between items-center">
-
-
                             <button
                                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4"
-                                onClick={() => navigate(-1)}
-                            >
+                                onClick={() => navigate(-1)}>
                                 Quay Lại
                             </button>
 
