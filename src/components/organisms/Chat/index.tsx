@@ -18,7 +18,7 @@ const Chat: React.FC = () => {
   const dispatch = useDispatch();
   const token = useSelector((state: RootState) => state.auth.token);
   const [selectedRoomChatId, setSelectedRoomChatId] = useState<string | null>(
-    null
+    null,
   );
   const { data, isLoading } = useGetRoomChatListQuery({ page: 1, size: 10 });
   let roomChats = useSelector(selectRoomChats);
