@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { HomePageTemplate } from "./index-temp";
+import { HomePageTemplate } from ".";
 
 const meta: Meta<typeof HomePageTemplate> = {
   title: "Templates/HomePageTemplate",
