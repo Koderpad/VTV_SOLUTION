@@ -1,6 +1,7 @@
 import { getAllParentCategory } from "@/services/common/CategoryService";
 import { CategoryDTO } from "@/utils/DTOs/common/Category/Response/CategoriesResponse";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
@@ -10,7 +11,7 @@ const CategoryList: React.FC = () => {
     startIndex,
     startIndex + maxColumns * 2,
   );
-
+  const navigate = useNavigate();
   const handlePrevClick = () => {
     setStartIndex(Math.max(0, startIndex - maxColumns));
   };
@@ -43,16 +44,21 @@ const CategoryList: React.FC = () => {
             {"<"}
           </button>
         )}
-        <div className="grid grid-cols-4 ">
+        <div className="grid grid-cols-10">
           {visibleCategories.map((category) => (
-            <a
+            <div
               key={category.categoryId}
-              href="#"
-              className="flex flex-col items-center border-[0.1rem] p-8 bg-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105"
+              onClick={() => {
+                navigate(`/category/${category.categoryId}`);
+              }}
+              className="flex flex-col w-auto h-auto items-center border-[0.1rem] p-8 bg-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-[#F5F5F5] cursor-pointer"
             >
-              <div className="text-4xl mb-2">{category.image}</div>
+              <img
+                src={category.image}
+                className="text-4xl w-20 h-20 object-fill rounded-full mb-2"
+              />
               <div className="text-sm text-center">{category.name}</div>
-            </a>
+            </div>
           ))}
         </div>
         {startIndex + maxColumns * 2 < categories.length && (
