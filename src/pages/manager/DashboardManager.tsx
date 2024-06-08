@@ -4,7 +4,7 @@ import {logOut} from "@/redux/features/common/auth/authSlice";
 import {useDispatch} from "react-redux";
 import {persistor} from "@/redux/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTicketAlt} from "@fortawesome/free-solid-svg-icons";
+import {faTicketAlt, faTruckArrowRight} from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardManager = () => {
     const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -39,6 +39,9 @@ export const DashboardManager = () => {
 
         if (currentPath === "managers") {
             setSelectedTitle("Manager");
+        }
+        if (currentPath === "transport-providers") {
+            setSelectedTitle("ManagerTransportProvider");
         }
 
 
@@ -149,6 +152,22 @@ export const DashboardManager = () => {
                             </svg>
                             Quản lý cửa hàng
                         </Link>
+
+
+                        <Link
+                            to="transport-providers"
+                            className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                selectedTitle === "ManagerTransportProvider"
+                                    ? "bg-gray-100 hover:bg-green-100"
+                                    : "hover:bg-green-100"
+                            }`}
+                            onClick={() => handleTitleClick("ManagerTransportProvider")}
+                        >
+                            <FontAwesomeIcon icon={faTruckArrowRight} size="sm" color="#666"/>
+
+                            Quản lý nhà cung cấp vận chuyển
+                        </Link>
+
 
 
                         <li>

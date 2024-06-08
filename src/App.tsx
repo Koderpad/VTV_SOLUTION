@@ -37,7 +37,10 @@ import AddNewManager from "@/features/manager/manager/AddNewManager.tsx";
 import StatisticsCustomers from "@/features/manager/customer/StatisticsCustomers.tsx";
 import TransportProviderManagerPage from "@/pages/manager/TransportProviderManagerPage.tsx";
 import TransportProviderDetail from "@/features/manager/shipping/TransportProviderDetail.tsx";
-// import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
+import UpdateTransportProviderProvinces from "@/features/manager/shipping/UpdateTransportProviderProvinces.tsx";
+import UpdateTransportProviderFeeShipping from "@/features/manager/shipping/UpdateTransportProviderFeeShipping.tsx";
+import AddNewTransportProvider from "@/features/manager/shipping/AddNewTransportProvider.tsx";
+
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -175,8 +178,13 @@ function App() {
 
 
                             <Route path="transport-providers" element={<TransportProviderManagerPage/>}/>
+                            <Route path="transport-provider/add" element={<AddNewTransportProvider/>}/>
                             <Route path="transport-provider/detail/:transportProviderId"
                                    element={<TransportProviderDetail/>}/>
+                            <Route path="transport-provider/update/:transportProviderId"
+                                   element={<UpdateTransportProviderProvinces/>}/>
+                            <Route path="transport-provider/update-fee-shipping/:transportProviderId"
+                                   element={<UpdateTransportProviderFeeShipping/>}/>
 
 
                         </Route>

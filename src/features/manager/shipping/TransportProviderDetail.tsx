@@ -44,7 +44,7 @@ const TransportProviderDetail = () => {
                 </button>
 
                 <button
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2"
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4"
                     onClick={() => navigate(`/manager/customer/detail/${transportProvider?.customerId}`)}
                 >
                     Xem Thông Tin Chi Tiết Tài Khoản
@@ -190,9 +190,16 @@ const TransportProviderDetail = () => {
             <div className="mt-8 flex justify-between">
                 <button
                     className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2"
-                    onClick={() => navigate(`/manager/customer/detail/${transportProvider?.customerId}`)}
+                    onClick={() => navigate(`/manager/transport-provider/update/${transportProvider?.transportProviderId}`)}
                 >
-                    Xem Thông Tin Chi Tiết Tài Khoản
+                    Cập nhật các tỉnh thành
+                </button>
+
+                <button
+                    className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                    onClick={() => navigate(`/manager/transport-provider/update-fee-shipping/${transportProvider?.transportProviderId}`)}
+                >
+                    Cập nhật phí vận chuyển
                 </button>
             </div>
 
