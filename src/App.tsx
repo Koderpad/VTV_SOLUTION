@@ -35,12 +35,17 @@ import ManagerPage from "@/pages/manager/ManagerPage.tsx";
 import ManagerDetail from "@/features/manager/manager/ManagerDetail.tsx";
 import AddNewManager from "@/features/manager/manager/AddNewManager.tsx";
 import StatisticsCustomers from "@/features/manager/customer/StatisticsCustomers.tsx";
-// import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
+import TransportProviderManagerPage from "@/pages/manager/TransportProviderManagerPage.tsx";
+import TransportProviderDetail from "@/features/manager/shipping/TransportProviderDetail.tsx";
+import UpdateTransportProviderProvinces from "@/features/manager/shipping/UpdateTransportProviderProvinces.tsx";
+import UpdateTransportProviderFeeShipping from "@/features/manager/shipping/UpdateTransportProviderFeeShipping.tsx";
+import AddNewTransportProvider from "@/features/manager/shipping/AddNewTransportProvider.tsx";
+
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage"),
+  () => import("./pages/common/ProductDetailPage")
 );
 
 // ROLE: CUSTOMER
@@ -49,14 +54,14 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges"),
+  () => import("./components/organisms/Account/PasswordChanges")
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail"),
+  () => import("./components/organisms/Account/OrderDetail")
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage"),
+  () => import("./pages/common/CategoryResultsPage")
 );
 
 //ROLE: MANAGER
@@ -64,7 +69,7 @@ const CategoryResultsPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
   const {
     data: notifications,
@@ -170,6 +175,10 @@ function App() {
               <Route path="shop/detail/:shopId" element={<ShopDetail />} />
               <Route path="shops/locked" element={<ManagerShops />} />
 
+              <Route path="managers" element={<ManagerPage />} />
+              <Route path="manager_id/:managerId" element={<ManagerDetail />} />
+              <Route path="add_manager" element={<AddNewManager />} />
+
               <Route path="products" element={<ProductManagerPage />} />
               <Route
                 path="product/detail/:productId"
@@ -180,6 +189,27 @@ function App() {
               <Route path="managers" element={<ManagerPage />} />
               <Route path="manager_id/:managerId" element={<ManagerDetail />} />
               <Route path="add_manager" element={<AddNewManager />} />
+
+              <Route
+                path="transport-providers"
+                element={<TransportProviderManagerPage />}
+              />
+              <Route
+                path="transport-provider/add"
+                element={<AddNewTransportProvider />}
+              />
+              <Route
+                path="transport-provider/detail/:transportProviderId"
+                element={<TransportProviderDetail />}
+              />
+              <Route
+                path="transport-provider/update/:transportProviderId"
+                element={<UpdateTransportProviderProvinces />}
+              />
+              <Route
+                path="transport-provider/update-fee-shipping/:transportProviderId"
+                element={<UpdateTransportProviderFeeShipping />}
+              />
             </Route>
           </Route>
 
