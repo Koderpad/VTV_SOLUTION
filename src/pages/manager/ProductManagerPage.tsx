@@ -56,6 +56,12 @@ const ProductManagerPage = () => {
                             </button>
 
                             <button
+                                onClick={() => navigate('/manager/product/revenue')}
+                                className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-lime-600 mb-4">
+                                Thống kê sản phẩm bán chạy
+                            </button>
+
+                            <button
                                 onClick={() => navigate('/manager/products/locked')}
                                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mb-4">
                                 Danh sách sản phẩm đã khóa

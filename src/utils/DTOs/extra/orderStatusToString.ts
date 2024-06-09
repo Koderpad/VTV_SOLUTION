@@ -1,0 +1,15 @@
+export const orderStatusToString = {
+    PENDING: "Đang Chờ",
+    PROCESSING: "Đang Xử Lý",
+    PICKUP_PENDING: "Chờ Lấy Hàng",
+    SHIPPING: "Đang Giao",
+    DELIVERED: "Đã Giao",
+    COMPLETED: "Hoàn Thành",
+    RETURNED: "Đã Trả",
+    WAITING: "Chờ Xác Nhận",
+    CANCEL: "Đã Hủy",
+    REFUNDED: "Đã Hoàn Tiền",
+    PAID: "Đã Thanh Toán",
+    UNPAID: "Chưa Thanh Toán",
+    FAIL: "Thất Bại",
+};
