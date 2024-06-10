@@ -1,13 +1,12 @@
 import { apiSlice } from "@/redux/api";
 import { ListReviewResponse } from "@/utils/DTOs/common/Product/Response/ListReviewResponse";
-import { ReviewRequest } from "@/utils/DTOs/common/Review/Request/ReviewRequest";
 import { ReviewResponse } from "@/utils/DTOs/common/Review/Response/ReviewResponse";
 
 export const reviewApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getReviewListByProductId: builder.query<ListReviewResponse, number>({
       query: (productId) => ({
-        url: `/customer/review/product/${productId}`,
+        url: `/review/product/${productId}`,
       }),
     }),
     isReviewExist: builder.query<boolean, string>({
@@ -28,12 +27,17 @@ export const reviewApi = apiSlice.injectEndpoints({
       }),
       extraOptions: {
         prepareHeaders: (headers: Headers) => {
-          headers.set('Content-Type', 'multipart/form-data');
+          headers.set("Content-Type", "multipart/form-data");
           return headers;
         },
       },
     }),
-  })
+  }),
 });
 
-export const { useGetReviewListByProductIdQuery, useIsReviewExistQuery, useGetReviewDetailByOrderItemIdQuery, useAddReviewMutation } = reviewApi;
+export const {
+  useGetReviewListByProductIdQuery,
+  useIsReviewExistQuery,
+  useGetReviewDetailByOrderItemIdQuery,
+  useAddReviewMutation,
+} = reviewApi;

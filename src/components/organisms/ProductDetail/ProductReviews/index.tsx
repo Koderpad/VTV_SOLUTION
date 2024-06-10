@@ -5,12 +5,16 @@ import { useParams } from "react-router-dom";
 
 export const ProductReviews = () => {
   const { productId } = useParams();
-
+  console.log("review of product id: ", productId);
   if (!productId) {
     return null;
   }
 
-  const { data: reviews, isLoading } = useGetReviewListByProductIdQuery(parseInt(productId));
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { data: reviews, isLoading } = useGetReviewListByProductIdQuery(
+    parseInt(productId),
+  );
+  console.log("reviews: ", reviews);
 
   if (isLoading) {
     return <div>Loading...</div>;
