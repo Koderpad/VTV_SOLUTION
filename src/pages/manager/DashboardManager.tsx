@@ -4,7 +4,7 @@ import {logOut} from "@/redux/features/common/auth/authSlice";
 import {useDispatch} from "react-redux";
 import {persistor} from "@/redux/store";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTicketAlt, faTruckArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {faBorderAll, faTicketAlt, faTruckArrowRight} from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardManager = () => {
     const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -27,6 +27,11 @@ export const DashboardManager = () => {
         if (currentPath === "products") {
             setSelectedTitle("ManagerProduct");
         }
+
+        if (currentPath === "orders") {
+            setSelectedTitle("ManagerOrder");
+        }
+
         if (currentPath === "categories") {
             setSelectedTitle("ManagerCategory");
         }
@@ -65,7 +70,7 @@ export const DashboardManager = () => {
                 <div className="w-auto m-4 col-start-1 col-end-2 flex h-full flex-col rounded-xl bg-white p-8">
                     {/* title ADMIN */}
                     <div className="flex flex-col items-center">
-                        <h2 className="text-2xl font-semibold text-gray-700 mt-4">DashboardManager</h2>
+                        <h2 className="text-2xl font-semibold text-gray-700 mt-4">Bảng điều khiển</h2>
                     </div>
                     <ul className="space-y-2">
                         <li>
@@ -164,10 +169,9 @@ export const DashboardManager = () => {
                             onClick={() => handleTitleClick("ManagerTransportProvider")}
                         >
                             <FontAwesomeIcon icon={faTruckArrowRight} size="sm" color="#666"/>
-
+                            <div className="ml-2"/>
                             Quản lý nhà cung cấp vận chuyển
                         </Link>
-
 
 
                         <li>
@@ -181,9 +185,11 @@ export const DashboardManager = () => {
                                 onClick={() => handleTitleClick("ManagerVoucher")}
                             >
                                 <FontAwesomeIcon icon={faTicketAlt} size="sm" color="#666"/>
+                                <div className="ml-2"/>
                                 Quản lý mã giảm giá
                             </Link>
                         </li>
+
                         <li>
                             <Link
                                 to="products"
@@ -214,6 +220,22 @@ export const DashboardManager = () => {
                                     />
                                 </svg>
                                 Quản lý sản phẩm
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link
+                                to="orders"
+                                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                    selectedTitle === "ManagerOrder"
+                                        ? "bg-gray-100 hover:bg-green-100"
+                                        : "hover:bg-green-100"
+                                }`}
+                                onClick={() => handleTitleClick("ManagerOrder")}
+                            >
+                                <FontAwesomeIcon icon={faBorderAll}/>
+                                <div className="ml-2"/>
+                                Quản lý đơn hàng
                             </Link>
                         </li>
 

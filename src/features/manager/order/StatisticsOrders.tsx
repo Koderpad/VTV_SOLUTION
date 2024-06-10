@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import {Bar, Line} from 'react-chartjs-2';
 import 'chart.js/auto';
 import dayjs from 'dayjs';
-import {useNavigate} from "react-router-dom";
-import {useStatisticsCustomersByDateAndStatusQuery} from "@/redux/features/manager/RevenueManagerApiSlice.ts";
+import { useNavigate } from "react-router-dom";
+import { useStatisticsOrderByDateAndStatusQuery } from "@/redux/features/manager/RevenueManagerApiSlice.ts";
+import { OrderStatus } from "@/utils/DTOs/extra/OrderStatus.ts";
+import {orderStatusToString} from "@/utils/DTOs/extra/orderStatusToString.ts";
 
-const StatisticsCustomers: React.FC = () => {
+const StatisticsOrders = () => {
     const currentYear = dayjs().format('YYYY');
     const currentMonth = dayjs().format('MM');
     const [selectedYear, setSelectedYear] = useState<string>(currentYear);
     const [selectedMonth, setSelectedMonth] = useState<string>(currentMonth);
+    const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(OrderStatus.PENDING); // Default to PENDING
     const navigate = useNavigate();
 
     const startDate = `${selectedYear}-${selectedMonth}-01`;
     const endDate = `${selectedYear}-${selectedMonth}-${dayjs(`${selectedYear}-${selectedMonth}`).daysInMonth()}`;
 
-    const { data, error, isLoading } = useStatisticsCustomersByDateAndStatusQuery({
+    const { data, error, isLoading } = useStatisticsOrderByDateAndStatusQuery({
         startDate: startDate,
-        endDate: endDate
+        endDate: endDate,
+        status: selectedStatus,
     });
 
     const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -28,18 +32,44 @@ const StatisticsCustomers: React.FC = () => {
         setSelectedMonth(e.target.value);
     };
 
+    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedStatus(e.target.value as OrderStatus); // Cast to OrderStatus
+    };
+
     const barData = {
-        labels: data?.statisticsCustomerDTOs.map((item) => dayjs(item.date).format('YYYY-MM-DD')),
+        labels: data?.statisticsOrderDTOs.map((item) => dayjs(item.date).format('DD-MM-YYYY')),
         datasets: [
             {
-                label: 'Tổng số khách hàng',
-                data: data?.statisticsCustomerDTOs.map((item) => item.totalCustomer),
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: 'Tổng số đơn hàng',
+                data: data?.statisticsOrderDTOs.map((item) => item.totalOrder),
+                backgroundColor: 'rgba(255, 0, 0, 0.6)', // Red color
+                borderColor: 'rgba(255, 0, 0, 1)',
+                borderWidth: 2,
+            },
+            {
+                label: 'Tổng sản phẩm',
+                data: data?.statisticsOrderDTOs.map((item) => item.totalProduct),
+                backgroundColor: 'rgba(0, 128, 0, 0.6)', // Green color
+                borderColor: 'rgba(0, 128, 0, 1)',
                 borderWidth: 2,
             },
         ],
     };
+
+    const lineData = {
+        labels: data?.statisticsOrderDTOs.map((item) => dayjs(item.date).format('DD-MM-YYYY')),
+        datasets: [
+            {
+                label: 'Tổng tiền',
+                data: data?.statisticsOrderDTOs.map((item) => item.totalMoney),
+                borderColor: 'rgba(255, 215, 0, 1)', // Yellow color
+                borderWidth: 2,
+                fill: false,
+            },
+        ],
+    };
+
+
 
     return (
         <div className="p-4">
@@ -51,13 +81,13 @@ const StatisticsCustomers: React.FC = () => {
                 </button>
 
                 <button
-                    onClick={() => navigate('/manager/customers')}
+                    onClick={() => navigate('/manager/orders')}
                     className="bg-green-400 text-white px-4 py-2 rounded hover:bg-green-500 mb-4">
-                    Danh sách khách hàng
+                    Danh sách đơn hàng
                 </button>
             </div>
-            <h1 className="text-2xl font-bold mb-4 text-center">Thống Kê Khách Hàng</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <h1 className="text-2xl font-bold mb-4 text-center">Thống Kê Đơn Hàng</h1>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label className="block mb-2 font-medium">
                         Chọn Năm:
@@ -82,10 +112,24 @@ const StatisticsCustomers: React.FC = () => {
                         onChange={handleMonthChange}
                         className="block w-full mt-1 p-2 border border-gray-300 rounded"
                     >
-                        {Array.from({length: 12}, (_, i) => i + 1).map((month) => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => {
                             const monthStr = month.toString().padStart(2, '0');
                             return <option key={monthStr} value={monthStr}>{monthStr}</option>;
                         })}
+                    </select>
+                </div>
+                <div>
+                    <label className="block mb-2 font-medium">
+                        Chọn Trạng Thái:
+                    </label>
+                    <select
+                        value={selectedStatus}
+                        onChange={handleStatusChange}
+                        className="block w-full mt-1 p-2 border border-gray-300 rounded"
+                    >
+                        {Object.values(OrderStatus).map((status) => (
+                            <option key={status} value={status}>{orderStatusToString[status]}</option>
+                        ))}
                     </select>
                 </div>
             </div>
@@ -97,23 +141,26 @@ const StatisticsCustomers: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <p>Số Ngày: {data.count}</p>
-                            <p>Tổng Số Khách Hàng: {data.totalCustomer}</p>
+                            <p>Tổng Số Đơn Hàng: {data.totalOrder}</p>
+                            <p>Tổng Tiền: {data.totalMoney.toLocaleString()} VNĐ</p>
                         </div>
                         <div>
-                            <p>Ngày Bắt Đầu: {dayjs(data.dateStart).format('YYYY-MM-DD')}</p>
-                            <p>Ngày Kết Thúc: {dayjs(data.dateEnd).format('YYYY-MM-DD')}</p>
+                            <p>Ngày Bắt Đầu: {dayjs(data.dateStart).format('DD-MM-YYYY')}</p>
+                            <p>Ngày Kết Thúc: {dayjs(data.dateEnd).format('DD-MM-YYYY')}</p>
                         </div>
                     </div>
-                    <br/>
+                    <br />
                     <h2 className="text-xl font-semibold mb-2 text-center">Biểu Đồ</h2>
+                    <div>
+                        <Bar data={barData}/>
+                        <br/>
+                        <Line data={lineData}/>
+                    </div>
 
-                    <Bar data={barData}/>
                 </div>
             )}
-
-
         </div>
     );
 };
 
-export default StatisticsCustomers;
+export default StatisticsOrders;
