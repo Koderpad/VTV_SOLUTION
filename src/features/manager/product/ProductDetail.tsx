@@ -3,7 +3,6 @@ import {useParams, useNavigate} from "react-router-dom";
 import {statusToString} from "@/utils/DTOs/extra/statusToString";
 import {fetchProductDetail} from "@/services/common/ProductService.ts";
 import {ProductDTO} from "@/utils/DTOs/manager/dto/ProductDTO.ts";
-import {ProductVariantDTO} from "@/utils/DTOs/manager/dto/ProductVariantDTO.ts";
 import {AttributeDTO} from "@/utils/DTOs/manager/dto/AttributeDTO.ts";
 import {toast, ToastContainer} from "react-toastify";
 import {getStatusColor} from "@/utils/DTOs/extra/getStatusColor.ts";

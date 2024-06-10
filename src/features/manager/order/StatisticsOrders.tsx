@@ -70,35 +70,6 @@ const StatisticsOrders = () => {
     };
 
 
-    const chartData = {
-        labels: data?.statisticsOrderDTOs.map((item) => dayjs(item.date).format('DD-MM-YYYY')),
-        datasets: [
-            {
-                label: 'Tổng số đơn hàng',
-                data: data?.statisticsOrderDTOs.map((item) => item.totalOrder),
-                backgroundColor: 'rgba(255, 0, 0, 0.6)', // Red color
-                borderColor: 'rgba(255, 0, 0, 1)',
-                borderWidth: 2,
-                type: 'bar', // Specify type as 'bar' for the first dataset
-            },
-            {
-                label: 'Tổng sản phẩm',
-                data: data?.statisticsOrderDTOs.map((item) => item.totalProduct),
-                backgroundColor: 'rgba(0, 128, 0, 0.6)', // Green color
-                borderColor: 'rgba(0, 128, 0, 1)',
-                borderWidth: 2,
-                type: 'bar', // Specify type as 'bar' for the second dataset
-            },
-            {
-                label: 'Tổng tiền',
-                data: data?.statisticsOrderDTOs.map((item) => item.totalMoney),
-                borderColor: 'rgba(255, 215, 0, 1)', // Yellow color
-                borderWidth: 2,
-                type: 'line', // Specify type as 'line' for the third dataset
-                fill: false, // Remove fill for the line chart
-            },
-        ],
-    };
 
     return (
         <div className="p-4">
