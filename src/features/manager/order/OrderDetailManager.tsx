@@ -206,6 +206,9 @@ const OrderDetailManager = () => {
                         <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên
                             sản phẩm
                         </th>
+                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên
+                            Hình ảnh
+                        </th>
                         <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Mã
                             biến thể
                         </th>
@@ -224,8 +227,11 @@ const OrderDetailManager = () => {
                     <tbody>
                     {orderResponse.orderDTO.orderItemDTOs.map((orderDetail, index) => (
                         <tr key={orderDetail.orderItemId}>
-                            <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1}</td>
+                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1}</td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderDetail.productVariantDTO.productName}</td>
+                            <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <img src={orderDetail.productVariantDTO.image} alt={orderDetail.productVariantDTO.productName} className="w-16 h-16 object-cover"/>
+                            </td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderDetail.productVariantDTO.sku}</td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderDetail.quantity}</td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderDetail.price.toLocaleString()}</td>
