@@ -57,7 +57,7 @@ const StatisticsFeeOrder = () => {
         datasets: [
             {
                 label: 'Tổng giảm giá cửa hàng (VNĐ)',
-                data: data?.statisticsFeeOrderDTOs.map((item) => - item.discountShopTotal),
+                data: data?.statisticsFeeOrderDTOs.map((item) => -item.discountShopTotal),
                 backgroundColor: 'rgba(50,222,24,0.6)', // Red color
                 borderColor: 'rgb(33,241,9)', // Red color
                 borderWidth: 2,
@@ -65,7 +65,7 @@ const StatisticsFeeOrder = () => {
             },
             {
                 label: 'Tổng giảm giá hệ thống (VNĐ)',
-                data: data?.statisticsFeeOrderDTOs.map((item) => - item.discountSystemTotal),
+                data: data?.statisticsFeeOrderDTOs.map((item) => -item.discountSystemTotal),
                 backgroundColor: 'rgba(10,41,239,0.6)', // Green color
                 borderColor: 'rgb(10,121,248)', // Green color
                 borderWidth: 2,
@@ -149,7 +149,9 @@ const StatisticsFeeOrder = () => {
                     <h2 className="text-xl font-semibold mb-2">Tóm Tắt</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <p>Số Ngày: {data.count}</p>
+                            <p>Số đơn hàng: {data.count}</p>
+                        </div>
+                        <div>
                             <p>Tổng Tiền Thanh Toán: {data.paymentTotal?.toLocaleString()} VNĐ</p>
                             <p>Tổng Tiền Cửa Hàng Nhận: {data.shopReceiveTotal?.toLocaleString()} VNĐ</p>
                         </div>
@@ -157,7 +159,14 @@ const StatisticsFeeOrder = () => {
                             <p>Tổng Phí Vận Chuyển: {data.feeShippingTotal?.toLocaleString()} VNĐ</p>
                             <p>Tổng Phí Hệ Thống: {data.feeSystemTotal?.toLocaleString()} VNĐ</p>
                         </div>
+                        <div>
+                            <p>Tổng Giảm Giá Hệ
+                                Thống: {data.discountSystemTotal < 0 ? (-data.discountSystemTotal)?.toLocaleString() : 0} VNĐ</p>
+                            <p>Tổng Giảm Giá Cửa
+                                Hàng: {data.discountShopTotal < 0 ? (-data.discountShopTotal)?.toLocaleString() : 0} VNĐ</p>
+                        </div>
                     </div>
+
                     <br/>
                     <h2 className="text-xl font-semibold mb-2 text-center">Biểu Đồ</h2>
                     <div className="mb-4">
