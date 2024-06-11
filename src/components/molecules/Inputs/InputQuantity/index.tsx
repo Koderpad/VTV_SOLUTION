@@ -3,11 +3,13 @@ import React from "react";
 interface InputQuantityProps {
   quantity: number;
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
+  minQuantity?: number;
 }
 
 export const InputQuantity: React.FC<InputQuantityProps> = ({
   quantity,
   setQuantity,
+  minQuantity = 1,
 }) => {
   const decreaseQuantity = () => {
     if (quantity > 1) {
@@ -55,6 +57,7 @@ export const InputQuantity: React.FC<InputQuantityProps> = ({
         aria-live="assertive"
         aria-valuenow={quantity}
         value={quantity}
+        min={minQuantity}
         onChange={handleQuantityChange}
         onKeyDown={handleKeyPress}
         className="w-12 text-center text-gray-700 font-semibold"
