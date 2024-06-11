@@ -44,6 +44,7 @@ import OrderManagerPage from "@/pages/manager/OrderManagerPage.tsx";
 import OrderDetailManager from "@/features/manager/order/OrderDetailManager.tsx";
 import StatisticsOrders from "@/features/manager/order/StatisticsOrders.tsx";
 import StatisticsProducts from "@/features/manager/product/StatisticsProducts.tsx";
+import StatisticsTransports from "@/features/manager/shipping/StatisticsTransports.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -228,6 +229,9 @@ function App() {
                                 path="transport-provider/update-fee-shipping/:transportProviderId"
                                 element={<UpdateTransportProviderFeeShipping/>}
                             />
+
+                            <Route path="transport-provider/revenue" element={<StatisticsTransports/>}/>
+
                         </Route>
                     </Route>
 
