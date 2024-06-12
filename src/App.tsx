@@ -46,12 +46,18 @@ import StatisticsOrders from "@/features/manager/order/StatisticsOrders.tsx";
 import StatisticsProducts from "@/features/manager/product/StatisticsProducts.tsx";
 import ShopDetailPage from "./pages/common/ShopDetailPage.tsx";
 import StatisticsTransports from "@/features/manager/shipping/StatisticsTransports.tsx";
+import { DashboardProvider } from "./pages/provider/DashboardProvider.tsx";
+import CustomerProviderPage from "./pages/provider/CustomerProviderPage.tsx";
+import { DashboardDeliver } from "./pages/deliver/DashboardDeliver.tsx";
+import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
+import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
+import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver_ManagerPage.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage")
+  () => import("./pages/common/ProductDetailPage"),
 );
 
 // ROLE: CUSTOMER
@@ -60,14 +66,14 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges")
+  () => import("./components/organisms/Account/PasswordChanges"),
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail")
+  () => import("./components/organisms/Account/OrderDetail"),
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage")
+  () => import("./pages/common/CategoryResultsPage"),
 );
 
 //ROLE: MANAGER
@@ -75,7 +81,7 @@ const CategoryResultsPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+    (state: RootState) => state.auth.isAuthenticated,
   );
   const {
     data: notifications,
@@ -229,6 +235,30 @@ function App() {
               <Route
                 path="transport-provider/revenue"
                 element={<StatisticsTransports />}
+              />
+            </Route>
+          </Route>
+
+          <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
+            <Route path="/provider" element={<DashboardProvider />}>
+              <Route path="customers" element={<CustomerProviderPage />} />
+            </Route>
+          </Route>
+
+          <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
+            <Route path="/deliver" element={<DashboardDeliver />}>
+              <Route path="customers" element={<CustomerDeliverPage />} />
+            </Route>
+          </Route>
+
+          <Route element={<RequireAuth allowedRoles={["DELIVER_MANAGER"]} />}>
+            <Route
+              path="/deliver_manager"
+              element={<DashboardDeliverManager />}
+            >
+              <Route
+                path="customers"
+                element={<CustomerDeliver_ManagerPage />}
               />
             </Route>
           </Route>
