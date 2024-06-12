@@ -114,6 +114,9 @@ const TransportProviderDetail = () => {
                             <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
                                 Chi phí (VNĐ)
                             </th>
+                            <th className="py-2 px-4 border-b border-gray-200 bg-gray-100  text-center text-sm font-semibold text-gray-700">
+                                Ngày ước tính
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -121,26 +124,37 @@ const TransportProviderDetail = () => {
                             <td className="py-2 px-4 border-b border-gray-200">Cùng xã</td>
                             <td className="py-2 px-4 border-b border-gray-200">
                                 {transportProvider?.feeShippingDTO.zeroArea.toLocaleString()}</td>
+                            <td className="py-2 px-4 border-b border-gray-200 text-center">
+                                {transportProvider?.feeShippingDTO.zeroEstimatedDeliveryTime}</td>
+
                         </tr>
                         <tr>
                             <td className="py-2 px-4 border-b border-gray-200">Cùng quận/huyện</td>
                             <td className="py-2 px-4 border-b border-gray-200">
                                 {transportProvider?.feeShippingDTO.oneArea.toLocaleString()}</td>
+                            <td className="py-2 px-4 border-b border-gray-200 text-center">
+                                {transportProvider?.feeShippingDTO.oneEstimatedDeliveryTime}</td>
                         </tr>
                         <tr>
                             <td className="py-2 px-4 border-b border-gray-200">Cùng tỉnh/thành phố</td>
                             <td className="py-2 px-4 border-b border-gray-200">
                                 {transportProvider?.feeShippingDTO.twoArea.toLocaleString()}</td>
+                            <td className="py-2 px-4 border-b border-gray-200 text-center">
+                                {transportProvider?.feeShippingDTO.twoEstimatedDeliveryTime}</td>
                         </tr>
                         <tr>
                             <td className="py-2 px-4 border-b border-gray-200">Cùng khu vực</td>
                             <td className="py-2 px-4 border-b border-gray-200">
                                 {transportProvider?.feeShippingDTO.threeArea.toLocaleString()}</td>
+                            <td className="py-2 px-4 border-b border-gray-200 text-center">
+                                {transportProvider?.feeShippingDTO.threeEstimatedDeliveryTime}</td>
                         </tr>
                         <tr>
                             <td className="py-2 px-4 border-b border-gray-200">Khác khu vực</td>
                             <td className="py-2 px-4 border-b border-gray-200">
                                 {transportProvider?.feeShippingDTO.fourArea.toLocaleString()}</td>
+                            <td className="py-2 px-4 border-b border-gray-200 text-center">
+                                {transportProvider?.feeShippingDTO.fourEstimatedDeliveryTime}</td>
                         </tr>
                         </tbody>
                     </table>

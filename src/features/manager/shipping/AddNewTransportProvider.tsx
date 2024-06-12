@@ -21,10 +21,15 @@ const AddNewTransportProvider = () => {
         usernameAdded: '',
         feeShippingRequest: {
             zeroArea: 0,
+            zeroEstimatedDeliveryTime: 0,
             oneArea: 0,
+            oneEstimatedDeliveryTime: 0,
             twoArea: 0,
+            twoEstimatedDeliveryTime: 0,
             threeArea: 0,
+            threeEstimatedDeliveryTime: 0,
             fourArea: 0,
+            fourEstimatedDeliveryTime: 0,
         },
         registerRequest: {
             username: '',
@@ -176,63 +181,135 @@ const AddNewTransportProvider = () => {
                     <div>
                         <h2 className="text-2xl font-bold text-black mb-4">Phí vận chuyển (VNĐ)</h2>
                         <div className="space-y-4">
-                            <div>
-                                <label className="block text-neutral-800 font-bold mb-1">Cùng xã/phường:</label>
-                                <input
-                                    type="number"
-                                    name="zeroArea"
-                                    value={form.feeShippingRequest.zeroArea}
-                                    onChange={handleFeeShippingChange}
-                                    className="w-full px-4 py-2 border rounded"
-                                    required
-                                />
+                            <div className="flex space-x-4 items-center">
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Cùng xã/phường:</label>
+                                    <input
+                                        type="number"
+                                        name="zeroArea"
+                                        value={form.feeShippingRequest.zeroArea}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Thời gian giao hàng cho
+                                        cùng xã/phường (ngày):</label>
+                                    <input
+                                        type="number"
+                                        name="zeroEstimatedDeliveryTime"
+                                        value={form.feeShippingRequest.zeroEstimatedDeliveryTime}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-neutral-800 font-bold mb-1">Cùng quận/huyện:</label>
-                                <input
-                                    type="number"
-                                    name="oneArea"
-                                    value={form.feeShippingRequest.oneArea}
-                                    onChange={handleFeeShippingChange}
-                                    className="w-full px-4 py-2 border rounded"
-                                    required
-                                />
+                            <div className="flex space-x-4 items-center">
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Cùng quận/huyện:</label>
+                                    <input
+                                        type="number"
+                                        name="oneArea"
+                                        value={form.feeShippingRequest.oneArea}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Thời gian giao hàng cho
+                                        cùng quận/huyện (ngày):</label>
+                                    <input
+                                        type="number"
+                                        name="oneEstimatedDeliveryTime"
+                                        value={form.feeShippingRequest.oneEstimatedDeliveryTime}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-neutral-800 font-bold mb-1">Cùng tỉnh/thành phố:</label>
-                                <input
-                                    type="number"
-                                    name="twoArea"
-                                    value={form.feeShippingRequest.twoArea}
-                                    onChange={handleFeeShippingChange}
-                                    className="w-full px-4 py-2 border rounded"
-                                    required
-                                />
+                            <div className="flex space-x-4 items-center">
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Cùng tỉnh/thành
+                                        phố:</label>
+                                    <input
+                                        type="number"
+                                        name="twoArea"
+                                        value={form.feeShippingRequest.twoArea}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Thời gian giao hàng cho
+                                        cùng tỉnh/thành phố (ngày):</label>
+                                    <input
+                                        type="number"
+                                        name="twoEstimatedDeliveryTime"
+                                        value={form.feeShippingRequest.twoEstimatedDeliveryTime}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-neutral-800 font-bold mb-1">Cùng khu vực:</label>
-                                <input
-                                    type="number"
-                                    name="threeArea"
-                                    value={form.feeShippingRequest.threeArea}
-                                    onChange={handleFeeShippingChange}
-                                    className="w-full px-4 py-2 border rounded"
-                                    required
-                                />
+                            <div className="flex space-x-4 items-center">
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Cùng khu vực:</label>
+                                    <input
+                                        type="number"
+                                        name="threeArea"
+                                        value={form.feeShippingRequest.threeArea}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Thời gian giao hàng cho
+                                        cùng khu vực (ngày):</label>
+                                    <input
+                                        type="number"
+                                        name="threeEstimatedDeliveryTime"
+                                        value={form.feeShippingRequest.threeEstimatedDeliveryTime}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-neutral-800 font-bold mb-1">Khác khu vực:</label>
-                                <input
-                                    type="number"
-                                    name="fourArea"
-                                    value={form.feeShippingRequest.fourArea}
-                                    onChange={handleFeeShippingChange}
-                                    className="w-full px-4 py-2 border rounded"
-                                    required
-                                />
+                            <div className="flex space-x-4 items-center">
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Khác khu vực:</label>
+                                    <input
+                                        type="number"
+                                        name="fourArea"
+                                        value={form.feeShippingRequest.fourArea}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="block text-neutral-800 font-bold mb-1">Thời gian giao hàng cho
+                                        khác khu vực (ngày):</label>
+                                    <input
+                                        type="number"
+                                        name="fourEstimatedDeliveryTime"
+                                        value={form.feeShippingRequest.fourEstimatedDeliveryTime}
+                                        onChange={handleFeeShippingChange}
+                                        className="w-full px-4 py-2 border rounded"
+                                        required
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
                 <div className="mt-8">
                     <h2 className="text-2xl font-bold text-black mb-4">Thông tin đăng ký</h2>
