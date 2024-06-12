@@ -3,6 +3,8 @@ import {StatisticsCustomersResponse} from "@/utils/DTOs/manager/response/Statist
 import {StatisticsOrdersResponse} from "@/utils/DTOs/manager/response/StatisticsOrdersResponse.ts";
 import {OrderStatus} from "@/utils/DTOs/extra/OrderStatus.ts";
 import {StatisticsProductsResponse} from "@/utils/DTOs/manager/response/StatisticsProductsResponse.ts";
+import {StatisticsTransportsResponse} from "@/utils/DTOs/shipping/response/StatisticsTransportsResponse.ts";
+import {StatisticsFeeOrderResponse} from "@/utils/DTOs/manager/response/StatisticsFeeOrderResponse.ts";
 
 export const RevenueManagerApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -25,6 +27,21 @@ export const RevenueManagerApiSlice = apiSlice.injectEndpoints({
             query: ({limit, startDate, endDate}) =>
                 `/manager/revenue/statistics/products/limit/${limit}?startDate=${startDate}&endDate=${endDate}`,
         }),
+
+
+        statisticsTransportsByDate: builder.query<
+            StatisticsTransportsResponse, { shippingMethod: string; startDate: string; endDate: string }>({
+            query: ({shippingMethod, startDate, endDate}) =>
+                `/manager/revenue/statistics/transports/method/${shippingMethod}?startDate=${startDate}&endDate=${endDate}`,
+        }),
+
+
+        statisticsFeeOrderByDate: builder.query<
+            StatisticsFeeOrderResponse, { startDate: string; endDate: string }>({
+            query: ({startDate, endDate}) =>
+                `/manager/revenue/statistics/fee-order?startDate=${startDate}&endDate=${endDate}`,
+        }),
+
     }),
 });
 
@@ -32,4 +49,6 @@ export const {
     useStatisticsCustomersByDateAndStatusQuery,
     useStatisticsOrderByDateAndStatusQuery,
     useGetTopProductByLimitAndDateQuery,
+    useStatisticsTransportsByDateQuery,
+    useStatisticsFeeOrderByDateQuery,
 } = RevenueManagerApiSlice;

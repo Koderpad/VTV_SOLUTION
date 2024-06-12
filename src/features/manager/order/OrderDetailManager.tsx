@@ -1,4 +1,4 @@
-import  {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import {useGetOrderDetailByOrderIdQuery} from "@/redux/features/manager/OrderManagerApiSlice.ts";
 import {orderStatusToString} from "@/utils/DTOs/extra/orderStatusToString.ts";
@@ -47,7 +47,7 @@ const OrderDetailManager = () => {
             <h1 className="text-4xl font-bold text-black mb-8 text-center">Chi tiết đơn hàng</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Order Information Section */}
+
                 <div className="bg-white rounded-md shadow-md p-6">
                     <h2 className="text-2xl font-bold text-black mb-4 text-center">Thông tin đơn hàng</h2>
                     <dl className="space-y-4">
@@ -112,7 +112,7 @@ const OrderDetailManager = () => {
                             <dt className="text-neutral-800  text-xl font-bold">Cửa hàng:</dt>
                             <dd className="mt-1 text-black">{orderResponse.orderDTO.shopDTO.name}</dd>
                         </div>
-                        {/* Render LoyaltyPointHistoryDTO if available */}
+
                         {orderResponse.orderDTO.loyaltyPointHistoryDTO && (
                             <div>
                                 <dt className="text-neutral-800  text-xl font-bold">Lịch sử điểm thưởng:</dt>
@@ -141,7 +141,7 @@ const OrderDetailManager = () => {
                 <div className="bg-white rounded-md shadow-md p-6">
                     <h2 className="text-2xl font-bold text-black mb-4 text-center">Thông tin vận chuyển</h2>
                     <dl className="space-y-4">
-                    <div>
+                        <div>
                             <dt className="text-neutral-800 text-xl font-bold">Phương thức vận chuyển:</dt>
                             <dd className="mt-1 text-black">{orderResponse.transportDTO.shippingMethod}</dd>
                         </div>
@@ -164,7 +164,8 @@ const OrderDetailManager = () => {
                                             <span
                                                 className="font-bold">{transportHandle.username}</span> - {transportStatusToString()[transportHandle.transportStatus]}
                                             <br/>
-                                            <span className={`text-${getTransportStatusColor(transportHandle.transportStatus)}-500`}>{transportHandle.messageStatus}</span>
+                                            <span
+                                                className={`text-${getTransportStatusColor(transportHandle.transportStatus)}-500`}>{transportHandle.messageStatus}</span>
                                             <br/>
                                             <span
                                                 className="text-gray-500">Ngày: {dayjs(transportHandle.createAt).format('DD-MM-YYYY')}</span>
@@ -203,34 +204,42 @@ const OrderDetailManager = () => {
                     <thead>
                     <tr>
                         <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">STT</th>
-                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên
-                            sản phẩm
-                        </th>
-                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên
-                            Hình ảnh
-                        </th>
-                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Mã
-                            biến thể
+
+                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Tên sản phẩm
                         </th>
 
-                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Số
-                            lượng
+                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">
+
+                            Hình ảnh
                         </th>
-                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Giá
-                            gốc (VNĐ)
+
+                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Mã biến thể
                         </th>
-                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Giá
-                            khuyến mãi (VNĐ)
+
+                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Số lượng
+                        </th>
+
+                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Giá
+                        </th>
+
+                        <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Tổng giá
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     {orderResponse.orderDTO.orderItemDTOs.map((orderDetail, index) => (
                         <tr key={orderDetail.orderItemId}>
-                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1}</td>
+                            <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1}</td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderDetail.productVariantDTO.productName}</td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <img src={orderDetail.productVariantDTO.image} alt={orderDetail.productVariantDTO.productName} className="w-16 h-16 object-cover"/>
+                                <img src={orderDetail.productVariantDTO.image}
+                                     alt={orderDetail.productVariantDTO.productName}
+                                     className="w-16 h-16 object-cover"/>
                             </td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderDetail.productVariantDTO.sku}</td>
                             <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderDetail.quantity}</td>
@@ -242,7 +251,6 @@ const OrderDetailManager = () => {
                 </table>
             </div>
 
-            {/* Render VoucherOrderDTO if available */}
             {orderResponse.orderDTO.voucherOrderDTOs.length > 0 && (
                 <div className="bg-white rounded-md shadow-md p-6 mt-4">
                     <h2 className="text-2xl font-bold text-black mb-4 text-center">Mã giảm giá</h2>

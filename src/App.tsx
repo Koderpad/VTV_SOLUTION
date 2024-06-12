@@ -45,12 +45,13 @@ import OrderDetailManager from "@/features/manager/order/OrderDetailManager.tsx"
 import StatisticsOrders from "@/features/manager/order/StatisticsOrders.tsx";
 import StatisticsProducts from "@/features/manager/product/StatisticsProducts.tsx";
 import ShopDetailPage from "./pages/common/ShopDetailPage.tsx";
+import StatisticsTransports from "@/features/manager/shipping/StatisticsTransports.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage"),
+  () => import("./pages/common/ProductDetailPage")
 );
 
 // ROLE: CUSTOMER
@@ -59,14 +60,14 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges"),
+  () => import("./components/organisms/Account/PasswordChanges")
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail"),
+  () => import("./components/organisms/Account/OrderDetail")
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage"),
+  () => import("./pages/common/CategoryResultsPage")
 );
 
 //ROLE: MANAGER
@@ -74,7 +75,7 @@ const CategoryResultsPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
   const {
     data: notifications,
@@ -225,12 +226,57 @@ function App() {
                 path="transport-provider/update-fee-shipping/:transportProviderId"
                 element={<UpdateTransportProviderFeeShipping />}
               />
+              <Route
+                path="transport-provider/revenue"
+                element={<StatisticsTransports />}
+              />
             </Route>
           </Route>
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
 
           {/* private routes */}
+          {/* <Route path="address" element={<Address />} /> */}
+          {/* <Route path="products/:id" element={<ProductsByCategory />} />
+                            <Route path="orders" element={<OrderManagerPage/>}/>
+                            <Route path="order/detail/:orderId" element={<OrderDetailManager/>}/>
+                            <Route path="order/revenue" element={<StatisticsOrders/>}/>
+
+
+                            <Route path="managers" element={<ManagerPage/>}/>
+                            <Route path="manager_id/:managerId" element={<ManagerDetail/>}/>
+                            <Route path="add_manager" element={<AddNewManager/>}/>
+
+
+                            <Route
+                                path="transport-providers"
+                                element={<TransportProviderManagerPage/>}
+                            />
+                            <Route
+                                path="transport-provider/add"
+                                element={<AddNewTransportProvider/>}
+                            />
+                            <Route
+                                path="transport-provider/detail/:transportProviderId"
+                                element={<TransportProviderDetail/>}
+                            />
+                            <Route
+                                path="transport-provider/update/:transportProviderId"
+                                element={<UpdateTransportProviderProvinces/>}
+                            />
+                            <Route
+                                path="transport-provider/update-fee-shipping/:transportProviderId"
+                                element={<UpdateTransportProviderFeeShipping/>}
+                            />
+
+                            <Route path="transport-provider/revenue" element={<StatisticsTransports/>}/>
+
+                        </Route>
+                    </Route>
+
+                    <Route element={<RequireAuth allowedRoles={["VENDOR"]}/>}></Route>
+
+                    {/* private routes */}
           <Route element={<RequireAuth allowedRoles={["CUSTOMER"]} />}>
             {/* <Route path="address" element={<Address />} /> */}
             {/* <Route path="products/:id" element={<ProductsByCategory />} />

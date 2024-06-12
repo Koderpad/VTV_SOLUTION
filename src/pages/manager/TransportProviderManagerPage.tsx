@@ -26,6 +26,12 @@ const TransportProviderManagerPage = () => {
                             </button>
 
                             <button
+                                className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-lime-600 mb-4"
+                                onClick={() => navigate('/manager/transport-provider/revenue')}>
+                                Thống kê vận chuyển
+                            </button>
+
+                            <button
                                 onClick={() => navigate('/manager/transport-provider/add')}
                                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4">
                                 Thêm nhà vận chuyển
