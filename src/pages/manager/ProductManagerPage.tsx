@@ -20,7 +20,7 @@ const ProductManagerPage = () => {
             if (searchTerm) {
                 response = await getProductPageBySearchAndSort(page, 10, searchTerm, sort);
             } else {
-                response = await getFilterProductPage(page, 10, filter);
+                response = await getFilterProductPage(page, 10, sort);
             }
             setData(response);
         } catch (err) {
