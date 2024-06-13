@@ -11,7 +11,7 @@ const inputStyles = cva([
   "transition-all",
   "duration-100",
   "outline-none",
-  "focus:outline-primary-500 ",
+  "focus:outline-blue-500 ",
   "focus:border-transparent",
   "placeholder:text-gray-400",
   "placeholder:text-sm",
@@ -31,5 +31,5 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {...props}
       />
     );
-  }
+  },
 );

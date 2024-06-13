@@ -23,25 +23,25 @@ const buttonStyles = cva(
         lg: "px-6 py-3 text-lg",
       },
       colorscheme: {
-        primary: "text-white bg-primary-500",
+        primary: "text-white bg-blue-500",
       },
     },
     compoundVariants: [
       {
         variant: "solid",
         colorscheme: "primary",
-        className: "bg-primary-500 hover:bg-primary-600",
+        className: "bg-blue-500 hover:bg-blue-600",
       },
       {
         variant: "outline",
         colorscheme: "primary",
         className:
-          "text-primary-600 border-primary-500 bg-transparent hover:bg-primary-100",
+          "text-blue-600 border-blue-500 bg-transparent hover:bg-blue-100",
       },
       {
         variant: "ghost",
         colorscheme: "primary",
-        className: "text-primary-600 bg-transparent hover:bg-primary-100",
+        className: "text-blue-600 bg-transparent hover:bg-blue-100",
       },
     ],
     defaultVariants: {
@@ -49,7 +49,7 @@ const buttonStyles = cva(
       size: "md",
       colorscheme: "primary",
     },
-  }
+  },
 );
 
 export type ButtonProps = ComponentProps<"button"> &
@@ -77,5 +77,5 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       />
     );
-  }
+  },
 );
