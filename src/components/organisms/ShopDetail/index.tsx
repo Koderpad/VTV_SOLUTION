@@ -1,6 +1,6 @@
 import {
   useGetCategoryListByShopIdQuery,
-  useGetShopByIdQuery,
+  useGetShopByUsernameQuery,
 } from "@/redux/features/common/shop/shopApiSlice";
 import { CategoryShopDTO } from "@/utils/DTOs/common/ShopDetail/Response/ListCategoryShopResponse";
 import { ShopDTO } from "@/utils/DTOs/common/ShopDetail/Response/ShopDetailResponse";
@@ -8,11 +8,9 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 
 const ShopDetail: React.FC = () => {
-  const { shopId, username } = useParams<{
-    shopId: string;
+  const { username } = useParams<{
     username: string;
   }>();
-  console.log("shopId: ", shopId);
   console.log("username: ", username);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({
@@ -21,23 +19,22 @@ const ShopDetail: React.FC = () => {
   });
   const [sortOption, setSortOption] = useState<string>("default");
 
-  const { data: shopData, isLoading: isShopLoading } = useGetShopByIdQuery(
-    Number(shopId)
-  );
+  const { data: shopData, isLoading: isShopLoading } =
+    useGetShopByUsernameQuery(String(username));
   const { data: categoryData, isLoading: isCategoryLoading } =
-    useGetCategoryListByShopIdQuery(Number(shopId));
+    useGetCategoryListByShopIdQuery(Number(shopData?.shopDTO?.shopId));
   const shop: ShopDTO | undefined = shopData?.shopDTO;
   const categories: CategoryShopDTO[] = categoryData?.categoryShopDTOs || [];
 
   const filteredProducts = categories
     .flatMap((category) => category.productDTOs)
     .filter((product) =>
-      selectedCategory ? product?.categoryId === selectedCategory : true
+      selectedCategory ? product?.categoryId === selectedCategory : true,
     )
     .filter(
       (product) =>
         product?.minPrice >= priceRange.min &&
-        product.maxPrice <= priceRange.max
+        product.maxPrice <= priceRange.max,
     );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
