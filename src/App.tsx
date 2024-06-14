@@ -53,6 +53,8 @@ import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
 import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
 import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver_ManagerPage.tsx";
 import Unauthorized from "@/pages/Unauthorized.tsx";
+import ProviderPage from "@/pages/provider/ProviderPage.tsx";
+import UpdateInformationTransportProvider from "@/features/shipping/provider/UpdateInformationTransportProvider.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -242,11 +244,29 @@ function App() {
             </Route>
           </Route>
 
+
+
+
+
+
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
               <Route path="customers" element={<CustomerProviderPage />} />
+              <Route path="detail" element={<ProviderPage />} />
+              <Route path="update/information" element={<UpdateInformationTransportProvider />} />
+
+
             </Route>
           </Route>
+
+
+
+
+
+
+
+
+
 
           <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
             <Route path="/deliver" element={<DashboardDeliver />}>

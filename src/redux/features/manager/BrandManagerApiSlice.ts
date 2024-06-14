@@ -1,5 +1,4 @@
 import {apiSlice} from "@/redux/api.ts";
-import {CategoryResponse} from "@/utils/DTOs/manager/response/CategoryResponse.ts";
 import {BrandResponse} from "@/utils/DTOs/manager/response/BrandResponse.ts";
 
 export const BrandManagerApiSlice = apiSlice.injectEndpoints({
