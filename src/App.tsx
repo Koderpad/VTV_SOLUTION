@@ -150,7 +150,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
 
           {/* shop detail */}
-          <Route path="/shop/:username/:shopId" element={<ShopDetailPage />} />
+          <Route path="/:username.shop" element={<ShopDetailPage />} />
 
           <Route element={<RequireAuth allowedRoles={["MANAGER"]} />}>
             <Route path="/manager" element={<DashboardManager />}>

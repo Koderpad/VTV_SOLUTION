@@ -11,6 +11,12 @@ export const shopApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getShopByUsername: builder.query<ShopDetailResponse, string>({
+      query: (username) => ({
+        url: `/shop/${username}`,
+        method: "GET",
+      }),
+    }),
     getCategoryListByShopId: builder.query<ListCategoryShopResponse, number>({
       query: (shopId) => ({
         url: `/category-shop/get-list/shop-id/${shopId}`,
@@ -20,5 +26,8 @@ export const shopApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetShopByIdQuery, useGetCategoryListByShopIdQuery } =
-  shopApiSlice;
+export const {
+  useGetShopByIdQuery,
+  useGetShopByUsernameQuery,
+  useGetCategoryListByShopIdQuery,
+} = shopApiSlice;
