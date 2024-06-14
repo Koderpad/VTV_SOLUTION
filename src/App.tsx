@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
 import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
@@ -52,6 +52,7 @@ import { DashboardDeliver } from "./pages/deliver/DashboardDeliver.tsx";
 import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
 import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
 import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver_ManagerPage.tsx";
+import Unauthorized from "@/pages/Unauthorized.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -129,6 +130,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/home/" element={<Home />} />
           <Route path="/" element={<Home />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
           <Route path="/test" element={<CategoryList />} />
 
           {/* category results */}
