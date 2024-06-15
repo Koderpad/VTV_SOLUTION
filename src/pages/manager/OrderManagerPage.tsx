@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
 import {useGetOrderPageByStatusAndDateQuery} from "@/redux/features/manager/OrderManagerApiSlice.ts";
 import {OrderStatus} from "@/utils/DTOs/extra/OrderStatus.ts";
-import {orderStatusToString} from "@/utils/DTOs/extra/orderStatusToString.ts";
+import {orderStatusToString} from "@/utils/DTOs/extra/convertToString/orderStatusToString.ts";
 import dayjs from "dayjs";
 import StatisticsOrderProps from "@/features/manager/order/StatisticsOrderProps.tsx";
 

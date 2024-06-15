@@ -55,6 +55,10 @@ import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver
 import Unauthorized from "@/pages/Unauthorized.tsx";
 import ProviderPage from "@/pages/provider/ProviderPage.tsx";
 import UpdateInformationTransportProvider from "@/features/shipping/provider/UpdateInformationTransportProvider.tsx";
+import ProviderEmployeePage from "@/pages/provider/ProviderEmployeePage.tsx";
+import DeliverDetail from "@/features/shipping/deliver-manager/DeliverDetail.tsx";
+import UpdateDeliverWork from "@/features/shipping/deliver-manager/UpdateDeliverWork.tsx";
+import AddNewDeliver from "@/features/shipping/deliver-manager/AddNewDeliver.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -254,6 +258,10 @@ function App() {
               <Route path="customers" element={<CustomerProviderPage />} />
               <Route path="detail" element={<ProviderPage />} />
               <Route path="update/information" element={<UpdateInformationTransportProvider />} />
+              <Route path="employees" element={<ProviderEmployeePage />} />
+              <Route path="employee/detail/:deliverId" element={<DeliverDetail />} />
+              <Route path="employee/update-work/:deliverId" element={<UpdateDeliverWork />} />
+              <Route path="employee/add" element={<AddNewDeliver />} />
 
 
             </Route>

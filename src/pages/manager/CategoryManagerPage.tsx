@@ -4,7 +4,7 @@ import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import {Status} from "@/utils/DTOs/extra/Status.ts";
 import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 

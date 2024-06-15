@@ -9,7 +9,7 @@ import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {faEye, faAdd} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
-import {roleToString} from "@/utils/DTOs/extra/RoleToString.ts";
+import {roleToString} from "@/utils/DTOs/extra/convertToString/roleToString.ts";
 import AddInManager from "@/features/manager/manager/AddInManager";
 
 const AddNewManager = () => {

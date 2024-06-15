@@ -6,7 +6,7 @@ import {
 } from '@/redux/features/manager/TransportProviderManagerApiSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { statusToString } from "@/utils/DTOs/extra/statusToString.ts";
+import { statusToString } from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import { TransportProviderDTO } from "@/utils/DTOs/shipping/dto/TransportProviderDTO.ts";
 
 const UpdateTransportProviderFeeShipping = () => {

@@ -24,6 +24,10 @@ export const DashboardProvider = () => {
       setSelectedTitle("Home");
     }
 
+    if (currentPath === "employees") {
+      setSelectedTitle("ProviderEmployee");
+    }
+
     if (currentPath === "customers") {
       setSelectedTitle("ProviderCustomer");
     }
@@ -106,6 +110,36 @@ export const DashboardProvider = () => {
                 Thông tin
               </Link>
             </li>
+
+            <li>
+              <Link
+                  to="employees"
+                  className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                      selectedTitle === "ProviderEmployee"
+                          ? "bg-gray-100 hover:bg-green-100"
+                          : "hover:bg-green-100"
+                  }`}
+                  onClick={() => handleTitleClick("ProviderEmployee")}
+              >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="mr-3 h-6 w-6"
+                >
+                  <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 6.75a4.5 4.5 0 01-9 0 4.5 4.5 0 119 0zM15 12.75a6 6 0 00-12 0v1.5c0 2.071 1.679 3.75 3.75 3.75h4.5c2.071 0 3.75-1.679 3.75-3.75v-1.5z"
+                  />
+                </svg>
+                Quản lý nhân viên quản lý
+              </Link>
+            </li>
+
+
 
             <li>
               <Link

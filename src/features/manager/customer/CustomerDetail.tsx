@@ -1,7 +1,7 @@
 import {useParams, useNavigate} from 'react-router-dom'; // Import useNavigate
 import {useGetCustomerDetailByCustomerIdQuery} from '@/redux/features/manager/CustomerManagerApiSlice';
-import {roleToString} from "@/utils/DTOs/extra/RoleToString.ts";
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {roleToString} from "@/utils/DTOs/extra/convertToString/roleToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import {toast, ToastContainer} from "react-toastify";
 
 const CustomerDetail = () => {

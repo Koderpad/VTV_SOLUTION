@@ -1,6 +1,6 @@
 import {useParams, useNavigate} from 'react-router-dom';
 import {useGetTransportProviderDetailQuery} from '@/redux/features/manager/TransportProviderManagerApiSlice';
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import {ToastContainer, toast} from "react-toastify";
 import React, {useEffect, useState} from "react";
 import {TransportProviderDTO} from "@/utils/DTOs/shipping/dto/TransportProviderDTO.ts";

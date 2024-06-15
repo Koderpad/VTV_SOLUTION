@@ -7,7 +7,7 @@ import {
 } from '@/services/manager/CategoryManagerService';
 import {CategoryDTO} from '@/utils/DTOs/manager/dto/CategoryDTO';
 import {toast, ToastContainer} from 'react-toastify';
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 

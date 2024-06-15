@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { useNavigate } from "react-router-dom";
 import { useStatisticsOrderByDateAndStatusQuery } from "@/redux/features/manager/RevenueManagerApiSlice.ts";
 import { OrderStatus } from "@/utils/DTOs/extra/OrderStatus.ts";
-import {orderStatusToString} from "@/utils/DTOs/extra/orderStatusToString.ts";
+import {orderStatusToString} from "@/utils/DTOs/extra/convertToString/orderStatusToString.ts";
 
 const StatisticsOrders = () => {
     const currentYear = dayjs().format('YYYY');

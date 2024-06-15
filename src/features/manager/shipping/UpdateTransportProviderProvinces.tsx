@@ -9,7 +9,7 @@ import {ProvinceDTO} from '@/utils/DTOs/location/dto/ProvinceDTO';
 import {ToastContainer, toast} from "react-toastify";
 import {TransportProviderDTO} from "@/utils/DTOs/shipping/dto/TransportProviderDTO.ts";
 import {fetchAllProvince} from "@/services/location/ProvinceService.ts";
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 
 const UpdateTransportProviderProvinces = () => {
     const {transportProviderId} = useParams<{ transportProviderId: string }>();

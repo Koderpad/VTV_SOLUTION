@@ -1,11 +1,11 @@
 import {useEffect, useState} from "react";
 import {useParams, useNavigate} from "react-router-dom";
-import {statusToString} from "@/utils/DTOs/extra/statusToString";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import {fetchProductDetail} from "@/services/common/ProductService.ts";
 import {ProductDTO} from "@/utils/DTOs/manager/dto/ProductDTO.ts";
 import {AttributeDTO} from "@/utils/DTOs/manager/dto/AttributeDTO.ts";
 import {toast, ToastContainer} from "react-toastify";
-import {getStatusColor} from "@/utils/DTOs/extra/getStatusColor.ts";
+import {getStatusColor} from "@/utils/DTOs/extra/color/getStatusColor.ts";
 import LockProduct from "@/features/manager/product/LockProduct.tsx";
 import UnlockProduct from "@/features/manager/product/UnlockProduct.tsx";
 
