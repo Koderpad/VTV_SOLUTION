@@ -7,6 +7,7 @@ export interface ProductResponse extends ResponseAbstract {
     categoryParentId: number;
     categoryParentName: string;
     shopId: number;
+    usernameShop: string;
     shopName: string;
     shopAvatar: string;
     countOrder: number;

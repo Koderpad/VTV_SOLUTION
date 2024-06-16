@@ -1,0 +1,8 @@
+export enum TypeWork {
+    SHIPPER = 'SHIPPER',
+    MANAGER = 'MANAGER',
+    PROVIDER = 'PROVIDER',
+    WAREHOUSE = 'WAREHOUSE',
+    TRANSIT = 'TRANSIT',
+    PICKUP = 'PICKUP',
+}

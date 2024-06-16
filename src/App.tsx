@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
 import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
@@ -52,6 +52,16 @@ import { DashboardDeliver } from "./pages/deliver/DashboardDeliver.tsx";
 import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
 import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
 import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver_ManagerPage.tsx";
+import Unauthorized from "@/pages/Unauthorized.tsx";
+import ProviderInformationPage from "@/pages/provider/ProviderInformationPage.tsx";
+import UpdateInformationTransportProvider from "@/features/shipping/provider/UpdateInformationTransportProvider.tsx";
+import ProviderEmployeePage from "@/pages/provider/ProviderEmployeePage.tsx";
+import DeliverDetail from "@/features/shipping/deliver-manager/DeliverDetail.tsx";
+import UpdateDeliverWork from "@/features/shipping/deliver-manager/UpdateDeliverWork.tsx";
+import AddNewDeliver from "@/features/shipping/deliver-manager/AddNewDeliver.tsx";
+import StatisticsTransportsPage from "@/pages/provider/StatisticsTransportsPage.tsx";
+import ManagerTransportPage from "@/pages/provider/ManagerTransportPage.tsx";
+import TransportDetail from "@/features/shipping/transport/TransportDetail.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -129,6 +139,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/home/" element={<Home />} />
           <Route path="/" element={<Home />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
           <Route path="/test" element={<CategoryList />} />
 
           {/* category results */}
@@ -239,11 +251,37 @@ function App() {
             </Route>
           </Route>
 
+
+
+
+
+
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
               <Route path="customers" element={<CustomerProviderPage />} />
+              <Route path="detail" element={<ProviderInformationPage />} />
+              <Route path="update/information" element={<UpdateInformationTransportProvider />} />
+              <Route path="employees" element={<ProviderEmployeePage />} />
+              <Route path="employee/detail/:deliverId" element={<DeliverDetail />} />
+              <Route path="employee/update-work/:deliverId" element={<UpdateDeliverWork />} />
+              <Route path="employee/add" element={<AddNewDeliver />} />
+              <Route path="statistics/revenue" element={<StatisticsTransportsPage />} />
+              <Route path="transports" element={<ManagerTransportPage />} />
+              <Route path="transport/detail/:transportId" element={<TransportDetail />} />
+
+
+
             </Route>
           </Route>
+
+
+
+
+
+
+
+
+
 
           <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
             <Route path="/deliver" element={<DashboardDeliver />}>

@@ -9,8 +9,8 @@ import {
     useFindManagerPageByUsernameQuery,
     useGetManagerPageByStatusQuery
 } from "@/redux/features/manager/ManagerApiSlice.ts";
-import {roleToString} from "@/utils/DTOs/extra/RoleToString.ts";
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {roleToString} from "@/utils/DTOs/extra/convertToString/roleToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import DeleteManager from "@/features/manager/manager/DeleteManager.tsx";
 import AddInManager from "@/features/manager/manager/AddInManager.tsx";
 import {faRemove} from "@fortawesome/free-solid-svg-icons/faRemove";

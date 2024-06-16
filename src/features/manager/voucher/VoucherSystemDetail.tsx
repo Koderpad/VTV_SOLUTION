@@ -5,8 +5,8 @@ import {toast, ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import {fetchVoucherByVoucherId} from "@/services/manager/VoucherSystemManagerService.ts";
 import {VoucherType} from "@/utils/DTOs/extra/VoucherType.ts";
-import {voucherTypeToString} from "@/utils/DTOs/extra/voucherTypeToString.ts";
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {voucherTypeToString} from "@/utils/DTOs/extra/convertToString/voucherTypeToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 
 
 const VoucherSystemDetail = () => {

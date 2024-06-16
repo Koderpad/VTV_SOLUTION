@@ -1,11 +1,11 @@
 import {useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import {useGetOrderDetailByOrderIdQuery} from "@/redux/features/manager/OrderManagerApiSlice.ts";
-import {orderStatusToString} from "@/utils/DTOs/extra/orderStatusToString.ts";
+import {orderStatusToString} from "@/utils/DTOs/extra/convertToString/orderStatusToString.ts";
 import dayjs from "dayjs";
-import {transportStatusToString} from "@/utils/DTOs/extra/transportStatusToString.ts";
+import {transportStatusToString} from "@/utils/DTOs/extra/convertToString/transportStatusToString.ts";
 import {OrderResponse} from "@/utils/DTOs/customer/response/OrderResponse.ts";
-import {getTransportStatusColor} from "@/utils/DTOs/extra/getTransportStatusColor.ts";
+import {getTransportStatusColor} from "@/utils/DTOs/extra/color/getTransportStatusColor.ts";
 
 const OrderDetailManager = () => {
     const {orderId} = useParams<{ orderId: string }>();

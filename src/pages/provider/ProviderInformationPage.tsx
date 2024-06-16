@@ -1,20 +1,14 @@
-import {useParams, useNavigate} from 'react-router-dom';
-import {useGetTransportProviderDetailQuery} from '@/redux/features/manager/TransportProviderManagerApiSlice';
-import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
-import {ToastContainer, toast} from "react-toastify";
-import React, {useEffect, useState} from "react";
-import {TransportProviderDTO} from "@/utils/DTOs/shipping/dto/TransportProviderDTO.ts";
+import { useParams, useNavigate } from 'react-router-dom';
+import { statusToString } from "@/utils/DTOs/extra/convertToString/statusToString.ts";
+import { ToastContainer, toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { TransportProviderDTO } from "@/utils/DTOs/shipping/dto/TransportProviderDTO.ts";
+import {useGetTransportProviderByUsernameQuery} from "@/redux/features/shipping/TransportProviderApiSlice.ts";
 
-const TransportProviderDetail = () => {
-    const {transportProviderId} = useParams<{ transportProviderId: string }>();
+const ProviderInformationPage = () => {
     const navigate = useNavigate();
     const [transportProvider, setTransportProvider] = useState<TransportProviderDTO>();
-    const {
-        data,
-        error: queryError,
-        isLoading: queryLoading,
-        refetch
-    } = useGetTransportProviderDetailQuery(Number(transportProviderId));
+    const { data, error, isLoading, refetch } = useGetTransportProviderByUsernameQuery();
 
     useEffect(() => {
         try {
@@ -24,15 +18,15 @@ const TransportProviderDetail = () => {
         } catch (e) {
             toast.error("Đã xảy ra lỗi khi lấy dữ liệu nhà cung cấp vận chuyển!");
             setTimeout(() => {
-                navigate('/manager/transport-providers');
+                navigate('/');
             }, 700);
         }
     }, [data]);
 
-    if (queryLoading) return <div className="flex justify-center items-center h-screen"><span
+    if (isLoading) return <div className="flex justify-center items-center h-screen"><span
         className="text-xl text-gray-700">Loading...</span></div>;
-    if (queryError) return <div className="flex justify-center items-center h-screen"><span
-        className="text-xl text-red-500">Error: {queryError.message}</span></div>;
+    if (error) return <div className="flex justify-center items-center h-screen"><span
+        className="text-xl text-red-500">Error: {error.message}</span></div>;
 
     return (
         <div className="container mx-auto px-4 sm:px-8 py-8">
@@ -45,9 +39,9 @@ const TransportProviderDetail = () => {
 
                 <button
                     className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4"
-                    onClick={() => navigate(`/manager/customer/detail/${transportProvider?.customerId}`)}
+                    onClick={() => navigate(`/provider/update/information`)}
                 >
-                    Xem Thông Tin Chi Tiết Tài Khoản
+                    Cập nhật thông tin
                 </button>
             </div>
             <br/>
@@ -201,25 +195,10 @@ const TransportProviderDetail = () => {
                 </dd>
             </div>
 
-            <div className="mt-8 flex justify-between">
-                <button
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2"
-                    onClick={() => navigate(`/manager/transport-provider/update/${transportProvider?.transportProviderId}`)}
-                >
-                    Cập nhật các tỉnh thành
-                </button>
-
-                <button
-                    className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                    onClick={() => navigate(`/manager/transport-provider/update-fee-shipping/${transportProvider?.transportProviderId}`)}
-                >
-                    Cập nhật phí vận chuyển
-                </button>
-            </div>
 
             <ToastContainer/>
         </div>
     );
 };
 
-export default TransportProviderDetail;
+export default ProviderInformationPage;

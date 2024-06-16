@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetShopByIdQuery, useLockShopByShopIdMutation, useUnlockShopByShopIdMutation } from '@/redux/features/manager/ShopManagerApiSlice';
-import { statusToString } from "@/utils/DTOs/extra/statusToString.ts";
+import { statusToString } from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 import UnlockShop from "@/features/manager/shop/UnLockShop.tsx";
 import LockShop from "@/features/manager/shop/LockShop.tsx";
 import { ToastContainer, toast } from "react-toastify";

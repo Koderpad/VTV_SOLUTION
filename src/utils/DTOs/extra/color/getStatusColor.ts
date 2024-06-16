@@ -1,4 +1,4 @@
-import { Status } from "./Status";
+import { Status } from "../Status.ts";
 
 export  const getStatusColor = (status: Status) => {
     switch (status) {

@@ -3,15 +3,16 @@ import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
-import {useGetOrderPageByStatusAndDateQuery} from "@/redux/features/manager/OrderManagerApiSlice.ts";
-import {OrderStatus} from "@/utils/DTOs/extra/OrderStatus.ts";
-import {orderStatusToString} from "@/utils/DTOs/extra/convertToString/orderStatusToString.ts";
+import {useGetTransportPageByManagerAndDateQuery} from "@/redux/features/shipping/ManagerTransportApiSlice.ts";
+import {TransportStatus} from "@/utils/DTOs/extra/TransportStatus.ts";
 import dayjs from "dayjs";
-import StatisticsOrderProps from "@/features/manager/order/StatisticsOrderProps.tsx";
+import StatisticsTransportProps from "@/features/shipping/provider/StatisticsTransportProps.tsx";
+import {transportStatusToString} from "@/utils/DTOs/extra/convertToString/transportStatusToString.ts";
 
-const OrderManagerPage = () => {
+
+const ManagerTransportPage = () => {
     const [page, setPage] = useState(1);
-    const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(OrderStatus.PENDING);
+    const [selectedStatus, setSelectedStatus] = useState<TransportStatus>(TransportStatus.PENDING);
     const [selectedYear, setSelectedYear] = useState<string>(dayjs().format('YYYY'));
     const [selectedMonth, setSelectedMonth] = useState<string>(dayjs().format('MM'));
     const [data, setData] = useState(null);
@@ -20,7 +21,7 @@ const OrderManagerPage = () => {
     const startDate = `${selectedYear}-${selectedMonth}-01`;
     const endDate = `${selectedYear}-${selectedMonth}-${dayjs(`${selectedYear}-${selectedMonth}`).daysInMonth()}`;
 
-    const {data: orderData, error: orderError, isLoading: orderLoading} = useGetOrderPageByStatusAndDateQuery({
+    const {data: transportData, error: transportError, isLoading: transportLoading} = useGetTransportPageByManagerAndDateQuery({
         page: page,
         size: 10,
         status: selectedStatus,
@@ -30,7 +31,7 @@ const OrderManagerPage = () => {
 
 
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStatus(e.target.value as OrderStatus);
+        setSelectedStatus(e.target.value as TransportStatus);
     };
 
     const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -42,13 +43,13 @@ const OrderManagerPage = () => {
     };
 
     useEffect(() => {
-        if (orderData) {
-            setData(orderData);
+        if (transportData) {
+            setData(transportData);
         }
-    }, [orderData]);
+    }, [transportData]);
 
-    if (orderLoading) return <div>Loading...</div>;
-    if (orderError) return <div>Error: {orderError.message}</div>;
+    if (transportLoading) return <div>Loading...</div>;
+    if (transportError) return <div>Error: {transportError.message}</div>;
 
     const totalPages = data?.totalPage || 1;
 
@@ -66,16 +67,12 @@ const OrderManagerPage = () => {
                                 Quay Lại
                             </button>
 
-                            <button
-                                onClick={() => navigate('/manager/order/revenue')}
-                                className="bg-green-400 text-white px-4 py-2 rounded hover:bg-green-500 mb-4">
-                                Thống kê đơn hàng
-                            </button>
+
                         </div>
 
                         <br/>
 
-                        <h1 className="text-4xl font-bold text-center text-gray-900">Quản lý đơn hàng</h1>
+                        <h1 className="text-4xl font-bold text-center text-gray-900">Quản lý vận chuyển</h1>
                         <br/>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -118,16 +115,16 @@ const OrderManagerPage = () => {
                                     onChange={handleStatusChange}
                                     className="block w-full mt-1 p-2 border border-gray-300 rounded"
                                 >
-                                    {Object.values(OrderStatus).map((status) => (
-                                        <option key={status} value={status}>{orderStatusToString[status]}</option>
+                                    {Object.values(TransportStatus).map((status) => (
+                                        <option key={status} value={status}>{transportStatusToString[status]}   </option>
                                     ))}
                                 </select>
                             </div>
                         </div>
 
-                        <div>
-                            <StatisticsOrderProps selectedYear={selectedYear} selectedMonth={selectedMonth} selectedStatus={selectedStatus}/>
-                        </div>
+                        {/*<div>*/}
+                        {/*    <StatisticsTransportProps selectedYear={selectedYear} selectedMonth={selectedMonth} selectedStatus={selectedStatus}/>*/}
+                        {/*</div>*/}
 
 
 
@@ -137,15 +134,16 @@ const OrderManagerPage = () => {
                                 <tr>
                                     <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">STT</th>
                                     <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Mã
+                                        vận chuyển
+                                    </th>
+                                    <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Mã
                                         đơn hàng
                                     </th>
-                                    <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Khách
-                                        hàng
+
+                                    <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Phương
+                                        thức
                                     </th>
 
-                                    <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Tổng
-                                        tiền (VNĐ)
-                                    </th>
                                     <th className="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-600 uppercase tracking-wider">Trạng
                                         thái
                                     </th>
@@ -158,18 +156,17 @@ const OrderManagerPage = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {data?.orderDTOs.map((order, index) => (
-                                    <tr key={order.orderId}>
+                                {data?.transportDTOs.map((transport, index) => (
+                                    <tr key={transport.transportId}>
                                         <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1 + (page - 1) * 5}</td>
-                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{order.orderId}</td>
-                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{order.addressDTO.fullName}</td>
-
-                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{order.totalPrice.toLocaleString()}</td>
-                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{orderStatusToString[order.status]}</td>
-                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{dayjs(order.createdAt).format('DD-MM-YYYY')}</td>
+                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{transport.transportId}</td>
+                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{transport.orderId}</td>
+                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{transport.shippingMethod}</td>
+                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{transportStatusToString[transport.status]}</td>
+                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{dayjs(transport.createAt).format('DD-MM-YYYY')}</td>
                                         <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <button
-                                                onClick={() => navigate(`/manager/order/detail/${order.orderId}`)}
+                                                onClick={() => navigate(`/provider/transport/detail/${transport.transportId}`)}
                                                 className="text-indigo-600 hover:text-indigo-900">
                                                 <FontAwesomeIcon icon={faEye}/>
                                             </button>
@@ -228,4 +225,4 @@ const OrderManagerPage = () => {
     );
 };
 
-export default OrderManagerPage;
+export default ManagerTransportPage;

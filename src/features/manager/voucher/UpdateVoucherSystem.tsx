@@ -8,7 +8,7 @@ import {VoucherSystemRequest} from '@/utils/DTOs/manager/request/VoucherSystemRe
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Status} from "@/utils/DTOs/extra/Status.ts";
-import {statusToString} from "@/utils/DTOs/extra/statusToString.ts";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 
 const UpdateVoucherSystem = () => {
     const {voucherId} = useParams();
