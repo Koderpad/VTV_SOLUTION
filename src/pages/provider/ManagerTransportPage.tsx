@@ -170,7 +170,7 @@ const ManagerTransportPage = () => {
                                         <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{dayjs(transport.createAt).format('DD-MM-YYYY')}</td>
                                         <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <button
-                                                onClick={() => navigate(`/shipping/manager/transport/detail/${transport.transportId}`)}
+                                                onClick={() => navigate(`/provider/transport/detail/${transport.transportId}`)}
                                                 className="text-indigo-600 hover:text-indigo-900">
                                                 <FontAwesomeIcon icon={faEye}/>
                                             </button>

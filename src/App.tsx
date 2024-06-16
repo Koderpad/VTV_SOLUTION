@@ -61,6 +61,7 @@ import UpdateDeliverWork from "@/features/shipping/deliver-manager/UpdateDeliver
 import AddNewDeliver from "@/features/shipping/deliver-manager/AddNewDeliver.tsx";
 import StatisticsTransportsPage from "@/pages/provider/StatisticsTransportsPage.tsx";
 import ManagerTransportPage from "@/pages/provider/ManagerTransportPage.tsx";
+import TransportDetail from "@/features/shipping/transport/TransportDetail.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -266,6 +267,7 @@ function App() {
               <Route path="employee/add" element={<AddNewDeliver />} />
               <Route path="statistics/revenue" element={<StatisticsTransportsPage />} />
               <Route path="transports" element={<ManagerTransportPage />} />
+              <Route path="transport/detail/:transportId" element={<TransportDetail />} />
 
 
 
