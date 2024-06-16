@@ -251,37 +251,35 @@ function App() {
             </Route>
           </Route>
 
-
-
-
-
-
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
               <Route path="customers" element={<CustomerProviderPage />} />
               <Route path="detail" element={<ProviderInformationPage />} />
-              <Route path="update/information" element={<UpdateInformationTransportProvider />} />
+              <Route
+                path="update/information"
+                element={<UpdateInformationTransportProvider />}
+              />
               <Route path="employees" element={<ProviderEmployeePage />} />
-              <Route path="employee/detail/:deliverId" element={<DeliverDetail />} />
-              <Route path="employee/update-work/:deliverId" element={<UpdateDeliverWork />} />
+              <Route
+                path="employee/detail/:deliverId"
+                element={<DeliverDetail />}
+              />
+              <Route
+                path="employee/update-work/:deliverId"
+                element={<UpdateDeliverWork />}
+              />
               <Route path="employee/add" element={<AddNewDeliver />} />
-              <Route path="statistics/revenue" element={<StatisticsTransportsPage />} />
+              <Route
+                path="statistics/revenue"
+                element={<StatisticsTransportsPage />}
+              />
               <Route path="transports" element={<ManagerTransportPage />} />
-              <Route path="transport/detail/:transportId" element={<TransportDetail />} />
-
-
-
+              <Route
+                path="transport/detail/:transportId"
+                element={<TransportDetail />}
+              />
             </Route>
           </Route>
-
-
-
-
-
-
-
-
-
 
           <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
             <Route path="/deliver" element={<DashboardDeliver />}>
@@ -303,48 +301,6 @@ function App() {
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
 
-          {/* private routes */}
-          {/* <Route path="address" element={<Address />} /> */}
-          {/* <Route path="products/:id" element={<ProductsByCategory />} />
-                            <Route path="orders" element={<OrderManagerPage/>}/>
-                            <Route path="order/detail/:orderId" element={<OrderDetailManager/>}/>
-                            <Route path="order/revenue" element={<StatisticsOrders/>}/>
-
-
-                            <Route path="managers" element={<ManagerPage/>}/>
-                            <Route path="manager_id/:managerId" element={<ManagerDetail/>}/>
-                            <Route path="add_manager" element={<AddNewManager/>}/>
-
-
-                            <Route
-                                path="transport-providers"
-                                element={<TransportProviderManagerPage/>}
-                            />
-                            <Route
-                                path="transport-provider/add"
-                                element={<AddNewTransportProvider/>}
-                            />
-                            <Route
-                                path="transport-provider/detail/:transportProviderId"
-                                element={<TransportProviderDetail/>}
-                            />
-                            <Route
-                                path="transport-provider/update/:transportProviderId"
-                                element={<UpdateTransportProviderProvinces/>}
-                            />
-                            <Route
-                                path="transport-provider/update-fee-shipping/:transportProviderId"
-                                element={<UpdateTransportProviderFeeShipping/>}
-                            />
-
-                            <Route path="transport-provider/revenue" element={<StatisticsTransports/>}/>
-
-                        </Route>
-                    </Route>
-
-                    <Route element={<RequireAuth allowedRoles={["VENDOR"]}/>}></Route>
-
-                    {/* private routes */}
           <Route element={<RequireAuth allowedRoles={["CUSTOMER"]} />}>
             {/* <Route path="address" element={<Address />} /> */}
             {/* <Route path="products/:id" element={<ProductsByCategory />} />
