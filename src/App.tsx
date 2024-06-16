@@ -59,6 +59,7 @@ import ProviderEmployeePage from "@/pages/provider/ProviderEmployeePage.tsx";
 import DeliverDetail from "@/features/shipping/deliver-manager/DeliverDetail.tsx";
 import UpdateDeliverWork from "@/features/shipping/deliver-manager/UpdateDeliverWork.tsx";
 import AddNewDeliver from "@/features/shipping/deliver-manager/AddNewDeliver.tsx";
+import StatisticsTransportsPage from "@/pages/provider/StatisticsTransportsPage.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -262,6 +263,7 @@ function App() {
               <Route path="employee/detail/:deliverId" element={<DeliverDetail />} />
               <Route path="employee/update-work/:deliverId" element={<UpdateDeliverWork />} />
               <Route path="employee/add" element={<AddNewDeliver />} />
+              <Route path="statistics/revenue" element={<StatisticsTransportsPage />} />
 
 
             </Route>
