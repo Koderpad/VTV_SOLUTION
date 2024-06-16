@@ -9,6 +9,8 @@ export interface TransportDTO {
     shopId: number;
     shippingMethod: string;
     status: TransportStatus; // Assuming TransportStatus is an existing enum/type
+    createAt: string;
+    updateAt: string;
     totalTransportHandle: number;
     transportHandleDTOs: TransportHandleDTO[];
 }
