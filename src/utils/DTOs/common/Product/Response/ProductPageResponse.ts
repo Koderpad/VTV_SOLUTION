@@ -1,19 +1,13 @@
-// File: ProductResponse.ts
-
-export interface ProductResponse {
+export interface ProductPageResponse {
   status: string;
   message: string;
   code: number;
-  categoryId: number;
-  categoryName: string;
-  categoryParentId: number;
-  categoryParentName: string;
-  shopId: number;
-  usernameShop: string;
-  shopName: string;
-  shopAvatar: string;
-  countOrder: number;
-  productDTO: ProductDTO;
+  count: number;
+  page: number;
+  size: number;
+  totalPage: number;
+  totalProduct: number;
+  productDTOs: ProductDTO[];
 }
 
 export interface ProductDTO {
@@ -23,10 +17,10 @@ export interface ProductDTO {
   description: string;
   information: string;
   sold: number;
-  status: string;
+  status: "ACTIVE" | "INACTIVE" | "DELETED" | "CANCEL" | "LOCKED";
   categoryId: number;
   shopId: number;
-  brandId: number | null;
+  brandId: number;
   maxPrice: number;
   minPrice: number;
   rating: string;
@@ -41,7 +35,7 @@ export interface ProductVariantDTO {
   originalPrice: number;
   price: number;
   quantity: number;
-  status: string;
+  status: "ACTIVE" | "INACTIVE" | "DELETED" | "CANCEL" | "LOCKED";
   productId: number;
   productName: string;
   productImage: string;

@@ -1,4 +1,5 @@
 import { apiSlice } from "@/redux/api";
+import { CategoryShopResponse } from "@/utils/DTOs/common/ShopDetail/Response/CategoryShopResponse";
 import { ListCategoryShopResponse } from "@/utils/DTOs/common/ShopDetail/Response/ListCategoryShopResponse";
 import { ShopDetailResponse } from "@/utils/DTOs/common/ShopDetail/Response/ShopDetailResponse";
 
@@ -13,7 +14,7 @@ export const shopApiSlice = apiSlice.injectEndpoints({
     }),
     getShopByUsername: builder.query<ShopDetailResponse, string>({
       query: (username) => ({
-        url: `/shop/${username}`,
+        url: `/shop/username/${username}`,
         method: "GET",
       }),
     }),
@@ -23,6 +24,14 @@ export const shopApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getListProductByCategoryShopId: builder.query<CategoryShopResponse, number>(
+      {
+        query: (shopId) => ({
+          url: `/category-shop/category-shop-id/${shopId}`,
+          method: "GET",
+        }),
+      },
+    ),
   }),
 });
 
@@ -30,4 +39,5 @@ export const {
   useGetShopByIdQuery,
   useGetShopByUsernameQuery,
   useGetCategoryListByShopIdQuery,
+  useGetListProductByCategoryShopIdQuery,
 } = shopApiSlice;

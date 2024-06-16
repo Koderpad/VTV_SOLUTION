@@ -485,7 +485,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
           </button>
           <button
             className="rounded-full border border-blue-600 px-4 py-2 text-blue-600 hover:bg-blue-100"
-            onClick={() => navigate(`/${data.shopName}.shop`)}
+            onClick={() => navigate(`/${data.usernameShop}.shop`)}
           >
             Xem shop
           </button>
