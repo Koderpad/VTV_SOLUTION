@@ -1,6 +1,6 @@
 import axios from "axios";
-import { ProductPageResponse } from "@/utils/DTOs/manager/response/ProductPageResponse.ts";
 import { BASE_URL_VTC } from "@/constants/urls";
+import { ProductPageResponse } from "@/utils/DTOs/common/Product/Response/ProductPageResponse";
 
 export const getRandomProductPage = async (
   page: number,
