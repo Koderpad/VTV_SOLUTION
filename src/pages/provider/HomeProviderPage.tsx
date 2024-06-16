@@ -1,3 +1,5 @@
+
+
 import React, {useEffect, useState} from 'react';
 import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {faEye} from "@fortawesome/free-solid-svg-icons";
@@ -10,9 +12,8 @@ import StatisticsTransportProps from "@/features/shipping/provider/StatisticsTra
 import {transportStatusToString} from "@/utils/DTOs/extra/convertToString/transportStatusToString.ts";
 
 
-const ManagerTransportPage = () => {
+const HomeProviderPage = () => {
     const [page, setPage] = useState(1);
-    const [selectedStatus, setSelectedStatus] = useState<TransportStatus>(TransportStatus.PENDING);
     const [selectedYear, setSelectedYear] = useState<string>(dayjs().format('YYYY'));
     const [selectedMonth, setSelectedMonth] = useState<string>(dayjs().format('MM'));
     const [data, setData] = useState(null);
@@ -23,16 +24,14 @@ const ManagerTransportPage = () => {
 
     const {data: transportData, error: transportError, isLoading: transportLoading} = useGetTransportPageByManagerAndDateQuery({
         page: page,
-        size: 10,
-        status: selectedStatus,
+        size: 100,
+        status: TransportStatus.COMPLETED,
         startDate: startDate,
         endDate: endDate
     });
 
 
-    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStatus(e.target.value as TransportStatus);
-    };
+
 
     const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedYear(e.target.value);
@@ -75,7 +74,7 @@ const ManagerTransportPage = () => {
                         <h1 className="text-4xl font-bold text-center text-gray-900">Quản lý vận chuyển</h1>
                         <br/>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label className="block mb-2 font-medium">
                                     Chọn Năm:
@@ -106,25 +105,11 @@ const ManagerTransportPage = () => {
                                     })}
                                 </select>
                             </div>
-                            <div>
-                                <label className="block mb-2 font-medium">
-                                    Chọn Trạng Thái:
-                                </label>
-                                <select
-                                    value={selectedStatus}
-                                    onChange={handleStatusChange}
-                                    className="block w-full mt-1 p-2 border border-gray-300 rounded"
-                                >
-                                    {Object.values(TransportStatus).map((status) => (
-                                        <option key={status} value={status}>{transportStatusToString[status]}   </option>
-                                    ))}
-                                </select>
-                            </div>
                         </div>
 
-                        {/*<div>*/}
-                        {/*    <StatisticsTransportProps selectedYear={selectedYear} selectedMonth={selectedMonth} selectedStatus={selectedStatus}/>*/}
-                        {/*</div>*/}
+                        <div>
+                            <StatisticsTransportProps selectedYear={selectedYear} selectedMonth={selectedMonth} />
+                        </div>
 
 
 
@@ -158,7 +143,7 @@ const ManagerTransportPage = () => {
                                 <tbody>
                                 {data?.transportDTOs.map((transport, index) => (
                                     <tr key={transport.transportId}>
-                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1 + (page - 1) * 5}</td>
+                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1 + (page - 1) * 10}</td>
                                         <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{transport.transportId}</td>
                                         <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{transport.orderId}</td>
                                         <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{transport.shippingMethod}</td>
@@ -225,4 +210,4 @@ const ManagerTransportPage = () => {
     );
 };
 
-export default ManagerTransportPage;
+export default HomeProviderPage;

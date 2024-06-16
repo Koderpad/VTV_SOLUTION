@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { TransportProviderDTO } from "@/utils/DTOs/shipping/dto/TransportProviderDTO.ts";
 import {useGetTransportProviderByUsernameQuery} from "@/redux/features/shipping/TransportProviderApiSlice.ts";
 
-const ProviderPage = () => {
+const ProviderInformationPage = () => {
     const navigate = useNavigate();
     const [transportProvider, setTransportProvider] = useState<TransportProviderDTO>();
     const { data, error, isLoading, refetch } = useGetTransportProviderByUsernameQuery();
@@ -201,4 +201,4 @@ const ProviderPage = () => {
     );
 };
 
-export default ProviderPage;
+export default ProviderInformationPage;

@@ -16,12 +16,8 @@ export const DashboardManager = () => {
     const [isShow, setIsShow] = useState(true);
 
     useEffect(() => {
-        // Lấy phần cuối cùng của đường dẫn làm title
         const currentPath = location.pathname.split("/").pop();
         if (currentPath === undefined) return;
-
-        console.log("show " + currentPath);
-
 
         if (currentPath === "manager") {
             setSelectedTitle("Home");

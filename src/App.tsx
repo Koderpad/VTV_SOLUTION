@@ -53,7 +53,7 @@ import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
 import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
 import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver_ManagerPage.tsx";
 import Unauthorized from "@/pages/Unauthorized.tsx";
-import ProviderPage from "@/pages/provider/ProviderPage.tsx";
+import ProviderInformationPage from "@/pages/provider/ProviderInformationPage.tsx";
 import UpdateInformationTransportProvider from "@/features/shipping/provider/UpdateInformationTransportProvider.tsx";
 import ProviderEmployeePage from "@/pages/provider/ProviderEmployeePage.tsx";
 import DeliverDetail from "@/features/shipping/deliver-manager/DeliverDetail.tsx";
@@ -259,7 +259,7 @@ function App() {
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
               <Route path="customers" element={<CustomerProviderPage />} />
-              <Route path="detail" element={<ProviderPage />} />
+              <Route path="detail" element={<ProviderInformationPage />} />
               <Route path="update/information" element={<UpdateInformationTransportProvider />} />
               <Route path="employees" element={<ProviderEmployeePage />} />
               <Route path="employee/detail/:deliverId" element={<DeliverDetail />} />

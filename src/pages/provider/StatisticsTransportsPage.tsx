@@ -65,11 +65,7 @@ const StatisticsTransportsPage = () => {
                     Quay Lại
                 </button>
 
-                <button
-                    onClick={() => navigate('/manager/orders')}
-                    className="bg-green-400 text-white px-4 py-2 rounded hover:bg-green-500 mb-4">
-                    Danh sách đơn hàng
-                </button>
+
             </div>
             <h1 className="text-2xl font-bold mb-4 text-center">Thống Kê Vận Chuyển</h1>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

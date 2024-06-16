@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
 import 'chart.js/auto';
 import dayjs from 'dayjs';
 import { useStatisticsTransportsByDateAndUsernameQuery } from "@/redux/features/shipping/StatisticsTransportApiSlice.ts";
-import { TransportStatus } from "@/utils/DTOs/extra/TransportStatus.ts";
 import {Bar, Line} from "react-chartjs-2";
 
 interface Props {
     selectedYear: string;
     selectedMonth: string;
-    selectedStatus: TransportStatus;
 }
 
-const StatisticsTransportProps = ({ selectedYear, selectedMonth, selectedStatus }: Props) => {
+const StatisticsTransportProps = ({ selectedYear, selectedMonth }: Props) => {
     const startDate = `${selectedYear}-${selectedMonth}-01`;
     const endDate = `${selectedYear}-${selectedMonth}-${dayjs(`${selectedYear}-${selectedMonth}`).daysInMonth()}`;
 
