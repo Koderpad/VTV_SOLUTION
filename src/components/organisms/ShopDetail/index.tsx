@@ -102,7 +102,7 @@ const ShopDetail = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="py-8">
       {/* Shop Info */}
       <div className="mb-8 p-6 bg-white shadow rounded-lg">
         <h2 className="text-2xl font-semibold mb-4">{shopData?.name}</h2>
