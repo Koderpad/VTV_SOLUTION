@@ -62,6 +62,7 @@ import AddNewDeliver from "@/features/shipping/deliver-manager/AddNewDeliver.tsx
 import StatisticsTransportsPage from "@/pages/provider/StatisticsTransportsPage.tsx";
 import ManagerTransportPage from "@/pages/provider/ManagerTransportPage.tsx";
 import TransportDetail from "@/features/shipping/transport/TransportDetail.tsx";
+import ResultsPage from "./pages/common/ResultsPage.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -144,10 +145,12 @@ function App() {
           <Route path="/test" element={<CategoryList />} />
 
           {/* category results */}
-          <Route
-            path="/category/:categoryId"
-            element={<CategoryResultsPage />}
-          />
+          {/* <Route */}
+          {/*   path="/category/:categoryId" */}
+          {/*   element={<CategoryResultsPage />} */}
+          {/* /> */}
+          <Route path="/category/:categoryId" element={<ResultsPage />} />
+          <Route path="/search/:searchTerm" element={<ResultsPage />} />
 
           {/* product */}
           <Route path="/product/:productId" element={<ProductDetailPage />} />
