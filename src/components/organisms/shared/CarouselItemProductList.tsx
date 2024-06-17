@@ -14,7 +14,7 @@ const CarouselItemProductList = ({ products }: { products: ProductDTO[] }) => {
       <CarouselPrevious />
       <CarouselContent>
         {products.map((product) => (
-          <CarouselItem key={product.productId}>
+          <CarouselItem key={product.productId} className="basis-1/5">
             <div className="group rounded-2xl bg-white p-2">
               <div className="relative h-[400px] overflow-hidden rounded-2xl transition sm:h-[330px]">
                 <a
