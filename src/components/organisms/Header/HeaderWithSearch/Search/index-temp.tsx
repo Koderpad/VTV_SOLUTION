@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { SearchIcon } from "@/components/atoms/Icon/Search";
+import { useNavigate } from "react-router-dom";
 
 export const SearchBar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
+  const navigate = useNavigate();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(searchTerm); // Process search term here
+    navigate(`/search/${searchTerm}`);
   };
 
   return (
