@@ -1,5 +1,5 @@
-import React, { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
 import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
 import CategoryList from "./components/organisms/Home/CategoryList/index.tsx";
@@ -47,7 +47,7 @@ import StatisticsProducts from "@/features/manager/product/StatisticsProducts.ts
 import ShopDetailPage from "./pages/common/ShopDetailPage.tsx";
 import StatisticsTransports from "@/features/manager/shipping/StatisticsTransports.tsx";
 import { DashboardProvider } from "./pages/provider/DashboardProvider.tsx";
-import CustomerProviderPage from "./pages/provider/CustomerProviderPage.tsx";
+// import CustomerProviderPage from "./pages/provider/CustomerProviderPage.tsx";
 import { DashboardDeliver } from "./pages/deliver/DashboardDeliver.tsx";
 import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
 import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
@@ -253,7 +253,7 @@ function App() {
 
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
-              <Route path="customers" element={<CustomerProviderPage />} />
+              {/* <Route path="customers" element={<CustomerProviderPage />} /> */}
               <Route path="detail" element={<ProviderInformationPage />} />
               <Route
                 path="update/information"
