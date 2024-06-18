@@ -16,20 +16,28 @@ export const SearchBar: React.FC = () => {
   };
 
   return (
-    <div className="bg-blue-400 p-2 flex justify-between items-center">
+    <div className="flex">
       <form
         onSubmit={handleSearchSubmit}
-        className="flex flex-grow items-center"
+        className="flex flex-grow p-[3px] items-center bg-white border border-gray-200 rounded-sm"
       >
-        <input
-          type="text"
-          placeholder="VTV bao ship 0Đ - Đăng ký ngay!..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="rounded-full flex-grow px-4 py-2 focus:outline-none"
-        />
-        <button type="submit" className="text-white p-2">
-          <SearchIcon className="h-6 w-6" />
+        <div className="flex flex-grow w-full">
+          <div className="flex-grow pr-4">
+            <input
+              type="text"
+              placeholder="VTV bao ship 0Đ - Đăng ký ngay!..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className=" focus:outline focus:outline-2 focus:outline-offset-8 w-full h-10 pl-2"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          className=" flex justify-center px-4  bg-blue-600 text-white  "
+        >
+          <SearchIcon className=" h-8 w-6" />
         </button>
       </form>
     </div>
