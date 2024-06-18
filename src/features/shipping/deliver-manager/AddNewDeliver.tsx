@@ -1,25 +1,27 @@
-import React, {useState, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     useAddNewDeliverManagerByProviderMutation,
     useAddNewDeliverByManagerMutation,
 } from "@/redux/features/shipping/ManagerDeliverApiSlice.ts";
-import {TypeWork} from "@/utils/DTOs/extra/TypeWork.ts";
-import {DeliverRequest} from "@/utils/DTOs/shipping/request/DeliverRequest.ts";
-import {toast, ToastContainer} from "react-toastify";
-import {ProvinceDTO} from "@/utils/DTOs/location/dto/ProvinceDTO.ts";
-import {DistrictDTO} from "@/utils/DTOs/location/dto/DistrictDTO.ts";
-import {WardDTO} from "@/utils/DTOs/location/dto/WardDTO.ts";
-import {RegisterRequest} from "@/utils/DTOs/manager/request/RegisterRequest.ts";
-import {getAllProvince} from "@/services/location/ProvinceService.ts";
-import {getAllDistrictByProvinceCode} from "@/services/location/DistrictService.ts";
-import {getAllWardByDistrictCode} from "@/services/location/WardService.ts";
+import { TypeWork } from "@/utils/DTOs/extra/TypeWork.ts";
+import { DeliverRequest } from "@/utils/DTOs/shipping/request/DeliverRequest.ts";
+import { toast, ToastContainer } from "react-toastify";
+import { ProvinceDTO } from "@/utils/DTOs/location/dto/ProvinceDTO.ts";
+import { DistrictDTO } from "@/utils/DTOs/location/dto/DistrictDTO.ts";
+import { WardDTO } from "@/utils/DTOs/location/dto/WardDTO.ts";
+import { RegisterRequest } from "@/utils/DTOs/manager/request/RegisterRequest.ts";
+import { getAllProvince } from "@/services/location/ProvinceService.ts";
+import { getAllDistrictByProvinceCode } from "@/services/location/DistrictService.ts";
+import { getAllWardByDistrictCode } from "@/services/location/WardService.ts";
+import { useGetDeliverInfoMutation } from "@/redux/features/shipping/DeliverApiSlice.ts";
+import { DeliverResponse } from "@/utils/DTOs/shipping/response/DeliverResponse.ts";
 
 const AddNewDeliver = () => {
     const navigate = useNavigate();
-    const [addNewDeliverManagerByProvider, {isLoading: isAddingManager, error: addManagerError}] =
+    const [addNewDeliverManagerByProvider, { isLoading: isAddingManager, error: addManagerError }] =
         useAddNewDeliverManagerByProviderMutation();
-    const [addNewDeliverByManager, {isLoading: isAddingDeliver, error: addDeliverError}] =
+    const [addNewDeliverByManager, { isLoading: isAddingDeliver, error: addDeliverError }] =
         useAddNewDeliverByManagerMutation();
 
     const [phone, setPhone] = useState("");
@@ -43,6 +45,10 @@ const AddNewDeliver = () => {
     const [registerFullName, setRegisterFullName] = useState("");
     const [registerBirthday, setRegisterBirthday] = useState(new Date());
 
+    const [getDeliverInfo, { data: deliverResponse, error: getDeliverError, isLoading: isGettingDeliverInfo }] =
+        useGetDeliverInfoMutation();
+    const [deliver, setDeliver] = useState<DeliverResponse>();
+
     useEffect(() => {
         const fetchProvinces = async () => {
             try {
@@ -53,6 +59,17 @@ const AddNewDeliver = () => {
             }
         };
         fetchProvinces();
+
+        const fetchDeliverInfo = async () => {
+            try {
+                const response = await getDeliverInfo();
+                setDeliver(response.data.deliverDTO);
+            } catch (error) {
+                toast.error("Đã xảy ra lỗi khi lấy thông tin giao hàng!");
+            }
+        };
+        fetchDeliverInfo();
+
     }, []);
 
     useEffect(() => {
@@ -122,14 +139,12 @@ const AddNewDeliver = () => {
                 response = await addNewDeliverByManager(deliverRequest);
             }
 
-
             if (response.error) {
-
                 toast.error(response.error.data.message);
                 return;
             } else {
                 toast.success("Thêm nhân viên giao hàng thành công!");
-                navigate("/provider/employees"); // Redirect to the list of deliveries
+                navigate(-1);
             }
         } catch (e) {
             toast.error("Đã xảy ra lỗi khi thêm nhân viên giao hàng!");
@@ -140,22 +155,19 @@ const AddNewDeliver = () => {
         setSelectedProvinceCode(e.target.value);
         setSelectedDistrictCode("");
         setSelectedWardCodes([]);
-        setSelectedWardCode("")
+        setSelectedWardCode("");
     };
 
     const handleSelectDistrict = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedDistrictCode(e.target.value);
         setSelectedWardCodes([]);
-        setSelectedWardCode("")
-
+        setSelectedWardCode("");
     };
 
     // Handle Ward Checkboxes
     const handleWardCheckboxChange = (wardCode: string) => {
         setSelectedWardCodes((prev) =>
-            prev.includes(wardCode)
-                ? prev.filter((code) => code !== wardCode)
-                : [...prev, wardCode]
+            prev.includes(wardCode) ? prev.filter((code) => code !== wardCode) : [...prev, wardCode]
         );
     };
 
@@ -171,7 +183,7 @@ const AddNewDeliver = () => {
         setSelectedWardCodes([]);
     };
 
-    const isLoading = isAddingManager || isAddingDeliver;
+    const isLoading = isAddingManager || isAddingDeliver || isGettingDeliverInfo;
 
     if (isLoading)
         return (
@@ -180,6 +192,13 @@ const AddNewDeliver = () => {
             </div>
         );
 
+    if (!deliver) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <span className="text-xl text-gray-700">Đang tải dữ liệu...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto px-4 sm:px-8 py-8">
@@ -191,7 +210,7 @@ const AddNewDeliver = () => {
                     Quay Lại
                 </button>
             </div>
-            <br/>
+            <br />
             <h1 className="text-4xl font-bold text-black mb-8 text-center">Thêm nhân viên giao hàng</h1>
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -233,7 +252,7 @@ const AddNewDeliver = () => {
                                 onChange={(e) => setTypeWork(e.target.value as TypeWork)}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             >
-                                <option value={TypeWork.MANAGER}>Quản lý</option>
+                                {deliver.typeWork === TypeWork.PROVIDER && <option value={TypeWork.MANAGER}>Quản lý</option>}
                                 <option value={TypeWork.SHIPPER}>Giao hàng</option>
                                 <option value={TypeWork.TRANSIT}>Trung chuyển</option>
                                 <option value={TypeWork.PICKUP}>Lấy hàng</option>
@@ -277,7 +296,6 @@ const AddNewDeliver = () => {
                             </select>
                         </div>
 
-
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ward">
                                 Phường/Xã:
@@ -296,11 +314,9 @@ const AddNewDeliver = () => {
                                 ))}
                             </select>
                         </div>
-
-
                     </div>
 
-                    {wards.length > 0 &&
+                    {wards.length > 0 && (
                         <div>
                             <h2 className="text-2xl font-bold text-black mb-4">Thông tin bổ sung (Phường/Xã làm việc)</h2>
                             <div className="mb-4 flex justify-between items-center">
@@ -336,7 +352,7 @@ const AddNewDeliver = () => {
                                 ))}
                             </div>
                         </div>
-                    }
+                    )}
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold text-black mb-4">Thông tin đăng ký</h2>
@@ -374,8 +390,8 @@ const AddNewDeliver = () => {
                         <div>
                             <label className="block text-neutral-800 font-bold mb-1">Giới tính:</label>
                             <select
-                                value={registerGender ? 'true' : 'false'}
-                                onChange={(e) => setRegisterGender(e.target.value === 'true')}
+                                value={registerGender ? "true" : "false"}
+                                onChange={(e) => setRegisterGender(e.target.value === "true")}
                                 className="w-full px-4 py-2 border rounded"
                                 required
                             >
@@ -397,7 +413,7 @@ const AddNewDeliver = () => {
                             <label className="block text-neutral-800 font-bold mb-1">Ngày sinh:</label>
                             <input
                                 type="date"
-                                value={registerBirthday.toISOString().split('T')[0]}
+                                value={registerBirthday.toISOString().split("T")[0]}
                                 onChange={(e) => setRegisterBirthday(new Date(e.target.value))}
                                 className="w-full px-4 py-2 border rounded"
                                 required
@@ -406,7 +422,7 @@ const AddNewDeliver = () => {
                     </div>
                 </div>
 
-                <br/>
+                <br />
 
                 <button
                     className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4"
@@ -416,7 +432,7 @@ const AddNewDeliver = () => {
                     Thêm nhân viên
                 </button>
             </form>
-            <ToastContainer/>
+            <ToastContainer />
         </div>
     );
 };

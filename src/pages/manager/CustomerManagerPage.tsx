@@ -14,8 +14,8 @@ const CustomerManagerPage = () => {
     const [sort, setSort] = useState('name-asc');
     const [searchTerm, setSearchTerm] = useState('');
     const {data, error, isLoading} = searchTerm
-        ? useSearchPageCustomerByFullNameAndStatusQuery({search: searchTerm, status: Status.ACTIVE, page, size: 5})
-        : useGetPageCustomerByStatusAndSortQuery({status: Status.ACTIVE, page, size: 5, sort});
+        ? useSearchPageCustomerByFullNameAndStatusQuery({search: searchTerm, status: Status.ACTIVE, page, size: 20})
+        : useGetPageCustomerByStatusAndSortQuery({status: Status.ACTIVE, page, size: 20, sort});
     const navigate = useNavigate();
 
     if (isLoading) return <div>Loading...</div>;
@@ -114,7 +114,7 @@ const CustomerManagerPage = () => {
                                 {data.customerDTOs.map((customer, index) => (
                                     <tr key={customer.customerId}>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {index + 1 + (page - 1) * 5}
+                                            {index + 1 + (page - 1) * 20}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {customer.username}
