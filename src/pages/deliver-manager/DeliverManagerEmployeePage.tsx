@@ -13,7 +13,7 @@ import {TypeWork} from '@/utils/DTOs/extra/TypeWork';
 import {statusToString} from '@/utils/DTOs/extra/convertToString/statusToString';
 import {typeWorkToString} from "@/utils/DTOs/extra/convertToString/typeWorkToString.ts";
 
-const ProviderEmployeePage = () => {
+const DeliverManagerEmployeePage = () => {
     const navigate = useNavigate();
     const [transportProvider, setTransportProvider] = useState<TransportProviderDTO>();
     const {data, error, isLoading, refetch} = useGetTransportProviderByUsernameQuery();
@@ -68,7 +68,7 @@ const ProviderEmployeePage = () => {
 
                         <button
                             className="bg-green-400 text-white px-4 py-2 rounded hover:bg-green-500 mb-4"
-                            onClick={() => navigate('/provider/employee/add')}
+                            onClick={() => navigate('/deliver_manager/employee/add')}
                         >
                             <FontAwesomeIcon icon={faAdd}/>
                             <span className="ml-2">Thêm</span>
@@ -92,8 +92,6 @@ const ProviderEmployeePage = () => {
                             >
                                 <option value={Status.ACTIVE}>Đang hoạt động</option>
                                 <option value={Status.INACTIVE}>Không hoạt động</option>
-                                <option value={Status.DELETED}>Đã xóa</option>
-                                <option value={Status.CANCEL}>Đã hủy</option>
                                 <option value={Status.LOCKED}>Đã khóa</option>
                             </select>
                         </div>
@@ -107,9 +105,7 @@ const ProviderEmployeePage = () => {
                                 onChange={handleTypeWorkChange}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             >
-                                <option value={TypeWork.MANAGER}>Quản lý</option>
                                 <option value={TypeWork.SHIPPER}>Giao hàng</option>
-                                <option value={TypeWork.PROVIDER}>Nhà cung cấp</option>
                                 <option value={TypeWork.TRANSIT}>Trung chuyển</option>
                                 <option value={TypeWork.PICKUP}>Lấy hàng</option>
                                 <option value={TypeWork.WAREHOUSE}>Kho</option>
@@ -201,4 +197,4 @@ const ProviderEmployeePage = () => {
     );
 };
 
-export default ProviderEmployeePage;
+export default DeliverManagerEmployeePage;

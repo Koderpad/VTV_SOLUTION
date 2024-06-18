@@ -1,14 +1,18 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useGetDeliverByDeliverIdQuery } from '@/redux/features/shipping/ManagerDeliverApiSlice';
-import { typeWorkToString } from '@/utils/DTOs/extra/convertToString/typeWorkToString.ts';
-import { toast, ToastContainer } from 'react-toastify';
+import {useParams, useNavigate} from 'react-router-dom';
+import {useGetDeliverByDeliverIdQuery} from '@/redux/features/shipping/ManagerDeliverApiSlice';
+import {typeWorkToString} from '@/utils/DTOs/extra/convertToString/typeWorkToString.ts';
+import {toast, ToastContainer} from 'react-toastify';
 import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
 
+
 const DeliverDetail = () => {
-    const { deliverId } = useParams<{ deliverId: string }>();
+    const {deliverId} = useParams<{ deliverId: string }>();
     const navigate = useNavigate();
-    const { data, error, isLoading } = useGetDeliverByDeliverIdQuery(Number(deliverId));
+    const {data, error, isLoading} = useGetDeliverByDeliverIdQuery(Number(deliverId));
+
+
+
+
 
     if (isLoading) return <div>Loading...</div>;
     if (error) {
@@ -23,7 +27,7 @@ const DeliverDetail = () => {
     return (
         <div className="container mx-auto px-4 sm:px-8">
             <h1 className="text-4xl font-bold text-center text-gray-900">Thông tin chi tiết nhân viên</h1>
-            <hr className="mt-4 border-b-2 border-gray-300" />
+            <hr className="mt-4 border-b-2 border-gray-300"/>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <table className="min-w-full leading-normal">
                     <tbody>

@@ -52,7 +52,7 @@ import { DashboardDeliver } from "./pages/deliver/DashboardDeliver.tsx";
 import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
 import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
 import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver_ManagerPage.tsx";
-import Unauthorized from "@/pages/Unauthorized.tsx";
+import Unauthorized from "@/features/Unauthorized.tsx";
 import ProviderInformationPage from "@/pages/provider/ProviderInformationPage.tsx";
 import UpdateInformationTransportProvider from "@/features/shipping/provider/UpdateInformationTransportProvider.tsx";
 import ProviderEmployeePage from "@/pages/provider/ProviderEmployeePage.tsx";
@@ -63,6 +63,8 @@ import StatisticsTransportsPage from "@/pages/provider/StatisticsTransportsPage.
 import ManagerTransportPage from "@/pages/provider/ManagerTransportPage.tsx";
 import TransportDetail from "@/features/shipping/transport/TransportDetail.tsx";
 import ResultsPage from "./pages/common/ResultsPage.tsx";
+import DeliverManagerInformationPage from "@/pages/deliver-manager/DeliverManagerInformationPage.tsx";
+import DeliverManagerEmployeePage from "@/pages/deliver-manager/DeliverManagerEmployeePage.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -254,9 +256,13 @@ function App() {
             </Route>
           </Route>
 
+
+
+
+
+
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
-              {/* <Route path="customers" element={<CustomerProviderPage />} /> */}
               <Route path="detail" element={<ProviderInformationPage />} />
               <Route
                 path="update/information"
@@ -284,23 +290,55 @@ function App() {
             </Route>
           </Route>
 
+
+
+
+
+
           <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
             <Route path="/deliver" element={<DashboardDeliver />}>
               <Route path="customers" element={<CustomerDeliverPage />} />
             </Route>
           </Route>
 
+
+
+
+
           <Route element={<RequireAuth allowedRoles={["DELIVER_MANAGER"]} />}>
             <Route
               path="/deliver_manager"
               element={<DashboardDeliverManager />}
             >
+              <Route path="detail" element={<DeliverManagerInformationPage />} />
               <Route
-                path="customers"
-                element={<CustomerDeliver_ManagerPage />}
+                  path="update/information"
+                  element={<UpdateInformationTransportProvider />}
+              />
+              <Route path="employees" element={<DeliverManagerEmployeePage />} />
+              <Route
+                  path="employee/detail/:deliverId"
+                  element={<DeliverDetail />}
+              />
+              <Route
+                  path="employee/update-work/:deliverId"
+                  element={<UpdateDeliverWork />}
+              />
+              <Route path="employee/add" element={<AddNewDeliver />} />
+              <Route
+                  path="statistics/revenue"
+                  element={<StatisticsTransportsPage />}
+              />
+              <Route path="transports" element={<ManagerTransportPage />} />
+              <Route
+                  path="transport/detail/:transportId"
+                  element={<TransportDetail />}
               />
             </Route>
           </Route>
+
+
+
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
 
