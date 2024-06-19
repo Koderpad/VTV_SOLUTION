@@ -20,7 +20,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { AiOutlineDown } from "react-icons/ai";
+import { AiOutlineDown, AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 
 const ShopDetail = () => {
   const { username } = useParams();
@@ -33,7 +33,7 @@ const ShopDetail = () => {
   const [currentPage, setCurrentPage] = useState(
     Number(searchParams.get("page")) || 1,
   );
-  const [productsPerPage] = useState(10);
+  const [productsPerPage] = useState(8);
   const [allProducts, setAllProducts] = useState<ProductDTO[] | null>(null);
   const categories: CategoryShopDTO[] = useMemo(
     () => categoryData,
@@ -104,13 +104,30 @@ const ShopDetail = () => {
     fetchSelectedCategoryProducts();
   }, [selectedCategory]);
 
+  const checkValidPage = (page: number) => {
+    console.log(
+      "max page: ",
+      Math.ceil(currentProducts.length / productsPerPage),
+    );
+    return (
+      page > 0 && page <= Math.ceil(currentProducts.length / productsPerPage)
+    );
+  };
   useEffect(() => {
     const pageParam = searchParams.get("page");
     const initialPage = pageParam ? parseInt(pageParam, 10) : 1;
+    if (!checkValidPage(initialPage)) {
+      setSearchParams({ page: "1" });
+      return;
+    }
     setCurrentPage(initialPage);
   }, [searchParams]);
 
   useEffect(() => {
+    if (!checkValidPage(currentPage)) {
+      setCurrentPage(1);
+      return;
+    }
     setSearchParams({ page: currentPage.toString() });
   }, [currentPage]);
 
@@ -227,7 +244,7 @@ const ShopDetail = () => {
           <div className="h-full w-full mb-4">
             <div className="flex items-center bg-[#EDEDED] px-5 py-3 h-full">
               <span className="text-gray-500 mr-1">Sắp xếp theo</span>
-              <div className="flex items-center h-8">
+              <div className="flex flex-grow items-center h-8">
                 <section className="flex w-auto h-full ml-2 gap-3">
                   {["Phổ biến", "Mới nhất", "Bán chạy"].map((item) => (
                     <button type="button" className="bg-white px-3 h-full">
@@ -235,10 +252,10 @@ const ShopDetail = () => {
                     </button>
                   ))}
                 </section>
-                <section>
-                  <div className="">
-                    <div className="flex flex-col w-auto cursor-pointer px-2 group">
-                      <button className="flex flex-grow gap-20 bg-white pl-3 pr-1 items-center justify-center">
+                <section className="h-full">
+                  <div className="h-full">
+                    <div className="flex flex-col w-auto h-full cursor-pointer px-2 group">
+                      <button className="flex flex-grow items-center gap-20 bg-white pl-3 pr-1 h-full">
                         <span className="">Giá</span>
                         <div className="w-2"></div>
                         <div className="mr-1">
@@ -268,6 +285,36 @@ const ShopDetail = () => {
                     </div>
                   </div>
                 </section>
+              </div>
+              {/* mini page controller */}
+              <div className="flex h-8">
+                <div className="flex items-center">
+                  <span className="text-red-600">{currentPage}</span>/
+                  <span className="text-black">
+                    {Math.ceil(currentProducts.length / productsPerPage)}
+                  </span>
+                </div>
+                <button
+                  className="bg-white ml-5 px-3 py-3 flex items-center"
+                  onClick={() => handlePreviousPage()}
+                >
+                  <AiOutlineLeft
+                    className={currentPage === 1 ? "text-gray-300" : ""}
+                  />
+                </button>
+                <button
+                  className="bg-white px-3 py-3 flex items-center border-l border-gray-300"
+                  onClick={() => handleNextPage()}
+                >
+                  <AiOutlineRight
+                    className={
+                      currentPage ===
+                      Math.ceil(currentProducts.length / productsPerPage)
+                        ? "text-gray-300"
+                        : ""
+                    }
+                  />
+                </button>
               </div>
             </div>
           </div>
@@ -350,51 +397,6 @@ const ShopDetail = () => {
           </Pagination>
         )}
       </div>
-      {/* Pagination */}
-      {/* <div className="flex justify-center mt-8"> */}
-      {/*   <nav> */}
-      {/*     <ul className="inline-flex items-center -space-x-px"> */}
-      {/*       <li> */}
-      {/*         <button */}
-      {/*           onClick={() => paginate(currentPage - 1)} */}
-      {/*           disabled={currentPage === 1} */}
-      {/*           className="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700" */}
-      {/*         > */}
-      {/*           Previous */}
-      {/*         </button> */}
-      {/*       </li> */}
-      {/*       {Array.from( */}
-      {/*         { length: Math.ceil(currentProducts.length / productsPerPage) }, */}
-      {/*         (_, index) => ( */}
-      {/*           <li key={index}> */}
-      {/*             <button */}
-      {/*               onClick={() => paginate(index + 1)} */}
-      {/*               className={`px-3 py-2 leading-tight ${ */}
-      {/*                 currentPage === index + 1 */}
-      {/*                   ? "text-blue-600 bg-blue-50" */}
-      {/*                   : "text-gray-500 bg-white" */}
-      {/*               } border border-gray-300 hover:bg-gray-100 hover:text-gray-700`} */}
-      {/*             > */}
-      {/*               {index + 1} */}
-      {/*             </button> */}
-      {/*           </li> */}
-      {/*         ), */}
-      {/*       )} */}
-      {/*       <li> */}
-      {/*         <button */}
-      {/*           onClick={() => paginate(currentPage + 1)} */}
-      {/*           disabled={ */}
-      {/*             currentPage === */}
-      {/*             Math.ceil(currentProducts.length / productsPerPage) */}
-      {/*           } */}
-      {/*           className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700" */}
-      {/*         > */}
-      {/*           Next */}
-      {/*         </button> */}
-      {/*       </li> */}
-      {/*     </ul> */}
-      {/*   </nav> */}
-      {/* </div> */}
     </div>
   );
 };
