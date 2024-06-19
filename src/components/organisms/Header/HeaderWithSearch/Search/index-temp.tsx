@@ -5,9 +5,10 @@ import { AiOutlineDown } from "react-icons/ai";
 
 export const SearchBar: React.FC = () => {
   const location = useLocation();
-  console.log(location.pathname);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchShopType, setSearchShopType] = useState(true); // all, this shop
+  const [searchType, setSearchType] = useState(
+    location.pathname.slice(-5) === ".shop" ? false : true,
+  ); // all, this shop
 
   const navigate = useNavigate();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,29 +36,44 @@ export const SearchBar: React.FC = () => {
               className=" focus:outline focus:outline-2 focus:outline-offset-8 w-full h-10 pl-2"
             />
           </div>
-          <span className="border-r border-gray-300 h-auto mr-2"></span>
-          <div className="flex flex-col w-auto cursor-pointer px-2 group">
-            <button
-              type="button"
-              className="flex flex-grow items-center justify-center"
-            >
-              <span className="">
-                {searchShopType ? "Trong Shop này" : "Trong VTV"}
-              </span>
-              <div className="w-2"></div>
-              <AiOutlineDown />
-            </button>
-            <div className="relative">
-              <div className="absolute -top-5 py-8 hidden group-hover:block w-full">
-                <div className="flex gap-2 bg-white shadow-lg w-auto -ml-4 pl-4">
-                  <div className="flex flex-col w-full">
-                    <span className="hover:text-gray-500">Trong VTV</span>
-                    <span className="hover:text-gray-500">Trong Shop này</span>
+          {/* shop search session */}
+          {location.pathname.slice(-5) === ".shop" ? (
+            <>
+              <span className="border-r border-gray-300 h-auto mr-2"></span>
+              <div className="flex flex-col w-auto cursor-pointer px-2 group">
+                <button
+                  type="button"
+                  className="flex flex-grow items-center justify-center"
+                >
+                  <span className="">
+                    {!searchType ? "Trong Shop này" : "Trong VTV"}
+                  </span>
+                  <div className="w-2"></div>
+                  <AiOutlineDown />
+                </button>
+                <div className="relative">
+                  <div className="absolute -top-5 py-8 hidden group-hover:block w-full">
+                    <div className="flex gap-2 bg-white shadow-lg w-auto -ml-4 pl-4">
+                      <div className="flex flex-col w-full">
+                        <span
+                          className={`hover:text-gray-500 ${searchType ? "text-gray-500" : ""}`}
+                          onClick={() => setSearchType(true)}
+                        >
+                          Trong VTV
+                        </span>
+                        <span
+                          className={`hover:text-gray-500 ${!searchType ? "text-gray-500" : ""}`}
+                          onClick={() => setSearchType(false)}
+                        >
+                          Trong Shop này
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </>
+          ) : null}
         </div>
 
         <button
