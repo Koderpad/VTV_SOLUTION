@@ -18,3 +18,24 @@ export const searchProducts = async (
     throw error;
   }
 };
+
+export const searchProductsInShop = async (
+  username: string,
+  page: number,
+  size: number,
+  search: string,
+  sort: string,
+): Promise<ProductPageResponse> => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL_VTC}/search/product/shop/username/${username}/sort`,
+      {
+        params: { page, size, search, sort },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error searching products in shop:", error);
+    throw error;
+  }
+};
