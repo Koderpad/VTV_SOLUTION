@@ -17,7 +17,14 @@ export const SearchBar: React.FC = () => {
 
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    navigate(`/search/${searchTerm}`);
+    if (searchType) {
+      navigate(`/search/${searchTerm}`);
+    } else {
+      console.log("shop search: " + location.pathname);
+      navigate(
+        `/search/${searchTerm}?shop=${location.pathname.split(".")[0].slice(1)}`,
+      );
+    }
   };
 
   return (
