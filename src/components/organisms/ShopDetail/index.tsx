@@ -41,6 +41,9 @@ const ShopDetail = () => {
   );
   const [ortherDataShop, setOrtherDataShop] =
     useState<ShopDetailResponse | null>(null);
+  const [sortBy, setSortBy] = useState<string>(
+    searchParams.get("sortBy") || "popular",
+  );
 
   const callApisSequentially = async () => {
     console.log("username: ", username);
@@ -113,23 +116,59 @@ const ShopDetail = () => {
       page > 0 && page <= Math.ceil(currentProducts.length / productsPerPage)
     );
   };
+
   useEffect(() => {
     const pageParam = searchParams.get("page");
     const initialPage = pageParam ? parseInt(pageParam, 10) : 1;
-    if (!checkValidPage(initialPage)) {
-      setSearchParams({ page: "1" });
-      return;
-    }
+    // if (!checkValidPage(initialPage)) {
+    //   setSearchParams({ page: "1" });
+    //   return;
+    // }
     setCurrentPage(initialPage);
   }, [searchParams]);
 
   useEffect(() => {
-    if (!checkValidPage(currentPage)) {
-      setCurrentPage(1);
-      return;
-    }
+    // if (!checkValidPage(currentPage)) {
+    //   setCurrentPage(1);
+    //   return;
+    // }
     setSearchParams({ page: currentPage.toString() });
   }, [currentPage]);
+
+  useEffect(() => {
+    if (!allProducts) return;
+
+    if (sortBy === "popular") {
+      setCurrentProducts(allProducts ?? []);
+      setSearchParams({ sortBy: "popular" });
+    }
+    if (sortBy === "newest") {
+      const sortedProducts = allProducts?.sort(
+        (a, b) => b.productId - a.productId,
+      );
+      setCurrentProducts(sortedProducts ?? []);
+      setSearchParams({ sortBy: "newest" });
+    }
+    if (sortBy === "sales") {
+      const sortedProducts = allProducts?.sort((a, b) => b.sold - a.sold);
+      setCurrentProducts(sortedProducts ?? []);
+      setSearchParams({ sortBy: "sales" });
+    }
+    if (sortBy === "priceAsc") {
+      const sortedProducts = allProducts?.sort(
+        (a, b) => a.minPrice - b.minPrice,
+      );
+      setCurrentProducts(sortedProducts ?? []);
+      setSearchParams({ sortBy: "priceAsc" });
+    }
+    if (sortBy === "priceDesc") {
+      const sortedProducts = allProducts?.sort(
+        (a, b) => b.minPrice - a.minPrice,
+      );
+      setCurrentProducts(sortedProducts ?? []);
+      setSearchParams({ sortBy: "priceDesc" });
+    }
+  }, [sortBy]);
 
   const handleCategorySelect = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
@@ -246,9 +285,23 @@ const ShopDetail = () => {
               <span className="text-gray-500 mr-1">Sắp xếp theo</span>
               <div className="flex flex-grow items-center h-8">
                 <section className="flex w-auto h-full ml-2 gap-3">
-                  {["Phổ biến", "Mới nhất", "Bán chạy"].map((item) => (
-                    <button type="button" className="bg-white px-3 h-full">
-                      <span className="text-black h-8">{item}</span>
+                  {["popular", "newest", "sales"].map((item) => (
+                    <button
+                      type="button"
+                      className={`px-3 h-full ${
+                        sortBy === item ? "bg-blue-600" : "bg-white"
+                      }`}
+                      onClick={() => setSortBy(item)}
+                    >
+                      <span className="text-black h-8">
+                        {item === "popular"
+                          ? "Phổ biến"
+                          : item === "newest"
+                            ? "Mới nhất"
+                            : item === "sales"
+                              ? "Bán chạy"
+                              : ""}
+                      </span>
                     </button>
                   ))}
                 </section>
@@ -267,14 +320,14 @@ const ShopDetail = () => {
                           <div className="flex gap-2 bg-white shadow-lg w-auto -ml-2 pl-5">
                             <div className="flex flex-col w-full gap-2 py-3">
                               <span
-                                // className={`hover:text-gray-500 ${searchType ? "text-gray-500" : ""}`}
-                                onClick={() => null}
+                                className={`hover:text-gray-500 ${sortBy === "priceAsc" ? "text-blue-600" : ""}`}
+                                onClick={() => setSortBy("priceAsc")}
                               >
                                 Giá từ thấp đến cao
                               </span>
                               <span
-                                // className={`hover:text-gray-500 ${!searchType ? "text-gray-500" : ""}`}
-                                onClick={() => null}
+                                className={`hover:text-gray-500 ${sortBy === "priceDesc" ? "text-blue-600" : ""}`}
+                                onClick={() => setSortBy("priceDesc")}
                               >
                                 Giá từ cao đến thấp
                               </span>
