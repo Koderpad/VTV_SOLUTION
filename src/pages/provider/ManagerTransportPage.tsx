@@ -6,7 +6,6 @@ import {useNavigate} from "react-router-dom";
 import {useGetTransportPageByManagerAndDateQuery} from "@/redux/features/shipping/ManagerTransportApiSlice.ts";
 import {TransportStatus} from "@/utils/DTOs/extra/TransportStatus.ts";
 import dayjs from "dayjs";
-import StatisticsTransportProps from "@/features/shipping/provider/StatisticsTransportProps.tsx";
 import {transportStatusToString} from "@/utils/DTOs/extra/convertToString/transportStatusToString.ts";
 
 
