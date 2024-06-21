@@ -68,6 +68,9 @@ import DeliverManagerEmployeePage from "@/pages/deliver-manager/DeliverManagerEm
 import DeliverInformationPage from "@/pages/deliver/DeliverInformationPage.tsx";
 import DeliverTransportPage from "@/pages/deliver/DeliverTransportPage.tsx";
 import ShopAndTransportDetail from "@/features/shipping/deliver/ShopAndTransportDetail.tsx";
+import UpdateTransportPage from "@/pages/deliver/UpdateTransportPage.tsx";
+import CashOrderShipperPage from "@/pages/deliver/CashOrderShipperPage.tsx";
+import CashOrderWaveHousePage from "@/pages/deliver/CashOrderWaveHousePage.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -309,6 +312,18 @@ function App() {
                     path="transport/shop/:shopId"
                     element={<ShopAndTransportDetail />}
                 />
+              <Route
+                  path="transport/update"
+                  element={<UpdateTransportPage/>}/>
+              <Route
+                  path="cash-order/shipper"
+                  element={<CashOrderShipperPage/>}/>
+              <Route
+                  path="cash-order/wavehouse"
+                  element={<CashOrderWaveHousePage/>}/>
+
+
+
 
 
             </Route>
