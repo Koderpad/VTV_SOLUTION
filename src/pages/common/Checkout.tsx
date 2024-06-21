@@ -1,10 +1,6 @@
-import { OrderContainer } from "@/features/common/order/components/OrderContainer";
+import { CheckoutTemplate } from "@/components/templates/common/CheckoutTemplate";
 
 const Checkout: React.FC = () => {
-  return (
-    <div>
-      <OrderContainer />
-    </div>
-  );
+  return <CheckoutTemplate />;
 };
 export default Checkout;
