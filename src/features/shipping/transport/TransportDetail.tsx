@@ -5,7 +5,7 @@ import { transportStatusToString } from "@/utils/DTOs/extra/convertToString/tran
 import { getTransportStatusColor } from "@/utils/DTOs/extra/color/getTransportStatusColor.ts";
 import TransportResponse from "@/utils/DTOs/shipping/response/TransportResponse.ts";
 import dayjs from "dayjs";
-
+import TransportDetailProps from "@/features/shipping/transport/TransportDetailProps.tsx";
 
 const TransportDetail = () => {
     const { transportId } = useParams<{ transportId: string }>();
@@ -13,9 +13,8 @@ const TransportDetail = () => {
     const [transportResponse, setTransportResponse] = useState<TransportResponse>();
     const [isLoading, setIsLoading] = useState(true);
 
-    const { data, error: transportError, isLoading: transportLoading } = useGetTransportResponseByTransportIdQuery({
-        transportId: transportId
-    });
+    const { data, error: transportError, isLoading: transportLoading } =
+        useGetTransportResponseByTransportIdQuery({ transportId: transportId });
 
     useEffect(() => {
         if (data) {
@@ -43,66 +42,8 @@ const TransportDetail = () => {
             >
                 Quay Lại
             </button>
-
-            <h1 className="text-4xl font-bold text-black mb-8 text-center">Chi tiết vận chuyển</h1>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-md shadow-md p-6">
-                    <h2 className="text-2xl font-bold text-black mb-4 text-center">Thông tin vận chuyển</h2>
-                    <dl className="space-y-4">
-                        <div>
-                            <dt className="text-neutral-800 text-xl font-bold">Mã vận chuyển:</dt>
-                            <dd className="mt-1 text-black">{transportResponse.transportDTO.transportId}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-neutral-800  text-xl font-bold">Mã đơn hàng:</dt>
-                            <dd className="mt-1 text-black">{transportResponse.transportDTO.orderId}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-neutral-800  text-xl font-bold">Phương thức vận chuyển:</dt>
-                            <dd className="mt-1 text-black">{transportResponse.transportDTO.shippingMethod}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-neutral-800  text-xl font-bold">Trạng thái:</dt>
-                            <dd className={`mt-1 text-${getTransportStatusColor(transportResponse.transportDTO.status)}`}>
-                                {transportStatusToString[transportResponse.transportDTO.status]}
-                            </dd>
-                        </div>
-                        <div>
-                            <dt className="text-neutral-800  text-xl font-bold">Ngày tạo:</dt>
-                            <dd className="mt-1 text-black">{dayjs(transportResponse.transportDTO.createAt).format('DD-MM-YYYY')}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-neutral-800  text-xl font-bold">Ngày cập nhật:</dt>
-                            <dd className="mt-1 text-black">{dayjs(transportResponse.transportDTO.updateAt).format('DD-MM-YYYY')}</dd>
-                        </div>
-                    </dl>
-                </div>
-                <div className="bg-white rounded-md shadow-md p-6">
-                    <h2 className="text-2xl font-bold text-black mb-4 text-center">Lịch sử vận chuyển</h2>
-                    <dl className="space-y-4">
-                        <div>
-                            <dt className="text-neutral-800  text-xl font-bold">Lịch sử vận chuyển:</dt>
-                            <dd className="mt-1 text-black">
-                                <ul>
-                                    {transportResponse.transportDTO.transportHandleDTOs.map((transportHandle, index) => (
-                                        <li key={index} className="list-disc list-inside">
-                                            <span
-                                                className="font-bold">{transportHandle.username}</span> - {transportStatusToString[transportHandle.transportStatus]}
-                                            <br/>
-                                            <span
-                                                className={`text-${getTransportStatusColor(transportHandle.transportStatus)}-500`}>{transportHandle.messageStatus}</span>
-                                            <br/>
-                                            <span
-                                                className="text-gray-500">Ngày: {dayjs(transportHandle.createAt).format('DD-MM-YYYY HH:mm')}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
+`
+            <TransportDetailProps transportDTO={transportResponse.transportDTO} />
         </div>
     );
 };

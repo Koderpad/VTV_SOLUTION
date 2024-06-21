@@ -11,6 +11,15 @@ export const TransportApiSlice = apiSlice.injectEndpoints({
             query: ({ transportId }) => `/shipping/transport/get/${transportId}`,
         }),
 
+        findTransportResponseByTransportId: builder.mutation<TransportResponse, string>({
+            query: (transportId) => ({
+                url: `/shipping/transport/get/${transportId}`,
+                method: 'GET',
+            })
+        }),
+
+
+
         updateStatusTransportByDeliver: builder.mutation<
             TransportResponse, { transportId: string, status: TransportStatus, handled: boolean, wardCode: string }>({
             query: ({ transportId, status, handled, wardCode }) => ({
@@ -68,6 +77,7 @@ export const TransportApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetTransportResponseByTransportIdQuery,
+    useFindTransportResponseByTransportIdMutation,
     useUpdateStatusTransportByDeliverMutation,
     useUpdateTransportStatusWithReturnOrderByDeliverMutation,
     useUpdateTransportStatusWithCancelReturnOrderByDeliverMutation,
