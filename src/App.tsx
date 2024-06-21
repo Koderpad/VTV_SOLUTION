@@ -65,12 +65,14 @@ import TransportDetail from "@/features/shipping/transport/TransportDetail.tsx";
 import ResultsPage from "./pages/common/ResultsPage.tsx";
 import DeliverManagerInformationPage from "@/pages/deliver-manager/DeliverManagerInformationPage.tsx";
 import DeliverManagerEmployeePage from "@/pages/deliver-manager/DeliverManagerEmployeePage.tsx";
+import { useGetListCartByUsernameQuery } from "./redux/features/common/cart/cartApiSlice.ts";
+import { setCarts } from "./redux/features/common/cart/cartSlice.ts";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage"),
+  () => import("./pages/common/ProductDetailPage")
 );
 
 // ROLE: CUSTOMER
@@ -79,14 +81,14 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges"),
+  () => import("./components/organisms/Account/PasswordChanges")
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail"),
+  () => import("./components/organisms/Account/OrderDetail")
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage"),
+  () => import("./pages/common/CategoryResultsPage")
 );
 
 //ROLE: MANAGER
@@ -94,7 +96,7 @@ const CategoryResultsPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
   const {
     data: notifications,
@@ -103,6 +105,14 @@ function App() {
     refetch,
   } = useGetListNotificationQuery({ page: 1, size: 5 }, { skip: !isLoggedIn });
 
+  //cart
+  const {
+    data: carts,
+    isLoading: isLoading_,
+    isSuccess: isSuccess_,
+    refetch: refetch_,
+  } = useGetListCartByUsernameQuery();
+
   useEffect(() => {
     requestForToken();
   }, []);
@@ -110,15 +120,19 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       refetch();
+      refetch_();
     }
-  }, [isLoggedIn, refetch]);
+  }, [isLoggedIn, refetch, refetch_]);
 
   useEffect(() => {
     if (isSuccess && notifications) {
       dispatch(setNotifications(notifications.notificationDTOs));
     }
-    console.log("notifications", notifications);
-  }, [dispatch, isSuccess, notifications]);
+    if (isSuccess_ && carts) {
+      dispatch(setCarts(carts.listCartByShopDTOs));
+      console.log(carts);
+    }
+  }, [dispatch, isSuccess, notifications, isSuccess_, carts]);
 
   useEffect(() => {
     onMessageListener().then(async (data: any) => {
@@ -129,7 +143,7 @@ function App() {
     });
   }, [isLoggedIn, refetch]);
 
-  if (isLoading) {
+  if (isLoading || isLoading_) {
     return <div>Loading...</div>;
   }
 
@@ -256,11 +270,6 @@ function App() {
             </Route>
           </Route>
 
-
-
-
-
-
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
               <Route path="detail" element={<ProviderInformationPage />} />
@@ -290,55 +299,49 @@ function App() {
             </Route>
           </Route>
 
-
-
-
-
-
           <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
             <Route path="/deliver" element={<DashboardDeliver />}>
               <Route path="customers" element={<CustomerDeliverPage />} />
             </Route>
           </Route>
 
-
-
-
-
           <Route element={<RequireAuth allowedRoles={["DELIVER_MANAGER"]} />}>
             <Route
               path="/deliver_manager"
               element={<DashboardDeliverManager />}
             >
-              <Route path="detail" element={<DeliverManagerInformationPage />} />
               <Route
-                  path="update/information"
-                  element={<UpdateInformationTransportProvider />}
-              />
-              <Route path="employees" element={<DeliverManagerEmployeePage />} />
-              <Route
-                  path="employee/detail/:deliverId"
-                  element={<DeliverDetail />}
+                path="detail"
+                element={<DeliverManagerInformationPage />}
               />
               <Route
-                  path="employee/update-work/:deliverId"
-                  element={<UpdateDeliverWork />}
+                path="update/information"
+                element={<UpdateInformationTransportProvider />}
+              />
+              <Route
+                path="employees"
+                element={<DeliverManagerEmployeePage />}
+              />
+              <Route
+                path="employee/detail/:deliverId"
+                element={<DeliverDetail />}
+              />
+              <Route
+                path="employee/update-work/:deliverId"
+                element={<UpdateDeliverWork />}
               />
               <Route path="employee/add" element={<AddNewDeliver />} />
               <Route
-                  path="statistics/revenue"
-                  element={<StatisticsTransportsPage />}
+                path="statistics/revenue"
+                element={<StatisticsTransportsPage />}
               />
               <Route path="transports" element={<ManagerTransportPage />} />
               <Route
-                  path="transport/detail/:transportId"
-                  element={<TransportDetail />}
+                path="transport/detail/:transportId"
+                element={<TransportDetail />}
               />
             </Route>
           </Route>
-
-
-
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
 
