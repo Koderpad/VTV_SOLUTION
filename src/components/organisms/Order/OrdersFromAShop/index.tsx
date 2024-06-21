@@ -15,8 +15,8 @@ interface OrderDetailsProps {
 
 export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
   const { order, updateOrderRequest, formatPrice } = props;
-  const { shopVouchers, isLoading, error  } = useShopVoucher(
-    order.orderDTO.shopDTO.shopId
+  const { shopVouchers, isLoading, error } = useShopVoucher(
+    order.orderDTO.shopDTO.shopId,
   );
   const [showVoucherForm, setShowVoucherForm] = useState(false);
   const [selectedVouchersOfShop, setSelectedVouchersOfShop] = useState<
@@ -48,7 +48,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
       try {
         //get shop voucher from order
         const shopVoucher = order.orderDTO.voucherOrderDTOs.find(
-          (v) => v.type === true
+          (v) => v.type === true,
         );
         console.log("shopVoucher: ", shopVoucher);
         if (shopVoucher) {
@@ -117,7 +117,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
 
   return (
     <div
-      className="w-4/5 mx-auto mt-12 bg-white flex flex-col h-auto rounded-md"
+      className="mt-8 bg-white flex flex-col h-auto rounded-md"
       style={{
         borderTop: "4px solid red",
         border: "none",
@@ -208,7 +208,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
         <VoucherDetails
           voucher={
             shopVouchers!.find(
-              (v) => v.voucherId === selectedVouchersOfShop[0]
+              (v) => v.voucherId === selectedVouchersOfShop[0],
             )!
           }
         />
@@ -331,7 +331,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
           <span className="text-lg">Giảm giá</span>
           <span className="text-lg text-red-400">
             {formatPrice(
-              order.orderDTO.discountShop + order.orderDTO.discountSystem
+              order.orderDTO.discountShop + order.orderDTO.discountSystem,
             )}
           </span>
         </div>
