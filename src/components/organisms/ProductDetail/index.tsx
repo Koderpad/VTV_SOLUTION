@@ -4,12 +4,14 @@ import {
 } from "@/utils/DTOs/common/Product/Response/ProductResponse";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { useAddNewCartMutation } from "../../../redux/features/common/cart/cartApiSlice";
+import {
+  useAddNewCartMutation,
+  useGetListCartByUsernameQuery,
+} from "../../../redux/features/common/cart/cartApiSlice";
 import { InputQuantity } from "../../molecules/Inputs/InputQuantity";
 
 interface ProductDetailProps {
@@ -18,25 +20,25 @@ interface ProductDetailProps {
 
 const getAvailableVariants = (
   selectedAttributes: { [key: string]: string },
-  productVariants: ProductVariantDTO[],
+  productVariants: ProductVariantDTO[]
 ): ProductVariantDTO[] => {
   return productVariants.filter((variant) => {
     return variant.attributeDTOs.every(
       (attribute) =>
         selectedAttributes[attribute.name] === attribute.value ||
-        !selectedAttributes[attribute.name],
+        !selectedAttributes[attribute.name]
     );
   });
 };
 
 const getAvailableAttributeValues = (
   attributeName: string,
-  availableVariants: ProductVariantDTO[],
+  availableVariants: ProductVariantDTO[]
 ): string[] => {
   const attributeValues = new Set<string>();
   availableVariants.forEach((variant) => {
     const attribute = variant.attributeDTOs.find(
-      (attr) => attr.name === attributeName,
+      (attr) => attr.name === attributeName
     );
     if (attribute) {
       attributeValues.add(attribute.value);
@@ -46,12 +48,12 @@ const getAvailableAttributeValues = (
 };
 const getSelectedVariant = (
   selectedAttributes: { [key: string]: string },
-  productVariants: ProductVariantDTO[],
+  productVariants: ProductVariantDTO[]
 ): ProductVariantDTO | undefined => {
   return productVariants.find((variant) =>
     variant.attributeDTOs.every(
-      (attribute) => selectedAttributes[attribute.name] === attribute.value,
-    ),
+      (attribute) => selectedAttributes[attribute.name] === attribute.value
+    )
   );
 };
 export const ProductDetail = ({ data }: ProductDetailProps) => {
@@ -65,15 +67,18 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
   const navigate = useNavigate();
   const [addNewCart] = useAddNewCartMutation();
+
+  const { refetch: refetch_ } = useGetListCartByUsernameQuery();
+
   const isAuth: boolean = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
 
   const dataImage = Array.from(
     new Set([
       data.productDTO.image,
       ...data.productDTO.productVariantDTOs.map((variant) => variant.image),
-    ]),
+    ])
   ).filter((image): image is string => !!image);
 
   const attributeList = data.productDTO.productVariantDTOs.reduce<
@@ -81,7 +86,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   >((acc, variant) => {
     variant.attributeDTOs.forEach((attribute) => {
       const existingAttribute = acc.find(
-        (attr) => attr.name === attribute.name,
+        (attr) => attr.name === attribute.name
       );
       if (existingAttribute) {
         if (!existingAttribute.values.includes(attribute.value)) {
@@ -97,12 +102,12 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   useEffect(() => {
     const availableVariants = getAvailableVariants(
       selectedAttributes,
-      data.productDTO.productVariantDTOs,
+      data.productDTO.productVariantDTOs
     );
     const selectedVariant = availableVariants.find((variant) =>
       variant.attributeDTOs.every(
-        (attribute) => selectedAttributes[attribute.name] === attribute.value,
-      ),
+        (attribute) => selectedAttributes[attribute.name] === attribute.value
+      )
     );
     if (selectedVariant) {
       setProductPrice(selectedVariant.price);
@@ -113,7 +118,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
   const selectedVariant = getSelectedVariant(
     selectedAttributes,
-    data.productDTO.productVariantDTOs,
+    data.productDTO.productVariantDTOs
   );
   const handleAttributeClick = (attributeName: string, value: string) => {
     setSelectedAttributes((prevSelectedAttributes) => {
@@ -132,13 +137,13 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
   const handlePrevImage = () => {
     setSelectedImage((prevIndex) =>
-      prevIndex === 0 ? dataImage.length - 1 : prevIndex - 1,
+      prevIndex === 0 ? dataImage.length - 1 : prevIndex - 1
     );
   };
 
   const handleNextImage = () => {
     setSelectedImage((prevIndex) =>
-      prevIndex === dataImage.length - 1 ? 0 : prevIndex + 1,
+      prevIndex === dataImage.length - 1 ? 0 : prevIndex + 1
     );
   };
 
@@ -153,12 +158,12 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
     const availableVariants = getAvailableVariants(
       selectedAttributes,
-      data.productDTO.productVariantDTOs,
+      data.productDTO.productVariantDTOs
     );
     const selectedVariant = availableVariants.find((variant) =>
       variant.attributeDTOs.every(
-        (attribute) => selectedAttributes[attribute.name] === attribute.value,
-      ),
+        (attribute) => selectedAttributes[attribute.name] === attribute.value
+      )
     );
 
     if (!selectedVariant) {
@@ -175,14 +180,25 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
       if (response && "data" in response) {
         const responseData = response.data;
 
-        if (responseData.status === "success") {
+        if (responseData.status === "Success") {
           toast.success(
-            responseData.message || "Thêm vào giỏ hàng thành công!",
+            `🦄 ${responseData.message} || "Thêm vào giỏ hàng thành công!"`,
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Slide,
+            }
           );
         } else {
           toast.error(
             responseData.message ||
-              "Thêm vào giỏ hàng thất bại. Vui lòng thử lại.",
+              "Thêm vào giỏ hàng thất bại. Vui lòng thử lại."
           );
         }
       } else {
@@ -191,6 +207,8 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+    } finally {
+      refetch_();
     }
   };
   // show info and des product
@@ -203,10 +221,6 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
-  };
-
-  const countWords = (text: string) => {
-    return text.trim().split(/\s+/).length;
   };
 
   const renderContent = (content: string, showFull: boolean, type: string) => {
@@ -385,16 +399,16 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
                   {values.map((value) => {
                     const availableVariants = getAvailableVariants(
                       selectedAttributes,
-                      data.productDTO.productVariantDTOs,
+                      data.productDTO.productVariantDTOs
                     );
                     console.log("Available Variants: ", availableVariants);
                     const isAvailable = getAvailableAttributeValues(
                       name,
-                      availableVariants,
+                      availableVariants
                     ).includes(value);
                     console.log(
                       "Get Available Attribute Values: ",
-                      getAvailableAttributeValues(name, availableVariants),
+                      getAvailableAttributeValues(name, availableVariants)
                     );
                     console.log("Is Available: ", isAvailable);
                     const isSelected = selectedAttributes[name] === value;
@@ -457,11 +471,10 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
                   ></path>
                 </svg>
               </div>
-              Thêm vào giỏ hàng
+              Thêm vào giỏ hàng!
             </button>
           </div>
         </div>
-        <ToastContainer />
       </div>
 
       {/* Shop info */}
@@ -503,9 +516,10 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
         {renderContent(
           data.productDTO.description,
           showFullDescription,
-          "desc",
+          "desc"
         )}
       </div>
+      <ToastContainer />
     </>
   );
 };

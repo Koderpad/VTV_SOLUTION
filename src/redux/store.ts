@@ -6,6 +6,7 @@ import chatReducer from "./features/common/chat/chatSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import notificationReducer from "./features/common/notifications/notificationSlice";
+import cartReducer from "./features/common/cart/cartSlice";
 // import { productDetailApi } from "../features/common/products/services/noAuth/productDetailApi.ts";
 // import productDataInAddProductReducer from "../features/vendor/redux/reducer/addProductSlice.ts";
 
@@ -20,6 +21,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   notification: notificationReducer,
+  carts: cartReducer,
   chat: chatReducer,
   // productInAddProduct: productDataInAddProductReducer,
   // [productDetailApi.reducerPath]: productDetailApi.reducer,

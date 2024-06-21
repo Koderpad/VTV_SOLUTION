@@ -1,7 +1,11 @@
 import NotificationIcon from "@/components/atoms/Icon/Notification";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-import { useDeleteNotificationMutation, useGetListNotificationQuery, useReadNotificationMutation } from "@/redux/features/common/notifications/notificationApiSlice";
+import {
+  useDeleteNotificationMutation,
+  useGetListNotificationQuery,
+  useReadNotificationMutation,
+} from "@/redux/features/common/notifications/notificationApiSlice";
 import { NotificationDTO } from "@/utils/DTOs/common/Notification/Response/NotificationResponse";
 
 import { AiOutlineExpand } from "react-icons/ai";
@@ -10,12 +14,20 @@ import { vi } from "date-fns/locale";
 import { useState } from "react";
 
 export const NotificationTooltip = () => {
-  const notifications: NotificationDTO[] = useSelector((state: RootState) => state.notification.notifications);
-  const { data: notifications_, isLoading, isSuccess, refetch } = useGetListNotificationQuery(
-    { page: 1, size: 5 });
+  const notifications: NotificationDTO[] = useSelector(
+    (state: RootState) => state.notification.notifications
+  );
+  const {
+    data: notifications_,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetListNotificationQuery({ page: 1, size: 5 });
   const [readNotification] = useReadNotificationMutation();
   const [deleteNotification] = useDeleteNotificationMutation();
-  const [expandedNotificationId, setExpandedNotificationId] = useState<string | null>(null);
+  const [expandedNotificationId, setExpandedNotificationId] = useState<
+    string | null
+  >(null);
 
   const handleNotificationClick = async (notification: NotificationDTO) => {
     if (!notification.seen) {
@@ -47,7 +59,7 @@ export const NotificationTooltip = () => {
     <>
       <div className="px-3 text-left md:cursor-pointer group">
         <div className="flex justify-between items-center md:pr-0 pr-5 group">
-          Thông Báo
+          Thông Báo!
           <div className="text-xl md:mt-1 md:ml-2 md:block hidden">
             <NotificationIcon />
           </div>
@@ -62,8 +74,9 @@ export const NotificationTooltip = () => {
                 {notifications?.map((notification) => (
                   <div
                     key={notification.notificationId}
-                    className={`text-sm text-gray-600 hover:bg-gray-100 flex justify-between items-center p-2 rounded ${!notification.seen ? "bg-red-50" : ""
-                      }`}
+                    className={`text-sm text-gray-600 hover:bg-gray-100 flex justify-between items-center p-2 rounded ${
+                      !notification.seen ? "bg-red-50" : ""
+                    }`}
                   >
                     <div
                       onClick={() => handleNotificationClick(notification)}
@@ -82,21 +95,27 @@ export const NotificationTooltip = () => {
                           : truncateText(notification.body, 35)}
                         {notification.body.length > 35 && (
                           <button
-                            onClick={() => toggleExpandNotification(notification.notificationId)}
+                            onClick={() =>
+                              toggleExpandNotification(
+                                notification.notificationId
+                              )
+                            }
                             className="ml-1 text-blue-500 hover:underline focus:outline-none"
                           >
-                            {expandedNotificationId === notification.notificationId ? (
-                              "Thu gọn"
-                            ) : (
-                            "Xem thêm"
-                              // <AiOutlineExpand />
-                            )}
+                            {expandedNotificationId ===
+                            notification.notificationId
+                              ? "Thu gọn"
+                              : "Xem thêm"
+                                // <AiOutlineExpand />
+                            }
                           </button>
                         )}
                       </div>
                     </div>
                     <button
-                      onClick={() => handleDeleteNotification(notification.notificationId)}
+                      onClick={() =>
+                        handleDeleteNotification(notification.notificationId)
+                      }
                       className="text-red-500 hover:text-red-700 focus:outline-none"
                     >
                       Xóa
