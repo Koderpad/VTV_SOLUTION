@@ -209,7 +209,7 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
         ),
       )}
 
-      <div className="mt-4 bg-white flex flex-col">
+      <div className="my-4 bg-white flex flex-col">
         <div className=" flex flex-col shadow-md rounded px-8 py-6">
           {/* LoyaltyPoint */}
           <div className="bg-white flex justify-between mb-4">
