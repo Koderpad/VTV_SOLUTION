@@ -65,6 +65,9 @@ import TransportDetail from "@/features/shipping/transport/TransportDetail.tsx";
 import ResultsPage from "./pages/common/ResultsPage.tsx";
 import DeliverManagerInformationPage from "@/pages/deliver-manager/DeliverManagerInformationPage.tsx";
 import DeliverManagerEmployeePage from "@/pages/deliver-manager/DeliverManagerEmployeePage.tsx";
+import DeliverInformationPage from "@/pages/deliver/DeliverInformationPage.tsx";
+import DeliverTransportPage from "@/pages/deliver/DeliverTransportPage.tsx";
+import ShopAndTransportDetail from "@/features/shipping/deliver/ShopAndTransportDetail.tsx";
 
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
@@ -297,7 +300,17 @@ function App() {
 
           <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
             <Route path="/deliver" element={<DashboardDeliver />}>
-              <Route path="customers" element={<CustomerDeliverPage />} />
+              <Route path="detail" element={<DeliverInformationPage />} />
+                <Route
+                    path="transports"
+                    element={<DeliverTransportPage />}
+                />
+              <Route
+                    path="transport/shop/:shopId"
+                    element={<ShopAndTransportDetail />}
+                />
+
+
             </Route>
           </Route>
 
