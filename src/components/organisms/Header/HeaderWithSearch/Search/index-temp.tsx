@@ -25,7 +25,10 @@ export const SearchBar: React.FC = () => {
       if (!searchTerm.trim()) return;
 
       let searchPath = `/search/${encodeURIComponent(searchTerm)}`;
-      if (!searchType) {
+      if (
+        !searchType &&
+        (location.pathname.endsWith(".shop") || searchParams.get("shop"))
+      ) {
         const shop =
           searchParams.get("shop") || location.pathname.split(".")[0].slice(1);
         searchPath += `?shop=${encodeURIComponent(shop)}`;

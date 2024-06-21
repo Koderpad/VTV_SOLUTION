@@ -75,7 +75,7 @@ import ShopAndTransportDetail from "@/features/shipping/deliver/ShopAndTransport
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage")
+  () => import("./pages/common/ProductDetailPage"),
 );
 
 // ROLE: CUSTOMER
@@ -84,14 +84,14 @@ const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(() => import("./components/organisms/Account/Profile"));
 const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges")
+  () => import("./components/organisms/Account/PasswordChanges"),
 );
 const Address = lazy(() => import("./components/organisms/Account/Address"));
 const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail")
+  () => import("./components/organisms/Account/OrderDetail"),
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage")
+  () => import("./pages/common/CategoryResultsPage"),
 );
 
 //ROLE: MANAGER
@@ -99,7 +99,7 @@ const CategoryResultsPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+    (state: RootState) => state.auth.isAuthenticated,
   );
   const {
     data: notifications,
@@ -173,12 +173,6 @@ function App() {
 
           {/* product */}
           <Route path="/product/:productId" element={<ProductDetailPage />} />
-
-          {/* cart */}
-          <Route path="/cart" element={<CartPage />} />
-
-          {/* order */}
-          <Route path="/checkout" element={<Checkout />} />
 
           {/* shop detail */}
           <Route path="/:username.shop" element={<ShopDetailPage />} />
@@ -359,6 +353,12 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<PayMent />} />
             <Route path="checkout/:id" element={<OrderDetailsForm />} /> */}
+
+            {/* cart */}
+            <Route path="/cart" element={<CartPage />} />
+
+            {/* order */}
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/vnpay/return" element={<VNPayReturn />} />
             <Route path="user/account" element={<AccountPage />}>
