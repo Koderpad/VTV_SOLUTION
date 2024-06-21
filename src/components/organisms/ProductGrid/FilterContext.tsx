@@ -9,6 +9,7 @@ interface Filters {
   sortBy: SortBy | null;
   rating: number[];
   page: number; // Add page field to store the current page number
+  shop?: string | null;
 }
 
 interface FilterContextType {
@@ -23,6 +24,7 @@ export const FilterContext = createContext<FilterContextType>({
     sortBy: null,
     rating: [],
     page: 1, // Default page number
+    shop: null,
   },
   updateFilters: () => {},
 });
@@ -41,6 +43,7 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
       sortBy: (searchParams.get("sortBy") as SortBy) || null,
       rating: searchParams.get("rating")?.split(",").map(Number) || [],
       page: Number(searchParams.get("page")) || 1, // Initialize page from URL
+      shop: searchParams.get("shop") || null,
     };
   });
 
@@ -52,6 +55,7 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
       sortBy: (searchParams.get("sortBy") as SortBy) || null,
       rating: searchParams.get("rating")?.split(",").map(Number) || [],
       page: Number(searchParams.get("page")) || 1, // Update page from URL
+      shop: searchParams.get("shop") || null,
     });
   }, [location.search]);
 
@@ -69,7 +73,11 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
     if (filters.rating.length > 0) {
       searchParams.set("rating", filters.rating.join(","));
     }
+    if (filters.shop !== null) {
+      searchParams.set("shop", filters.shop!);
+    }
     searchParams.set("page", String(filters.page)); // Reflect page changes in URL
+
     window.history.replaceState(null, "", `?${searchParams.toString()}`);
   }, [filters]);
 

@@ -4,11 +4,14 @@ import { useParams } from "react-router-dom";
 
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
 import { FilterContext } from "@/components/organisms/ProductGrid/FilterContext";
-import { searchProducts } from "@/services/common/SearchProductService";
+import {
+  searchProducts,
+  searchProductsInShop,
+} from "@/services/common/SearchProductService";
 export const SearchResultsContainer = () => {
   const { searchTerm } = useParams<{ searchTerm: string }>();
   const { filters, updateFilters } = useContext(FilterContext);
-  const { fromPrice, toPrice, sortBy, rating } = filters;
+  const { fromPrice, toPrice, sortBy, rating, shop } = filters;
 
   const [products, setProducts] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,13 +25,20 @@ export const SearchResultsContainer = () => {
         let totalPages = 1;
 
         while (currentPage <= totalPages) {
-          const response = await searchProducts(
-            currentPage,
-            1,
-            searchTerm ?? "",
-            "best-selling",
-          );
-
+          const response = shop
+            ? await searchProductsInShop(
+                shop,
+                currentPage,
+                10,
+                searchTerm ?? "",
+                sortBy ?? "best-selling",
+              )
+            : await searchProducts(
+                currentPage,
+                10,
+                searchTerm ?? "",
+                sortBy ?? "best-selling",
+              );
           if (response.status === "OK") {
             allProducts = [...allProducts, ...response.productDTOs];
             totalPages = response.totalPage;
@@ -41,9 +51,7 @@ export const SearchResultsContainer = () => {
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        if (sortBy === null) {
-          updateFilters({ sortBy: "best-selling" });
-        }
+        updateFilters({ sortBy: "best-selling" });
         setLoading(false);
       }
     };
