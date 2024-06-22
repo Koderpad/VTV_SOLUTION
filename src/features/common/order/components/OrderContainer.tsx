@@ -53,7 +53,7 @@ export const OrderContainer = () => {
   // Hàm cập nhật thông tin đơn hàng khi người dùng thay đổi
   const updateOrderRequest = (
     index: number,
-    updates: Partial<OrderRequestWithCart>
+    updates: Partial<OrderRequestWithCart>,
   ) => {
     const updatedDate: Partial<OrderRequestWithCart>[] = [];
     multipleOrderResponse!.orderResponses.forEach(() => {
@@ -84,7 +84,7 @@ export const OrderContainer = () => {
     }
 
     const neccessaryOrderResponses = getNeccessaryOrderResponses(
-      multipleOrderResponse
+      multipleOrderResponse,
     );
     const updatedOrderRequestWithCarts: Promise<OrderRequestWithCart[]> =
       Promise.all(
@@ -114,7 +114,7 @@ export const OrderContainer = () => {
 
             cartIds: orderDTO.orderItemDTOs.map(({ cartId }) => cartId),
           };
-        })
+        }),
       );
 
     // Sử dụng finalOrderRequestWithCarts
@@ -123,7 +123,7 @@ export const OrderContainer = () => {
         // Sử dụng finalOrderRequestWithCarts
         console.log(
           "Updated Order Request With Carts: ",
-          finalOrderRequestWithCarts
+          finalOrderRequestWithCarts,
         );
 
         setOrderRequestWithCarts({
@@ -146,7 +146,7 @@ export const OrderContainer = () => {
         setMultipleOrderResponse(multipleOrderResponse);
 
         const neccessaryOrderResponses = getNeccessaryOrderResponses(
-          multipleOrderResponse
+          multipleOrderResponse,
         );
         setAddress(neccessaryOrderResponses[0]?.orderDTO.addressDTO);
         setSystemVoucherNameAndId(() => {
@@ -154,7 +154,7 @@ export const OrderContainer = () => {
           if (neccessaryOrderResponses[0]?.orderDTO.voucherOrderDTOs) {
             const systemVoucher =
               neccessaryOrderResponses[0]?.orderDTO.voucherOrderDTOs.find(
-                (voucher) => !voucher.type
+                (voucher) => !voucher.type,
               );
             console.log("System Voucher: ", systemVoucher);
             if (systemVoucher) {
@@ -169,7 +169,7 @@ export const OrderContainer = () => {
         });
 
         setPaymentMethod(
-          neccessaryOrderResponses[0]?.orderDTO.paymentMethod || "COD"
+          neccessaryOrderResponses[0]?.orderDTO.paymentMethod || "COD",
         );
 
         shouldUpdateFromURL.current = false;
@@ -186,7 +186,7 @@ export const OrderContainer = () => {
 
   // Xử lý đặt hàng khi orderRequestWithCarts thay đổi
   const trustedOrderRequestWithCarts = (
-    orderRequestWithCarts: MultipleOrderRequestWithCart
+    orderRequestWithCarts: MultipleOrderRequestWithCart,
   ) => {
     return {
       orderRequestWithCarts: orderRequestWithCarts.orderRequestWithCarts.map(
@@ -206,7 +206,7 @@ export const OrderContainer = () => {
           }
 
           return updatedOrderRequest;
-        }
+        },
       ),
     };
   };
@@ -222,24 +222,24 @@ export const OrderContainer = () => {
         setIsUpdating(true);
         try {
           const edittedOrderRequestWithCarts = trustedOrderRequestWithCarts(
-            orderRequestWithCarts
+            orderRequestWithCarts,
           );
           const updateOrderResponse = await updateMultiOrder(
-            edittedOrderRequestWithCarts
+            edittedOrderRequestWithCarts,
           ).unwrap();
 
           if (updateOrderResponse) {
-            // toast("Cập nhật đơn hàng thành công111111!", {
-            //   position: "top-right",
-            //   autoClose: 1000,
-            //   hideProgressBar: false,
-            //   closeOnClick: false,
-            //   pauseOnHover: false,
-            //   draggable: true,
-            //   progress: undefined,
-            //   theme: "light",
-            //   transition: Bounce,
-            // });
+            toast("Cập nhật đơn hàng thành công", {
+              position: "top-right",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
             updateURL(updateOrderResponse);
             shouldUpdateFromURL.current = true;
           } else {
@@ -270,11 +270,15 @@ export const OrderContainer = () => {
           paymentMethod={paymentMethod}
           updateOrderRequest={updateOrderRequest}
           handlePlaceOrder={() => {
-            handlePlaceOrder(multipleOrderResponse, addMultipleOrderRequestthCart, createVNPayPayment);
+            handlePlaceOrder(
+              multipleOrderResponse,
+              addMultipleOrderRequestthCart,
+              createVNPayPayment,
+            );
           }}
         />
       )}
-      // <ToastContainer />
+      <ToastContainer />
     </>
   );
 };
@@ -290,7 +294,7 @@ const getMultipleOrderResponseFromURL = () => {
   const encryptedState = decodeURIComponent(params);
   const decryptedState = AES.decrypt(
     encryptedState,
-    "vtv-secret-key-2024"
+    "vtv-secret-key-2024",
   ).toString(enc.Utf8);
   // console.log("Decrypted State: ", decryptedState);
   return JSON.parse(decryptedState);
@@ -298,7 +302,7 @@ const getMultipleOrderResponseFromURL = () => {
 
 // Hàm lấy thông tin cần thiết từ đơn hàng
 const getNeccessaryOrderResponses = (
-  multipleOrderResponse: MultipleOrderResponse
+  multipleOrderResponse: MultipleOrderResponse,
 ) => {
   return multipleOrderResponse.orderResponses.map(
     ({ code, balance, totalPoint, orderDTO }) => ({
@@ -306,7 +310,7 @@ const getNeccessaryOrderResponses = (
       balance,
       totalPoint,
       orderDTO,
-    })
+    }),
   );
 };
 
@@ -323,7 +327,7 @@ const getNeccessaryOrderResponses = (
 // Hàm lấy mã voucher hệ thống
 const getSystemVoucherCode = async (orderDTO: any) => {
   const systemVoucher = orderDTO.voucherOrderDTOs?.find(
-    (voucher: any) => voucher.type === false
+    (voucher: any) => voucher.type === false,
   );
   const id = systemVoucher?.voucherId.toString() || "";
   if (id !== "" && id) {
@@ -340,7 +344,7 @@ const getSystemVoucherCode = async (orderDTO: any) => {
 
 const getShopVoucherCode = async (orderDTO: any) => {
   const shopVoucher = orderDTO.voucherOrderDTOs?.find(
-    (voucher: any) => voucher.type === true
+    (voucher: any) => voucher.type === true,
   );
   const id = shopVoucher?.voucherId.toString() || "";
   if (id !== "" && id) {
@@ -359,17 +363,17 @@ const updateURL = (orderResponsesWithCart: MultipleOrderResponse) => {
   const updatedStateString = JSON.stringify(orderResponsesWithCart);
   const encryptedUpdatedState = AES.encrypt(
     updatedStateString,
-    "vtv-secret-key-2024"
+    "vtv-secret-key-2024",
   ).toString();
   const urlSafeEncryptedUpdatedState = encodeURIComponent(
-    encryptedUpdatedState
+    encryptedUpdatedState,
   );
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?state=${urlSafeEncryptedUpdatedState}`;
   window.history.replaceState({}, "", newUrl);
 };
 
 const getMultipleOrderRequestWithCartFromMultipleOrderResponse = async (
-  multipleOrderResponse: MultipleOrderResponse
+  multipleOrderResponse: MultipleOrderResponse,
 ) => {
   const orderRequestWithCarts = [];
 
@@ -397,14 +401,13 @@ const getMultipleOrderRequestWithCartFromMultipleOrderResponse = async (
 const handlePlaceOrder = async (
   multipleOrderResponse: MultipleOrderResponse,
   addMultipleOrderRequestWithCart: any,
-  createVNPayPayment: any
+  createVNPayPayment: any,
 ) => {
-
   handleApiCall<MultipleOrderResponse, ServerError>({
     callbackFn: async () => {
       const orderRequestWithCarts =
         await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
-          multipleOrderResponse
+          multipleOrderResponse,
         );
       return await addMultipleOrderRequestWithCart(orderRequestWithCarts);
     },
@@ -416,7 +419,9 @@ const handlePlaceOrder = async (
           sessionStorage.setItem("checkoutState", JSON.stringify(data));
 
           // Gọi API tạo thanh toán VNPay
-          const response = await createVNPayPayment([data.orderResponses[0].orderDTO.orderId]).unwrap();
+          const response = await createVNPayPayment([
+            data.orderResponses[0].orderDTO.orderId,
+          ]).unwrap();
 
           if (response.code === 200) {
             // Chuyển hướng đến URL thanh toán VNPay
@@ -451,7 +456,7 @@ const handlePlaceOrder = async (
     },
     errorCallback: (error) => {
       alert("Lỗi đặt hàng: " + error);
-    }
+    },
   });
 };
 // const handlePlaceOrder = async (

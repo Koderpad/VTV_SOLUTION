@@ -35,6 +35,7 @@ interface FilterProviderProps {
 
 export const FilterProvider = ({ children }: FilterProviderProps) => {
   const location = useLocation();
+  console.log("location in FilterProvider: ", location.search);
   const [filters, setFilters] = useState<Filters>(() => {
     const searchParams = new URLSearchParams(location.search);
     return {
@@ -78,6 +79,7 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
     }
     searchParams.set("page", String(filters.page)); // Reflect page changes in URL
 
+    console.log("searchParams in FilterProvider: ", searchParams.toString());
     window.history.replaceState(null, "", `?${searchParams.toString()}`);
   }, [filters]);
 

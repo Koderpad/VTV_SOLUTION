@@ -71,7 +71,8 @@ import ShopAndTransportDetail from "@/features/shipping/deliver/ShopAndTransport
 import UpdateTransportPage from "@/pages/deliver/UpdateTransportPage.tsx";
 import CashOrderShipperPage from "@/pages/deliver/CashOrderShipperPage.tsx";
 import CashOrderWaveHousePage from "@/pages/deliver/CashOrderWaveHousePage.tsx";
-
+import { useGetListCartByUsernameQuery } from "./redux/features/common/cart/cartApiSlice.ts";
+import { setCarts } from "./redux/features/common/cart/cartSlice.ts";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -109,6 +110,14 @@ function App() {
     refetch,
   } = useGetListNotificationQuery({ page: 1, size: 5 }, { skip: !isLoggedIn });
 
+  //cart
+  const {
+    data: carts,
+    isLoading: isLoading_,
+    isSuccess: isSuccess_,
+    refetch: refetch_,
+  } = useGetListCartByUsernameQuery();
+
   useEffect(() => {
     requestForToken();
   }, []);
@@ -116,15 +125,19 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       refetch();
+      refetch_();
     }
-  }, [isLoggedIn, refetch]);
+  }, [isLoggedIn, refetch, refetch_]);
 
   useEffect(() => {
     if (isSuccess && notifications) {
       dispatch(setNotifications(notifications.notificationDTOs));
     }
-    console.log("notifications", notifications);
-  }, [dispatch, isSuccess, notifications]);
+    if (isSuccess_ && carts) {
+      dispatch(setCarts(carts.listCartByShopDTOs));
+      console.log(carts);
+    }
+  }, [dispatch, isSuccess, notifications, isSuccess_, carts]);
 
   useEffect(() => {
     onMessageListener().then(async (data: any) => {
@@ -135,7 +148,7 @@ function App() {
     });
   }, [isLoggedIn, refetch]);
 
-  if (isLoading) {
+  if (isLoading || isLoading_) {
     return <div>Loading...</div>;
   }
 
@@ -162,12 +175,6 @@ function App() {
 
           {/* product */}
           <Route path="/product/:productId" element={<ProductDetailPage />} />
-
-          {/* cart */}
-          <Route path="/cart" element={<CartPage />} />
-
-          {/* order */}
-          <Route path="/checkout" element={<Checkout />} />
 
           {/* shop detail */}
           <Route path="/:username.shop" element={<ShopDetailPage />} />
@@ -262,11 +269,6 @@ function App() {
             </Route>
           </Route>
 
-
-
-
-
-
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
               <Route path="detail" element={<ProviderInformationPage />} />
@@ -296,77 +298,66 @@ function App() {
             </Route>
           </Route>
 
-
-
-
-
-
           <Route element={<RequireAuth allowedRoles={["DELIVER"]} />}>
             <Route path="/deliver" element={<DashboardDeliver />}>
               <Route path="detail" element={<DeliverInformationPage />} />
-                <Route
-                    path="transports"
-                    element={<DeliverTransportPage />}
-                />
+              <Route path="transports" element={<DeliverTransportPage />} />
               <Route
-                    path="transport/shop/:shopId"
-                    element={<ShopAndTransportDetail />}
-                />
+                path="transport/shop/:shopId"
+                element={<ShopAndTransportDetail />}
+              />
               <Route
-                  path="transport/update"
-                  element={<UpdateTransportPage/>}/>
+                path="transport/update"
+                element={<UpdateTransportPage />}
+              />
               <Route
-                  path="cash-order/shipper"
-                  element={<CashOrderShipperPage/>}/>
+                path="cash-order/shipper"
+                element={<CashOrderShipperPage />}
+              />
               <Route
-                  path="cash-order/wavehouse"
-                  element={<CashOrderWaveHousePage/>}/>
-
-
-
-
-
+                path="cash-order/wavehouse"
+                element={<CashOrderWaveHousePage />}
+              />
             </Route>
           </Route>
-
-
-
-
 
           <Route element={<RequireAuth allowedRoles={["DELIVER_MANAGER"]} />}>
             <Route
               path="/deliver_manager"
               element={<DashboardDeliverManager />}
             >
-              <Route path="detail" element={<DeliverManagerInformationPage />} />
               <Route
-                  path="update/information"
-                  element={<UpdateInformationTransportProvider />}
-              />
-              <Route path="employees" element={<DeliverManagerEmployeePage />} />
-              <Route
-                  path="employee/detail/:deliverId"
-                  element={<DeliverDetail />}
+                path="detail"
+                element={<DeliverManagerInformationPage />}
               />
               <Route
-                  path="employee/update-work/:deliverId"
-                  element={<UpdateDeliverWork />}
+                path="update/information"
+                element={<UpdateInformationTransportProvider />}
+              />
+              <Route
+                path="employees"
+                element={<DeliverManagerEmployeePage />}
+              />
+              <Route
+                path="employee/detail/:deliverId"
+                element={<DeliverDetail />}
+              />
+              <Route
+                path="employee/update-work/:deliverId"
+                element={<UpdateDeliverWork />}
               />
               <Route path="employee/add" element={<AddNewDeliver />} />
               <Route
-                  path="statistics/revenue"
-                  element={<StatisticsTransportsPage />}
+                path="statistics/revenue"
+                element={<StatisticsTransportsPage />}
               />
               <Route path="transports" element={<ManagerTransportPage />} />
               <Route
-                  path="transport/detail/:transportId"
-                  element={<TransportDetail />}
+                path="transport/detail/:transportId"
+                element={<TransportDetail />}
               />
             </Route>
           </Route>
-
-
-
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
 
@@ -376,6 +367,12 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<PayMent />} />
             <Route path="checkout/:id" element={<OrderDetailsForm />} /> */}
+
+            {/* cart */}
+            <Route path="/cart" element={<CartPage />} />
+
+            {/* order */}
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/vnpay/return" element={<VNPayReturn />} />
             <Route path="user/account" element={<AccountPage />}>

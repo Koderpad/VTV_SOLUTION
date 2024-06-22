@@ -1,5 +1,5 @@
 import { SearchItemResultItems } from "@/components/organisms/ProductGrid/SearchItemResult/SearchItemResultItems";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
@@ -12,52 +12,53 @@ export const SearchResultsContainer = () => {
   const { searchTerm } = useParams<{ searchTerm: string }>();
   const { filters, updateFilters } = useContext(FilterContext);
   const { fromPrice, toPrice, sortBy, rating, shop } = filters;
-
+  console.log("filters in SearchResultsContainer: ", filters);
   const [products, setProducts] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAllProducts = async () => {
-      try {
-        setLoading(true);
-        let allProducts: ProductDTO[] = [];
-        let currentPage = 1;
-        let totalPages = 1;
+  const fetchProducts = useCallback(async () => {
+    if (!searchTerm) return;
+    try {
+      setLoading(true);
+      let allProducts: ProductDTO[] = [];
+      let currentPage = 1;
+      let totalPages = 1;
 
-        while (currentPage <= totalPages) {
-          const response = shop
-            ? await searchProductsInShop(
-                shop,
-                currentPage,
-                10,
-                searchTerm ?? "",
-                sortBy ?? "best-selling",
-              )
-            : await searchProducts(
-                currentPage,
-                10,
-                searchTerm ?? "",
-                sortBy ?? "best-selling",
-              );
-          if (response.status === "OK") {
-            allProducts = [...allProducts, ...response.productDTOs];
-            totalPages = response.totalPage;
-          }
-
-          currentPage++;
+      while (currentPage <= totalPages) {
+        const response = shop
+          ? await searchProductsInShop(
+              shop,
+              currentPage,
+              10,
+              searchTerm ?? "",
+              sortBy ?? "best-selling",
+            )
+          : await searchProducts(
+              currentPage,
+              10,
+              searchTerm ?? "",
+              sortBy ?? "best-selling",
+            );
+        if (response.status === "OK") {
+          allProducts = [...allProducts, ...response.productDTOs];
+          totalPages = response.totalPage;
         }
 
-        setProducts(allProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        updateFilters({ sortBy: "best-selling" });
-        setLoading(false);
+        currentPage++;
       }
-    };
 
-    fetchAllProducts();
-  }, [searchTerm]);
+      setProducts(allProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      updateFilters({ sortBy: "best-selling" });
+      setLoading(false);
+    }
+  }, [searchTerm, shop]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const filteredProducts = () => {
     let filtered = products;
