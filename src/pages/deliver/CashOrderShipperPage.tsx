@@ -1,11 +1,11 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useGetAllCashOrdersByShipperUsernameQuery } from '@/redux/features/shipping/CashOrderApiSlice';
-import { toast, ToastContainer } from 'react-toastify';
+import {useParams, useNavigate} from 'react-router-dom';
+import {useGetAllCashOrdersByShipperUsernameQuery} from '@/redux/features/shipping/CashOrderApiSlice';
+import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import React, { useEffect, useState } from "react";
-import { CashOrderDTO } from '@/utils/DTOs/shipping/dto/CashOrderDTO';
-import { statusToString } from '@/utils/DTOs/extra/convertToString/statusToString';
-import { FaEye, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import React, {useEffect, useState} from "react";
+import {CashOrderDTO} from '@/utils/DTOs/shipping/dto/CashOrderDTO';
+import {statusToString} from '@/utils/DTOs/extra/convertToString/statusToString';
+import {FaEye, FaCheckCircle, FaTimesCircle} from "react-icons/fa";
 
 const CashOrderShipperPage = () => {
     const navigate = useNavigate();
@@ -77,7 +77,10 @@ const CashOrderShipperPage = () => {
                         Trạng thái
                     </th>
                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                        Thao tác
+                        Đang cầm tiền
+                    </th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                        Xem
                     </th>
                 </tr>
                 </thead>
@@ -90,12 +93,19 @@ const CashOrderShipperPage = () => {
                         <td className="py-2 px-4 border-b border-gray-200 text-center">{statusToString[cashOrder.status]}</td>
                         <td className="py-2 px-4 border-b border-gray-200 text-center">
                             <div className="flex justify-center items-center">
+
+                                {cashOrder.shipperHold && <FaCheckCircle
+                                    className="text-green-500 cursor-pointer hover:text-green-600 mr-2"/>}
+                                {!cashOrder.shipperHold &&
+                                    <FaTimesCircle className="text-red-500 cursor-pointer hover:text-red-600 mr-2"/>}
+                            </div>
+                        </td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-center">
+                            <div className="flex justify-center items-center">
                                 <FaEye
                                     className="text-blue-500 cursor-pointer hover:text-blue-600 mr-2"
                                     onClick={() => handleViewOrder(cashOrder.cashOrderId)}
                                 />
-                                {cashOrder.shipperHold && <FaCheckCircle className="text-green-500 cursor-pointer hover:text-green-600 mr-2" />}
-                                {!cashOrder.shipperHold && <FaTimesCircle className="text-red-500 cursor-pointer hover:text-red-600 mr-2" />}
                             </div>
                         </td>
                     </tr>
@@ -114,10 +124,25 @@ const CashOrderShipperPage = () => {
                 >
                     Quay Lại
                 </button>
+
+                <button
+                    className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600"
+                    onClick={() => navigate("/deliver/cash-order/shipper/can-update")}
+                >
+                    Xác nhận chuyển tiền
+                </button>
+
+                <button
+                    className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-lime-600"
+                    onClick={() => navigate("/deliver/cash-order/shipper/history")}
+                >
+                    Lịch sử
+                </button>
+
             </div>
-            <h1 className="text-4xl font-bold text-black mb-8 text-center">Danh sách đơn hàng</h1>
+            <h1 className="text-4xl font-bold text-black mb-8 text-center">Danh sách biên lai</h1>
             {renderCashOrders()}
-            <ToastContainer />
+            <ToastContainer/>
         </div>
     );
 };

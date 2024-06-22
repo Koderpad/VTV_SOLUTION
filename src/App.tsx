@@ -70,10 +70,12 @@ import DeliverTransportPage from "@/pages/deliver/DeliverTransportPage.tsx";
 import ShopAndTransportDetail from "@/features/shipping/deliver/ShopAndTransportDetail.tsx";
 import UpdateTransportPage from "@/pages/deliver/UpdateTransportPage.tsx";
 import CashOrderShipperPage from "@/pages/deliver/CashOrderShipperPage.tsx";
-import CashOrderWaveHousePage from "@/pages/deliver/CashOrderWaveHousePage.tsx";
+import CashOrderWareHousePage from "@/pages/deliver/CashOrderWareHousePage.tsx";
 import { useGetListCartByUsernameQuery } from "./redux/features/common/cart/cartApiSlice.ts";
 import { setCarts } from "./redux/features/common/cart/cartSlice.ts";
 import CashOrderDetail from "@/features/shipping/deliver/CashOrderDetail.tsx";
+import HistoryCashOrderShipper from "@/features/shipping/deliver/HistoryCashOrderShipper.tsx";
+import CanUpdateCashOrderShipper from "@/features/shipping/deliver/CanUpdateCashOrderShipper.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -316,13 +318,22 @@ function App() {
                 element={<CashOrderShipperPage />}
               />
               <Route
-                path="cash-order/wavehouse"
-                element={<CashOrderWaveHousePage />}
+                path="cash-order/warehouse"
+                element={<CashOrderWareHousePage />}
               />
 
             <Route
                 path="cash-order/detail/:cashOrderId"
                 element={<CashOrderDetail />}
+              />
+              <Route
+                  path="cash-order/shipper/history"
+                  element={<HistoryCashOrderShipper/>}
+              />
+
+              <Route
+                  path="cash-order/shipper/can-update"
+                  element={<CanUpdateCashOrderShipper/>}
               />
 
             </Route>
