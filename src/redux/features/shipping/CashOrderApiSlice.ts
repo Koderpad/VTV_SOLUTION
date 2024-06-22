@@ -2,6 +2,8 @@ import {apiSlice} from "@/redux/api.ts";
 import {CashOrdersRequest} from "@/utils/DTOs/shipping/request/CashOrdersRequest.ts";
 import {CashOrdersResponse} from "@/utils/DTOs/shipping/response/CashOrdersResponse.ts";
 import {CashOrdersByDatesResponse} from "@/utils/DTOs/shipping/response/CashOrdersByDatesResponse.ts";
+import {CashOrderDetailResponse} from "@/utils/DTOs/shipping/response/CashOrderDetailResponse.ts";
+import {BaseQueryArg} from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 
 export const CashOrderApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -57,6 +59,12 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
             }),
         }),
 
+
+        getDetailCashOrder: builder.query<CashOrderDetailResponse, string>({
+            query: (cashOrderId) => ({
+                url: `shipping/cash-order/detail/${cashOrderId}`,
+            })
+        }),
     }),
 });
 
@@ -68,6 +76,7 @@ export const {
     useGetAllCashOrdersByShipperUsernameQuery,
     useHistoryCashOrdersByShipperUsernameQuery,
     useHistoryCashOrdersByWarehouseUsernameQuery,
+    useGetDetailCashOrderQuery,
 
 
 } = CashOrderApiSlice;

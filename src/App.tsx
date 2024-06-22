@@ -73,6 +73,7 @@ import CashOrderShipperPage from "@/pages/deliver/CashOrderShipperPage.tsx";
 import CashOrderWaveHousePage from "@/pages/deliver/CashOrderWaveHousePage.tsx";
 import { useGetListCartByUsernameQuery } from "./redux/features/common/cart/cartApiSlice.ts";
 import { setCarts } from "./redux/features/common/cart/cartSlice.ts";
+import CashOrderDetail from "@/features/shipping/deliver/CashOrderDetail.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -318,6 +319,12 @@ function App() {
                 path="cash-order/wavehouse"
                 element={<CashOrderWaveHousePage />}
               />
+
+            <Route
+                path="cash-order/detail/:cashOrderId"
+                element={<CashOrderDetail />}
+              />
+
             </Route>
           </Route>
 
