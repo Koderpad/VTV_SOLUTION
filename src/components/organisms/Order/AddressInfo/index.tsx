@@ -1,4 +1,6 @@
+import { OrderRequestWithCart } from "@/utils/DTOs/common/Order/Request/MultipleOrderRequestWithCart";
 import React from "react";
+import { AddressDialog } from "./AddressDialog";
 
 export interface AddressDTO {
   addressId: number;
@@ -15,7 +17,18 @@ export interface AddressDTO {
   wardCode: string;
 }
 
-export const AddressInfo: React.FC<{ address: AddressDTO }> = ({ address }) => {
+interface Props {
+  address: AddressDTO;
+  updateOrderRequest: (
+    index: number,
+    updates: Partial<OrderRequestWithCart>,
+  ) => void;
+}
+
+export const AddressInfo: React.FC<Props> = ({
+  address,
+  updateOrderRequest,
+}) => {
   return (
     <div
       className="mt-4 bg-white flex flex-col h-36"
@@ -45,12 +58,13 @@ export const AddressInfo: React.FC<{ address: AddressDTO }> = ({ address }) => {
             <span className=" text-red-500">Mặc định</span>
           </div>
           <div className="flex items-center justify-end flex-grow">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-            >
-              Thay đổi
-            </button>
+            <AddressDialog />
+            {/* <button */}
+            {/*   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+            {/*   type="button" */}
+            {/* > */}
+            {/*   Thay đổi */}
+            {/* </button> */}
           </div>
         </div>
       </div>

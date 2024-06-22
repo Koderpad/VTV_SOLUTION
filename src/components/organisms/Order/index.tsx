@@ -192,7 +192,10 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
     <div className="flex flex-col gap-4">
       {/* address */}
       <div className="h-auto ">
-        <AddressInfo address={props.address} />
+        <AddressInfo
+          address={props.address}
+          updateOrderRequest={props.updateOrderRequest}
+        />
       </div>
 
       {/* item */}
