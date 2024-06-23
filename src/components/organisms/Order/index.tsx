@@ -220,12 +220,10 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
               Điểm tích lũy
             </span>
 
-            {/* toggle */}
-
             <label className="inline-flex items-center cursor-pointer">
               {/* <input type="checkbox" value="" className="sr-only peer" /> */}
               <span className="ms-3 text-sm pr-4 font-medium text-red-900 dark:text-gray-300">
-                Use point{" "}
+                Điểm tích lũy:{" "}
                 {
                   props.priceDataFromMultipleOrderResponse.orderResponses[0]
                     .totalPoint
@@ -235,6 +233,10 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
                 type="checkbox"
                 value=""
                 className="sr-only peer"
+                disabled={
+                  props.priceDataFromMultipleOrderResponse.totalLoyaltyPoint ===
+                  0
+                }
                 checked={
                   props.priceDataFromMultipleOrderResponse.orderResponses[0]
                     .orderDTO.loyaltyPointHistoryDTO
@@ -270,8 +272,22 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
             >
               <option value="COD">Thanh toán khi nhận hàng</option>
               <option value="VNPay">Thanh toán qua VNPay</option>
+              <option value="Wallet">Thanh toán qua ví</option>
             </select>
           </div>
+          {selectedPaymentMethod === "Wallet" && (
+            <div className="flex justify-between">
+              <span className="text-gray-700 text-2xl font-medium">
+                Số dư ví
+              </span>
+              <span className="text-red-600">
+                {
+                  props.priceDataFromMultipleOrderResponse.orderResponses[0]
+                    .balance
+                }
+              </span>
+            </div>
+          )}
           <div className="border-t my-4 border-black-200"></div>
 
           {/* system voucher */}
@@ -297,14 +313,7 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
               />
               <span className="text-red-500">Voucher VTC</span>
             </div>
-            <button
-              className="text-blue-500 hover:underline cursor-pointer"
-              onClick={() => setShowSystemVoucherForm(true)}
-            >
-              Chọn voucher
-            </button>
-          </div>
-          {showSystemVoucherForm && (
+
             <Vouchers
               key={-1}
               vouchers={systemVouchers}
@@ -312,7 +321,23 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
               onVoucherSelect_fix={handleVouchersOfSystem}
               selectedVouchers={selectedVouchersOfSystem}
             />
-          )}
+            {/* <button */}
+            {/*   className="text-blue-500 hover:underline cursor-pointer" */}
+            {/*   onClick={() => setShowSystemVoucherForm(true)} */}
+            {/* > */}
+            {/*   Chọn voucher */}
+            {/* </button> */}
+          </div>
+
+          {/* {showSystemVoucherForm && ( */}
+          {/*   <Vouchers */}
+          {/*     key={-1} */}
+          {/*     vouchers={systemVouchers} */}
+          {/*     onClose={() => setShowSystemVoucherForm(false)} */}
+          {/*     onVoucherSelect_fix={handleVouchersOfSystem} */}
+          {/*     selectedVouchers={selectedVouchersOfSystem} */}
+          {/*   /> */}
+          {/* )} */}
           {selectedVouchersOfSystem.length > 0 && (
             <VoucherDetails
               voucher={
@@ -343,7 +368,6 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
                 Tiền giảm voucher
               </span>
               <span className="text-red-500 text-2xl font-medium">
-                -
                 {formatPrice(
                   props.priceDataFromMultipleOrderResponse.totalDiscount,
                 )}{" "}
@@ -381,10 +405,17 @@ export const Order: FC<OrderProps> = ({ ...props }) => {
           <div className="w-4/5 mx-auto mb-8 flex justify-end">
             <button
               onClick={props.handlePlaceOrder}
-              className="bg-blue-500 hover:bg-blue-800 focus:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className={`bg-blue-500 hover:bg-blue-800 focus:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${props.priceDataFromMultipleOrderResponse.orderResponses[0].balance === 0 && selectedPaymentMethod === "Wallet" ? "bg-gray-600 cursor-not-allowed" : ""}`}
               type="button"
+              disabled={
+                props.priceDataFromMultipleOrderResponse.orderResponses[0]
+                  .balance === 0 && selectedPaymentMethod === "Wallet"
+              }
             >
-              Đặt hàng
+              {props.priceDataFromMultipleOrderResponse.orderResponses[0]
+                .balance === 0 && selectedPaymentMethod === "Wallet"
+                ? "Số dư ví không đủ"
+                : "Đặt hàng"}
             </button>
           </div>
           <ToastContainer />

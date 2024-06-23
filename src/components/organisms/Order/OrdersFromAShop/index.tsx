@@ -188,14 +188,7 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
           />
           <span className="text-red-500">Voucher của shop</span>
         </div>
-        <button
-          className="text-blue-500 hover:underline cursor-pointer"
-          onClick={handleToggleVoucherForm}
-        >
-          Chọn voucher
-        </button>
-      </div>
-      {showVoucherForm && (
+
         <Vouchers
           key={order.orderDTO.shopDTO.shopId}
           vouchers={shopVouchers}
@@ -203,7 +196,22 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
           onVoucherSelect_fix={handleVouchersOfShop}
           selectedVouchers={selectedVouchersOfShop}
         />
-      )}
+        {/* <button */}
+        {/*   className="text-blue-500 hover:underline cursor-pointer" */}
+        {/*   onClick={handleToggleVoucherForm} */}
+        {/* > */}
+        {/*   Chọn voucher */}
+        {/* </button> */}
+      </div>
+      {/* {showVoucherForm && ( */}
+      {/*   <Vouchers */}
+      {/*     key={order.orderDTO.shopDTO.shopId} */}
+      {/*     vouchers={shopVouchers} */}
+      {/*     onClose={() => setShowVoucherForm(false)} */}
+      {/*     onVoucherSelect_fix={handleVouchersOfShop} */}
+      {/*     selectedVouchers={selectedVouchersOfShop} */}
+      {/*   /> */}
+      {/* )} */}
       {selectedVouchersOfShop.length > 0 && (
         <VoucherDetails
           voucher={
@@ -236,17 +244,17 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
         border-r border-black-200 h-20 w-0.5 my-2 mx-4 bg-black-200"
         ></div>
         {/* phuong thuc van chuyen */}
-        <div className="flex w-2/3">
-          <div className="bg-white flex justify-between mb-4">
+        <div className="flex w-2/3 ">
+          <div className="bg-white flex justify-between  mb-4 w-full">
             <span className="text-gray-700 text-2xl font-medium">
               Phương thức vận chuyển
             </span>
-            <span className="text-gray-700 text-2xl font-medium ml-auto flex items-center">
+            <span className="text-gray-700 text-1xl font-medium  flex justify-start">
               <button
                 onClick={() => {
                   setIsOpen(true);
                 }}
-                className="mr-2"
+                className="flex flex-col justify-start mr-2"
               >
                 <FaTruck size={20} />
               </button>
@@ -273,19 +281,28 @@ export const OrdersFromAShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
               </h2>
               <div className="flex flex-col space-y-2">
                 <button
-                  onClick={() => setShippingMethod("GHN")}
+                  onClick={() => {
+                    setShippingMethod("GHN");
+                    setIsOpen(false);
+                  }}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                   Giao hàng nhanh
                 </button>
                 <button
-                  onClick={() => setShippingMethod("GHTK")}
+                  onClick={() => {
+                    setShippingMethod("GHTK");
+                    setIsOpen(false);
+                  }}
                   className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                   Giao hàng tiết kiệm
                 </button>
                 <button
-                  onClick={() => setShippingMethod("VTV Express")}
+                  onClick={() => {
+                    setShippingMethod("VTV Express");
+                    setIsOpen(false);
+                  }}
                   className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                   Giao hàng siêu tốc độ VTV Express
