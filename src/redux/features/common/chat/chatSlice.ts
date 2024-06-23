@@ -6,14 +6,12 @@ import { MessageDTO } from "@/utils/DTOs/chat/Response/ListMessagesPageResponse"
 interface ChatState {
   roomChats: RoomChatDTO[];
   messages: { [roomChatId: string]: MessageDTO[] };
-  sendingMessages: { [roomChatId: string]: MessageDTO[] };
   failedMessages: { [roomChatId: string]: MessageDTO[] };
 }
 
 const initialState: ChatState = {
   roomChats: [],
   messages: {},
-  sendingMessages: {},
   failedMessages: {},
 };
 
@@ -41,21 +39,6 @@ const chatSlice = createSlice({
         roomChat.lastDate = date;
       }
     },
-    addSendingMessage: (state, action: PayloadAction<MessageDTO>) => {
-      const { roomChatId } = action.payload;
-      if (!state.sendingMessages[roomChatId]) {
-        state.sendingMessages[roomChatId] = [];
-      }
-      state.sendingMessages[roomChatId].push(action.payload);
-    },
-    removeSendingMessage: (state, action: PayloadAction<MessageDTO>) => {
-      const { roomChatId, messengerId } = action.payload;
-      if (state.sendingMessages[roomChatId]) {
-        state.sendingMessages[roomChatId] = state.sendingMessages[
-          roomChatId
-        ].filter((message) => message.messengerId !== messengerId);
-      }
-    },
     addFailedMessage: (state, action: PayloadAction<MessageDTO>) => {
       const { roomChatId } = action.payload;
       if (!state.failedMessages[roomChatId]) {
@@ -78,8 +61,6 @@ export const {
   setRoomChats,
   addMessage,
   updateRoomChat,
-  addSendingMessage,
-  removeSendingMessage,
   addFailedMessage,
   removeFailedMessage,
 } = chatSlice.actions;
@@ -87,15 +68,15 @@ export const {
 export const selectRoomChats = (state: RootState) => state.chat.roomChats;
 export const selectMessages = (state: RootState, roomChatId: string) =>
   state.chat.messages[roomChatId] || [];
-export const selectSendingMessages = (state: RootState, roomChatId: string) =>
-  state.chat.sendingMessages[roomChatId] || [];
 export const selectFailedMessages = (state: RootState, roomChatId: string) =>
   state.chat.failedMessages[roomChatId] || [];
 
 export default chatSlice.reducer;
+
 // import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import { RootState } from "@/redux/store";
-// import { MessageDTO, RoomChatDTO } from "@/utils/DTOs/chat";
+// import { RoomChatDTO } from "@/utils/DTOs/chat/Response/RoomChatResponse";
+// import { MessageDTO } from "@/utils/DTOs/chat/Response/ListMessagesPageResponse";
 
 // interface ChatState {
 //   roomChats: RoomChatDTO[];

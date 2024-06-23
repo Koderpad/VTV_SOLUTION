@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { initSocket, disconnectSocket } from "@/utils/stock";
+import React, { useState } from "react";
 import ChatIcon from "@/components/organisms/Chat/ChatIcon";
 import Chat from "@/components/organisms/Chat";
 

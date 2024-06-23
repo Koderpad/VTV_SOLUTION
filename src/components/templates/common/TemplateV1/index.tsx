@@ -1,5 +1,6 @@
 import { Footer } from "@/components/organisms/Footer";
 import { Header } from "@/components/organisms/Header/index-temp";
+import ChatPage from "@/pages/common/ChatPage";
 import { FC } from "react";
 
 type TemplateV1 = {
@@ -18,6 +19,7 @@ export const TemplateV1: FC<TemplateV1> = ({ children }) => {
         </main>
         <Footer />
       </div>
+      <ChatPage /> {/* Add Chat component here */}
     </div>
   );
 };

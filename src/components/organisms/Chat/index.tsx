@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import {
@@ -11,36 +11,51 @@ import {
   selectRoomChats,
 } from "@/redux/features/common/chat/chatSlice";
 import { useGetRoomChatListQuery } from "@/redux/features/common/chat/chatApiSlice";
-import ChatRoomList from "./ChatRoomList";
 import ChatRoom from "./ChatRoom";
 
 const Chat: React.FC = () => {
   const dispatch = useDispatch();
   const token = useSelector((state: RootState) => state.auth.token);
   const [selectedRoomChatId, setSelectedRoomChatId] = useState<string | null>(
-    null,
+    null
   );
+  const [selectedReceiverUsername, setSelectedReceiverUsername] = useState<
+    string | null
+  >(null);
   const { data, isLoading } = useGetRoomChatListQuery({ page: 1, size: 10 });
-  let roomChats = useSelector(selectRoomChats);
+  const roomChats = useSelector(selectRoomChats);
 
-  if (!roomChats || roomChats.length === 0) {
-    roomChats = data?.roomChatDTOs || [];
-  }
-
+  // ... (rest of the component remains the same)
   useEffect(() => {
     if (token) {
-      initSocket(token);
+      initSocket(token)
+        .then(() => console.log("Socket connected successfully"))
+        .catch((error) => console.error("Socket connection failed:", error));
     }
   }, [token]);
 
   useEffect(() => {
-    if (data && data.roomChatDTOs) {
+    if (data?.roomChatDTOs) {
       dispatch(setRoomChats(data.roomChatDTOs));
     }
+  }, [data, dispatch]);
 
-    const unsubscribes = roomChats
-      .filter(() => isSocketConnected()) // Chỉ subscribe khi đã kết nối
-      .map((roomChat) => subscribeToRoomMessages(roomChat.roomChatId));
+  const subscribeToRooms = useCallback(async () => {
+    if (!isSocketConnected()) return;
+
+    const unsubscribes = await Promise.all(
+      roomChats.map(async (roomChat) => {
+        try {
+          return await subscribeToRoomMessages(roomChat.roomChatId);
+        } catch (error) {
+          console.error(
+            `Failed to subscribe to room ${roomChat.roomChatId}:`,
+            error
+          );
+          return null;
+        }
+      })
+    );
 
     return () => {
       unsubscribes.forEach((unsubscribe) => {
@@ -49,10 +64,27 @@ const Chat: React.FC = () => {
         }
       });
     };
-  }, [roomChats, data, dispatch]);
+  }, [roomChats]);
 
-  const handleRoomClick = (roomChatId: string) => {
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+
+    const setupSubscriptions = async () => {
+      cleanup = await subscribeToRooms();
+    };
+
+    setupSubscriptions();
+
+    return () => {
+      if (cleanup) {
+        cleanup();
+      }
+    };
+  }, [subscribeToRooms]);
+
+  const handleRoomClick = (roomChatId: string, receiverUsername: string) => {
     setSelectedRoomChatId(roomChatId);
+    setSelectedReceiverUsername(receiverUsername);
   };
 
   return (
@@ -62,14 +94,34 @@ const Chat: React.FC = () => {
           {isLoading ? (
             <div>Loading...</div>
           ) : (
-            <ChatRoomList
-              rooms={roomChats.slice(0, 5)}
-              onRoomClick={handleRoomClick}
-            />
+            <ul className="overflow-y-auto h-full">
+              {roomChats.slice(0, 5).map((room) => (
+                <li
+                  key={room.roomChatId}
+                  className="p-2 cursor-pointer hover:bg-gray-100"
+                  onClick={() =>
+                    handleRoomClick(room.roomChatId, room.receiverUsername)
+                  }
+                >
+                  <div className="flex items-center">
+                    <span className="font-bold">{room.receiverUsername}</span>
+                    <span className="ml-2 text-gray-500">
+                      {room.lastMessage}
+                    </span>
+                  </div>
+                  <span className="text-sm text-gray-400">{room.lastDate}</span>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
         <div className="w-2/3 p-4">
-          {selectedRoomChatId && <ChatRoom roomChatId={selectedRoomChatId} />}
+          {selectedRoomChatId && selectedReceiverUsername && (
+            <ChatRoom
+              roomChatId={selectedRoomChatId}
+              receiverUsername={selectedReceiverUsername}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -77,42 +129,60 @@ const Chat: React.FC = () => {
 };
 
 export default Chat;
-// import React, { useEffect, useState } from "react";
+
+// import React, { useEffect, useState, useCallback } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "@/redux/store";
-// import { initSocket, subscribeToRoomMessages } from "@/utils/stock";
+// import {
+//   initSocket,
+//   isSocketConnected,
+//   subscribeToRoomMessages,
+// } from "@/utils/stock";
 // import {
 //   setRoomChats,
 //   selectRoomChats,
 // } from "@/redux/features/common/chat/chatSlice";
 // import { useGetRoomChatListQuery } from "@/redux/features/common/chat/chatApiSlice";
-// import ChatRoomList from "./ChatRoomList";
 // import ChatRoom from "./ChatRoom";
 
 // const Chat: React.FC = () => {
 //   const dispatch = useDispatch();
 //   const token = useSelector((state: RootState) => state.auth.token);
-//   const roomChats = useSelector(selectRoomChats);
 //   const [selectedRoomChatId, setSelectedRoomChatId] = useState<string | null>(
 //     null
 //   );
 //   const { data, isLoading } = useGetRoomChatListQuery({ page: 1, size: 10 });
+//   const roomChats = useSelector(selectRoomChats);
 
 //   useEffect(() => {
 //     if (token) {
-//       initSocket(token);
+//       initSocket(token)
+//         .then(() => console.log("Socket connected successfully"))
+//         .catch((error) => console.error("Socket connection failed:", error));
 //     }
 //   }, [token]);
 
 //   useEffect(() => {
-//     if (data && data.roomChatDTOs) {
+//     if (data?.roomChatDTOs) {
 //       dispatch(setRoomChats(data.roomChatDTOs));
 //     }
 //   }, [data, dispatch]);
 
-//   useEffect(() => {
-//     const unsubscribes = roomChats.map((roomChat) =>
-//       subscribeToRoomMessages(roomChat.roomChatId)
+//   const subscribeToRooms = useCallback(async () => {
+//     if (!isSocketConnected()) return;
+
+//     const unsubscribes = await Promise.all(
+//       roomChats.map(async (roomChat) => {
+//         try {
+//           return await subscribeToRoomMessages(roomChat.roomChatId);
+//         } catch (error) {
+//           console.error(
+//             `Failed to subscribe to room ${roomChat.roomChatId}:`,
+//             error
+//           );
+//           return null;
+//         }
+//       })
 //     );
 
 //     return () => {
@@ -123,6 +193,22 @@ export default Chat;
 //       });
 //     };
 //   }, [roomChats]);
+
+//   useEffect(() => {
+//     let cleanup: (() => void) | undefined;
+
+//     const setupSubscriptions = async () => {
+//       cleanup = await subscribeToRooms();
+//     };
+
+//     setupSubscriptions();
+
+//     return () => {
+//       if (cleanup) {
+//         cleanup();
+//       }
+//     };
+//   }, [subscribeToRooms]);
 
 //   const handleRoomClick = (roomChatId: string) => {
 //     setSelectedRoomChatId(roomChatId);
@@ -135,10 +221,23 @@ export default Chat;
 //           {isLoading ? (
 //             <div>Loading...</div>
 //           ) : (
-//             <ChatRoomList
-//               rooms={roomChats.slice(0, 5)}
-//               onRoomClick={handleRoomClick}
-//             />
+//             <ul className="overflow-y-auto h-full">
+//               {roomChats.slice(0, 5).map((room) => (
+//                 <li
+//                   key={room.roomChatId}
+//                   className="p-2 cursor-pointer hover:bg-gray-100"
+//                   onClick={() => handleRoomClick(room.roomChatId)}
+//                 >
+//                   <div className="flex items-center">
+//                     <span className="font-bold">{room.receiverUsername}</span>
+//                     <span className="ml-2 text-gray-500">
+//                       {room.lastMessage}
+//                     </span>
+//                   </div>
+//                   <span className="text-sm text-gray-400">{room.lastDate}</span>
+//                 </li>
+//               ))}
+//             </ul>
 //           )}
 //         </div>
 //         <div className="w-2/3 p-4">
@@ -152,61 +251,62 @@ export default Chat;
 // export default Chat;
 
 // import React, { useEffect, useState } from "react";
-// import { useGetRoomChatListQuery } from "@/redux/features/common/chat/chatApiSlice";
-// import ChatRoomList from "./ChatRoomList";
-// import ChatRoom from "./ChatRoom";
-// import { useSelector } from "react-redux";
+// import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "@/redux/store";
-// import { initSocket } from "@/utils/stock";
+// import {
+//   initSocket,
+//   isSocketConnected,
+//   subscribeToRoomMessages,
+// } from "@/utils/stock";
+// import {
+//   setRoomChats,
+//   selectRoomChats,
+// } from "@/redux/features/common/chat/chatSlice";
+// import { useGetRoomChatListQuery } from "@/redux/features/common/chat/chatApiSlice";
+// import ChatRoom from "./ChatRoom";
 
 // const Chat: React.FC = () => {
-//   const [selectedRoomChatId, setSelectedRoomChatId] = useState<string | null>(
-//     null,
-//   );
-//   const [username, setUsername] = useState<string | null>(null);
-//   const { data, isLoading } = useGetRoomChatListQuery({ page: 1, size: 10 });
-//   console.log(data);
+//   const dispatch = useDispatch();
 //   const token = useSelector((state: RootState) => state.auth.token);
+//   const [selectedRoomChatId, setSelectedRoomChatId] = useState<string | null>(
+//     null
+//   );
+//   const { data, isLoading } = useGetRoomChatListQuery({ page: 1, size: 10 });
+//   let roomChats = useSelector(selectRoomChats);
 
-//   const [messages, setMessages] = useState<any[]>([]);
+//   if (!roomChats || roomChats.length === 0) {
+//     roomChats = data?.roomChatDTOs || [];
+//   }
 
 //   useEffect(() => {
-//     const handle = async () => {
-//       if (selectedRoomChatId) {
-//         console.log("selectedRoomChatId", selectedRoomChatId);
-//         if (token) {
-//           initSocket(token, selectedRoomChatId, (newMessage: any) => {
-//             setMessages((prevMessages) => [...prevMessages, newMessage]);
-//           });
+//     if (token) {
+//       initSocket(token)
+//         .then(() => console.log("Socket connected successfully"))
+//         .catch((error) => console.error("Socket connection failed:", error));
+//     }
+//   }, [token]);
 
-//           console.log("socket connected");
+//   useEffect(() => {
+//     if (data && data.roomChatDTOs) {
+//       dispatch(setRoomChats(data.roomChatDTOs));
+//     }
+
+//     const unsubscribes = roomChats
+//       .filter(() => isSocketConnected())
+//       .map((roomChat) => subscribeToRoomMessages(roomChat.roomChatId));
+
+//     return () => {
+//       unsubscribes.forEach((unsubscribe) => {
+//         if (typeof unsubscribe === "function") {
+//           unsubscribe();
 //         }
-//         setUsername(
-//           data?.roomChatDTOs.find(
-//             (room) => room.roomChatId === selectedRoomChatId,
-//           )?.receiverUsername || "",
-//         );
-//       }
+//       });
 //     };
-//     handle();
-//   }, [selectedRoomChatId]);
-
-//   useEffect(() => {
-//     console.log("messages sau khi", messages);
-//   }, [messages]);
+//   }, [roomChats, data, dispatch]);
 
 //   const handleRoomClick = (roomChatId: string) => {
 //     setSelectedRoomChatId(roomChatId);
 //   };
-
-//   const handleBackClick = () => {
-//     setSelectedRoomChatId(null);
-//     console.log("back");
-//   };
-
-//   useEffect(() => {
-//     console.log("username", username);
-//   }, [username]);
 
 //   return (
 //     <div className="fixed bottom-20 right-4 w-96 h-96 bg-white border border-gray-300 rounded shadow-lg">
@@ -215,26 +315,119 @@ export default Chat;
 //           {isLoading ? (
 //             <div>Loading...</div>
 //           ) : (
-//             <ChatRoomList
-//               rooms={data?.roomChatDTOs || []}
-//               onRoomClick={handleRoomClick}
-//             />
+//             <ul className="overflow-y-auto h-full">
+//               {roomChats.slice(0, 5).map((room) => (
+//                 <li
+//                   key={room.roomChatId}
+//                   className="p-2 cursor-pointer hover:bg-gray-100"
+//                   onClick={() => handleRoomClick(room.roomChatId)}
+//                 >
+//                   <div className="flex items-center">
+//                     <span className="font-bold">{room.receiverUsername}</span>
+//                     <span className="ml-2 text-gray-500">
+//                       {room.lastMessage}
+//                     </span>
+//                   </div>
+//                   <span className="text-sm text-gray-400">{room.lastDate}</span>
+//                 </li>
+//               ))}
+//             </ul>
 //           )}
 //         </div>
 //         <div className="w-2/3 p-4">
-//           {selectedRoomChatId ? (
-//             username ? (
-//               <ChatRoom
-//                 roomChatId={selectedRoomChatId}
-//                 messages_={messages}
-//                 receiverUsername={username}
-//               />
-//             ) : (
-//               <div className="text-center text-gray-500">
-//                 Select a room to start chatting
-//               </div>
-//             )
-//           ) : null}
+//           {selectedRoomChatId && <ChatRoom roomChatId={selectedRoomChatId} />}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Chat;
+
+// import React, { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "@/redux/store";
+// import {
+//   initSocket,
+//   isSocketConnected,
+//   subscribeToRoomMessages,
+// } from "@/utils/stock";
+// import {
+//   setRoomChats,
+//   selectRoomChats,
+// } from "@/redux/features/common/chat/chatSlice";
+// import { useGetRoomChatListQuery } from "@/redux/features/common/chat/chatApiSlice";
+// import ChatRoom from "./ChatRoom";
+
+// const Chat: React.FC = () => {
+//   const dispatch = useDispatch();
+//   const token = useSelector((state: RootState) => state.auth.token);
+//   const [selectedRoomChatId, setSelectedRoomChatId] = useState<string | null>(
+//     null
+//   );
+//   const { data, isLoading } = useGetRoomChatListQuery({ page: 1, size: 10 });
+//   let roomChats = useSelector(selectRoomChats);
+
+//   if (!roomChats || roomChats.length === 0) {
+//     roomChats = data?.roomChatDTOs || [];
+//   }
+
+//   useEffect(() => {
+//     if (token) {
+//       initSocket(token);
+//     }
+//   }, [token]);
+
+//   useEffect(() => {
+//     if (data && data.roomChatDTOs) {
+//       dispatch(setRoomChats(data.roomChatDTOs));
+//     }
+
+//     const unsubscribes = roomChats
+//       .filter(() => isSocketConnected()) // Chỉ subscribe khi đã kết nối
+//       .map((roomChat) => subscribeToRoomMessages(roomChat.roomChatId));
+
+//     return () => {
+//       unsubscribes.forEach((unsubscribe) => {
+//         if (typeof unsubscribe === "function") {
+//           unsubscribe();
+//         }
+//       });
+//     };
+//   }, [roomChats, data, dispatch]);
+
+//   const handleRoomClick = (roomChatId: string) => {
+//     setSelectedRoomChatId(roomChatId);
+//   };
+
+//   return (
+//     <div className="fixed bottom-20 right-4 w-96 h-96 bg-white border border-gray-300 rounded shadow-lg">
+//       <div className="flex h-full">
+//         <div className="w-1/3 border-r border-gray-300">
+//           {isLoading ? (
+//             <div>Loading...</div>
+//           ) : (
+//             <ul className="overflow-y-auto h-full">
+//               {roomChats.slice(0, 5).map((room) => (
+//                 <li
+//                   key={room.roomChatId}
+//                   className="p-2 cursor-pointer hover:bg-gray-100"
+//                   onClick={() => handleRoomClick(room.roomChatId)}
+//                 >
+//                   <div className="flex items-center">
+//                     <span className="font-bold">{room.receiverUsername}</span>
+//                     <span className="ml-2 text-gray-500">
+//                       {room.lastMessage}
+//                     </span>
+//                   </div>
+//                   <span className="text-sm text-gray-400">{room.lastDate}</span>
+//                 </li>
+//               ))}
+//             </ul>
+//           )}
+//         </div>
+//         <div className="w-2/3 p-4">
+//           {selectedRoomChatId && <ChatRoom roomChatId={selectedRoomChatId} />}
 //         </div>
 //       </div>
 //     </div>
