@@ -2,6 +2,8 @@ import {apiSlice} from "@/redux/api.ts";
 import {CashOrdersRequest} from "@/utils/DTOs/shipping/request/CashOrdersRequest.ts";
 import {CashOrdersResponse} from "@/utils/DTOs/shipping/response/CashOrdersResponse.ts";
 import {CashOrdersByDatesResponse} from "@/utils/DTOs/shipping/response/CashOrdersByDatesResponse.ts";
+import {CashOrderDetailResponse} from "@/utils/DTOs/shipping/response/CashOrderDetailResponse.ts";
+
 
 export const CashOrderApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -15,7 +17,7 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
             })
         }),
 
-        shipperUpdateCashOrdersByWaveHouse: builder.mutation<CashOrdersResponse, CashOrdersRequest>({
+        shipperUpdateCashOrdersByWareHouse: builder.mutation<CashOrdersResponse, CashOrdersRequest>({
             query: (body) => ({
                 url: `shipping/cash-order/updates/confirm-money-shipper`,
                 method: "POST",
@@ -23,7 +25,7 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
             })
         }),
 
-        getCashOrdersByWaveHouseUsername: builder.query<CashOrdersResponse, void>({
+        getCashOrdersByWareHouseUsername: builder.query<CashOrdersResponse, void>({
             query: () => ({
                 url: `shipping/cash-order/list-by-ware-house`,
                 method: "GET",
@@ -47,15 +49,42 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
             }),
         }),
 
-        historyCashOrdersByWarehouseUsername: builder.query<CashOrdersByDatesResponse, {
-            waveHouseHold: boolean;
+
+        historyCashOrdersByShipper: builder.mutation<CashOrdersByDatesResponse, {
+            shipperHold: boolean;
             shipping: boolean;
         }>({
-            query: ({waveHouseHold, shipping}) => ({
-                url: `shipping/cash-order/history-by-warehouse?waveHouseHold=${waveHouseHold}&shipping=${shipping}`,
+            query: ({shipperHold, shipping}) => ({
+                url: `shipping/cash-order/history-by-shipper?shipperHold=${shipperHold}&shipping=${shipping}`,
                 method: "GET",
             }),
         }),
+
+
+        historyCashOrdersByWarehouseUsername: builder.query<CashOrdersByDatesResponse, {
+            wareHouseHold: boolean;
+            shipping: boolean;
+        }>({
+            query: ({wareHouseHold, shipping}) => ({
+                url: `shipping/cash-order/history-by-warehouse?wareHouseHold=${wareHouseHold}&shipping=${shipping}`,
+                method: "GET",
+            }),
+        }),
+
+
+        getDetailCashOrder: builder.query<CashOrderDetailResponse, string>({
+            query: (cashOrderId) => ({
+                url: `shipping/cash-order/detail/${cashOrderId}`,
+            })
+        }),
+
+        getCashOrdersCanUpdateByShipperUsername: builder.query<CashOrdersResponse, void>({
+            query: () => ({
+                url: `shipping/cash-order/list/shipper/can-update`,
+                method: "GET",
+            })
+        }),
+
 
     }),
 });
@@ -63,11 +92,14 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
 export const {
 
     useShipperUpdateCashOrdersByShipperMutation,
-    useShipperUpdateCashOrdersByWaveHouseMutation,
-    useGetCashOrdersByWaveHouseUsernameQuery,
+    useShipperUpdateCashOrdersByWareHouseMutation,
+    useGetCashOrdersByWareHouseUsernameQuery,
     useGetAllCashOrdersByShipperUsernameQuery,
     useHistoryCashOrdersByShipperUsernameQuery,
+    useHistoryCashOrdersByShipperMutation,
     useHistoryCashOrdersByWarehouseUsernameQuery,
+    useGetDetailCashOrderQuery,
+    useGetCashOrdersCanUpdateByShipperUsernameQuery,
 
 
 } = CashOrderApiSlice;

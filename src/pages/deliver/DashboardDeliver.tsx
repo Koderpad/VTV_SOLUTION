@@ -40,13 +40,6 @@ export const DashboardDeliver = () => {
       setIsShow(false);
     }
 
-    if (currentPath === "employees") {
-      setSelectedTitle("ProviderEmployee");
-    }
-
-    if (currentPath === "statistics/revenue") {
-      setSelectedTitle("StatisticsRevenue");
-    }
 
     if (currentPath === "transports") {
       setSelectedTitle("ProviderTransports");
@@ -60,8 +53,8 @@ export const DashboardDeliver = () => {
       setSelectedTitle("DeliverCashOrderShipper");
     }
 
-    if (currentPath === "cash-order/wavehouse") {
-      setSelectedTitle("DeliverCashOrderWaveHouse");
+    if (currentPath === "cash-order/warehouse") {
+      setSelectedTitle("DeliverCashOrderWareHouse");
     }
   }, [location.pathname]);
 
@@ -164,13 +157,13 @@ export const DashboardDeliver = () => {
 
               <li>
                 <Link
-                    to="/deliver/cash-order/wavehouse"
+                    to="/deliver/cash-order/warehouse"
                     className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                        selectedTitle === "DeliverCashOrderWaveHouse"
+                        selectedTitle === "DeliverCashOrderWareHouse"
                             ? "bg-gray-100 hover:bg-green-100"
                             : "hover:bg-green-100"
                     }`}
-                    onClick={() => handleTitleClick("DeliverCashOrderWaveHouse")}
+                    onClick={() => handleTitleClick("DeliverCashOrderWareHouse")}
                 >
                   <FontAwesomeIcon icon={faWarehouse} className="mr-3 h-6 w-6" />
                   Quản lý tiền của nhân kho

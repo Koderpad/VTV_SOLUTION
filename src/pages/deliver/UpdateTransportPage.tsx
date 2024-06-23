@@ -15,7 +15,6 @@ const UpdateTransportPage = () => {
     const navigate = useNavigate();
     const [transportId, setTransportId] = useState<string>("");
     const [transportResponse, setTransportResponse] = useState<TransportResponse>();
-    const [isLoading, setIsLoading] = useState(true);
     const [selectedStatus, setSelectedStatus] = useState<TransportStatus>(TransportStatus.PICKED_UP);
 
     const [findTransport, {isLoading: transportLoading}] = useFindTransportResponseByTransportIdMutation();
@@ -34,10 +33,10 @@ const UpdateTransportPage = () => {
             setTransportResponse(undefined);
             const isValidUUID = validateUUID(transportId);
             if (!isValidUUID) {
-                toast.error('Vui lòng nhập đúng định dạng UUID.');
+                toast.error('Vui lòng nhập đúng mã đơn vận chuyển');
                 return;
             }
-            setIsLoading(true);
+
             try {
                 const response = await findTransport(transportId).unwrap();
                 setTransportResponse(response);
@@ -45,7 +44,6 @@ const UpdateTransportPage = () => {
                 toast.error(error.data.message);
             }
 
-            setIsLoading(false);
         } catch (error) {
             toast.error('Lỗi khi tìm kiếm đơn vận chuyển');
         }

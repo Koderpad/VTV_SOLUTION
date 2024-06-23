@@ -1,4 +1,4 @@
-const CashOrderWaveHousePage = () => {
+const CashOrderWareHousePage = () => {
     return (
         <div>
         <h1>CashOrderWaveHousePage</h1>
@@ -6,4 +6,4 @@ const CashOrderWaveHousePage = () => {
     );
 }
 
-export default CashOrderWaveHousePage;
+export default CashOrderWareHousePage;
