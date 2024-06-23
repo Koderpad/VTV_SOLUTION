@@ -11,9 +11,18 @@ export const DeliverApiSlice = apiSlice.injectEndpoints({
         }),
 
 
+        getDeliverByUsernameRequest: builder.mutation<DeliverResponse, string>({
+            query: (username) => ({
+                url: `shipping/deliver/get/username/${username}`,
+                method: "GET",
+            }),
+        }),
+
+
     }),
 });
 
 export const {
     useGetDeliverInfoMutation,
+    useGetDeliverByUsernameRequestMutation,
 } = DeliverApiSlice;

@@ -6,6 +6,7 @@ import React, {useEffect, useState} from "react";
 import {CashOrderDTO} from '@/utils/DTOs/shipping/dto/CashOrderDTO';
 import {statusToString} from '@/utils/DTOs/extra/convertToString/statusToString';
 import {FaEye, FaCheckCircle, FaTimesCircle} from "react-icons/fa";
+import dayjs from "dayjs";
 
 const CashOrderShipperPage = () => {
     const navigate = useNavigate();
@@ -68,12 +69,15 @@ const CashOrderShipperPage = () => {
                         STT
                     </th>
                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                        Mã đơn hàng
+                        Mã biên lai
                     </th>
                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                        Số tiền
+                        Số tiền (VNĐ)
                     </th>
-                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-700">
+                        Ngày
+                    </th>
+                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-700">
                         Trạng thái
                     </th>
                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
@@ -90,6 +94,9 @@ const CashOrderShipperPage = () => {
                         <td className="py-2 px-4 border-b border-gray-200 text-center">{index + 1}</td>
                         <td className="py-2 px-4 border-b border-gray-200">{cashOrder.cashOrderId}</td>
                         <td className="py-2 px-4 border-b border-gray-200 text-right">{cashOrder.money.toLocaleString()}</td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-right">
+                            {cashOrder.createAt ? dayjs(cashOrder.createAt).format('DD/MM/YYYY') : ''}
+                        </td>
                         <td className="py-2 px-4 border-b border-gray-200 text-center">{statusToString[cashOrder.status]}</td>
                         <td className="py-2 px-4 border-b border-gray-200 text-center">
                             <div className="flex justify-center items-center">
@@ -141,6 +148,16 @@ const CashOrderShipperPage = () => {
 
             </div>
             <h1 className="text-4xl font-bold text-black mb-8 text-center">Danh sách biên lai</h1>
+            {cashOrders.length > 0 &&
+                <div className="flex justify-start items-center">
+                    <h2 className="text-xl text-gray-700">Tổng số biên lai: {cashOrders.length}</h2>
+                    <h3 className="text-xl text-gray-700 ml-4">
+                        Tổng số tiền: {cashOrders.reduce((acc, cur) => acc + cur.money, 0)
+                        .toLocaleString()} VNĐ</h3>
+                    {/*<h3 className="text-xl text-gray-700 ml-4"> Tổng số biên lai đang cầm: {cashOrders.filter(cashOrder => cashOrder.shipperHold).length}</h3>*/}
+                </div>
+            }
+            <br/>
             {renderCashOrders()}
             <ToastContainer/>
         </div>

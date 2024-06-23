@@ -78,7 +78,7 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
             })
         }),
 
-        getCashOrdersCanUpdateByShipperUsername: builder.mutation<CashOrdersResponse, void>({
+        getCashOrdersCanUpdateByShipperUsername: builder.query<CashOrdersResponse, void>({
             query: () => ({
                 url: `shipping/cash-order/list/shipper/can-update`,
                 method: "GET",
@@ -99,7 +99,7 @@ export const {
     useHistoryCashOrdersByShipperMutation,
     useHistoryCashOrdersByWarehouseUsernameQuery,
     useGetDetailCashOrderQuery,
-    useGetCashOrdersCanUpdateByShipperUsernameMutation,
+    useGetCashOrdersCanUpdateByShipperUsernameQuery,
 
 
 } = CashOrderApiSlice;

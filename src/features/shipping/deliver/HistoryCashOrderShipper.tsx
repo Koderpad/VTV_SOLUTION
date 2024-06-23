@@ -103,6 +103,10 @@ const HistoryCashOrderShipper = () => {
                             <h2 className="text-2xl font-bold text-black mb-4">
                                 Ngày: {dayjs(cashOrdersByDate.date).format('DD/MM/YYYY')}
                             </h2>
+                            <h3 className="text-lg font-bold text-black mb-4">
+                                Tổng số biên lai: {cashOrdersByDate.cashOrderDTOs.length} -
+                                Tổng số tiền: {cashOrdersByDate.totalMoney.toLocaleString()} VNĐ
+                            </h3>
                             <table className="min-w-full bg-white">
                                 <thead>
                                 <tr>
@@ -113,7 +117,10 @@ const HistoryCashOrderShipper = () => {
                                         Mã đơn hàng
                                     </th>
                                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                                        Số tiền
+                                        Số tiền (VNĐ)
+                                    </th>
+                                    <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-700">
+                                        Ngày
                                     </th>
                                     <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
                                         Trạng thái
@@ -128,7 +135,10 @@ const HistoryCashOrderShipper = () => {
                                     <tr key={cashOrder.cashOrderId}>
                                         <td className="py-2 px-4 border-b border-gray-200 text-center">{index + 1}</td>
                                         <td className="py-2 px-4 border-b border-gray-200">{cashOrder.cashOrderId}</td>
-                                        <td className="py-2 px-4 border-b border-gray-200 text-right">{cashOrder.money.toLocaleString()} VNĐ</td>
+                                        <td className="py-2 px-4 border-b border-gray-200 text-right">{cashOrder.money.toLocaleString()}</td>
+                                        <td className="py-2 px-4 border-b border-gray-200 text-right">
+                                            {cashOrder.createAt ? dayjs(cashOrder.createAt).format('DD/MM/YYYY') : ''}
+                                        </td>
                                         <td className="py-2 px-4 border-b border-gray-200 text-center">{statusToString[cashOrder.status]}</td>
                                         <td className="py-2 px-4 border-b border-gray-200 text-center">
                                             <div className="flex justify-center items-center">
