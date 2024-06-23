@@ -1,11 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface VouchersProps {
   vouchers: VoucherDTO[] | undefined;
   onClose: () => void;
   onVoucherSelect_fix: (voucherId: number, voucherCode: string) => void;
-  selectedVouchers: number[] | undefined; // Add a prop for selected vouchers
+  selectedVouchers: number[] | undefined;
 }
 
 const Vouchers: React.FC<VouchersProps> = ({
@@ -14,73 +27,222 @@ const Vouchers: React.FC<VouchersProps> = ({
   onVoucherSelect_fix,
   selectedVouchers,
 }) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [tempSelectedVoucher, setTempSelectedVoucher] = useState<number | null>(
+    selectedVouchers && selectedVouchers.length > 0
+      ? selectedVouchers[0]
+      : null,
+  );
+  const [lastCheckedVoucher, setLastCheckedVoucher] = useState<number | null>(
+    null,
+  );
 
-  const handleOnClose = () => {
-    setIsVisible(false);
+  useEffect(() => {
+    if (selectedVouchers && selectedVouchers.length > 0) {
+      setTempSelectedVoucher(selectedVouchers[0]);
+      setLastCheckedVoucher(selectedVouchers[0]);
+    }
+  }, [selectedVouchers]);
+
+  const handleVoucherSelect = (voucherId: number, checked: boolean) => {
+    if (checked) {
+      setTempSelectedVoucher(voucherId);
+      setLastCheckedVoucher(voucherId);
+    } else {
+      setTempSelectedVoucher(null);
+    }
+  };
+
+  const handleConfirm = () => {
+    if (tempSelectedVoucher) {
+      const selectedVoucherObj = vouchers?.find(
+        (v) => v.voucherId === tempSelectedVoucher,
+      );
+      if (selectedVoucherObj) {
+        onVoucherSelect_fix(
+          selectedVoucherObj.voucherId,
+          selectedVoucherObj.code,
+        );
+      }
+    } else if (lastCheckedVoucher) {
+      const lastCheckedVoucherObj = vouchers?.find(
+        (v) => v.voucherId === lastCheckedVoucher,
+      );
+      if (lastCheckedVoucherObj) {
+        onVoucherSelect_fix(
+          lastCheckedVoucherObj.voucherId,
+          lastCheckedVoucherObj.code,
+        );
+      }
+    }
     onClose();
   };
+
   return (
-    <>
-      {isVisible && (
-        <div className="fixed top-0 left-0 w-full h-full bg-opacity-70 flex items-center justify-center overflow-hidden z-50 ">
-          <div className="bg-gray-100 p-4 relative">
-            <button
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center"
-              onClick={handleOnClose}
-            >
-              x
-            </button>
-            <div className="border border-solid  z-50">
-              {/* Form nhập voucher */}
-              <div className="flex flex-col">
-                <div className=" p-4 rounded-md mb-4 mt-2">
-                  <div className="flex flex-row items-center mb-2">
-                    <input
-                      type="text"
-                      placeholder="Nhập mã giảm giá"
-                      className="py-2 px-3 border rounded outline-none mr-2"
-                    />
-                    <button className="bg-blue-500 text-white py-2 px-4 rounded-lg">
-                      Apply
-                    </button>
-                  </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Chọn voucher</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Danh sách voucher</DialogTitle>
+          <DialogDescription>
+            Chọn voucher để áp dụng vào đơn hàng của bạn
+          </DialogDescription>
+          <div className="border-t border-gray-300 w-full my-2"></div>
+        </DialogHeader>
+        <div className="space-y-4">
+          {vouchers &&
+            vouchers.map((voucher) => (
+              <div
+                key={voucher.voucherId}
+                className="flex items-start space-x-3"
+              >
+                <Checkbox
+                  id={`voucher-${voucher.voucherId}`}
+                  checked={tempSelectedVoucher === voucher.voucherId}
+                  onCheckedChange={(checked) =>
+                    handleVoucherSelect(voucher.voucherId, checked as boolean)
+                  }
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <label
+                    htmlFor={`voucher-${voucher.voucherId}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    <span className="font-bold">{voucher.name}</span>
+                    <span className="mx-2">|</span>
+                    <span className="font-mono">{voucher.code}</span>
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    {voucher.quantity} | {voucher.discount} |{" "}
+                    {voucher.description} | {voucher.endDate}
+                  </p>
                 </div>
               </div>
-              <div className="max-h-80 overflow-y-auto">
-                {/* Duyệt và hiển thị các khung voucher */}
-                {vouchers &&
-                  vouchers.map((voucher) => (
-                    <div
-                      className="flex flex-row items-center mb-4"
-                      key={voucher.voucherId}
-                    >
-                      <img
-                        className="w-6 h-6 rounded-full mr-4"
-                        src=" https://via.placeholder.com/150"
-                      />
-                      <p className="justify-center mt-8 ml-4">{voucher.name}</p>
-                      <input
-                        type="checkbox"
-                        className="ml-36 h-4 w-4"
-                        onChange={() =>
-                          onVoucherSelect_fix(voucher.voucherId, voucher.code)
-                        }
-                        checked={
-                          selectedVouchers
-                            ? selectedVouchers.includes(voucher.voucherId)
-                            : false
-                        }
-                      />
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </div>
+            ))}
         </div>
-      )}
-    </>
+        <DialogFooter className="flex gap-4">
+          <div className="border-t border-gray-300 w-full mb-8"></div>
+          <DialogClose asChild>
+            <Button type="button" variant="secondary" onClick={onClose}>
+              Hủy
+            </Button>
+          </DialogClose>
+          <DialogClose>
+            <Button type="submit" onClick={handleConfirm}>
+              Xác nhận
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
 export default Vouchers;
+// import React, { useState } from "react";
+// import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
+//
+// import { Button } from "@/components/ui/button";
+// import {
+//   Dialog,
+//   DialogClose,
+//   DialogContent,
+//   DialogDescription,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// interface VouchersProps {
+//   vouchers: VoucherDTO[] | undefined;
+//   onClose: () => void;
+//   onVoucherSelect_fix: (voucherId: number, voucherCode: string) => void;
+//   selectedVouchers: number[] | undefined; // Add a prop for selected vouchers
+// }
+//
+// const Vouchers: React.FC<VouchersProps> = ({
+//   vouchers,
+//   onClose,
+//   onVoucherSelect_fix,
+//   selectedVouchers,
+// }) => {
+//   console.log("{selectedVouchers}: ", selectedVouchers);
+//   return (
+//     <>
+//       <Dialog>
+//         <DialogTrigger asChild>
+//           <Button variant="outline">Chọn voucher</Button>
+//         </DialogTrigger>
+//         <DialogContent className="sm:max-w-[500px]">
+//           <DialogHeader>
+//             <DialogTitle>Danh sách voucher</DialogTitle>
+//             <DialogDescription>
+//               Chọn voucher để áp dụng vào đơn hàng của bạn
+//             </DialogDescription>
+//             <div className="border-t border-gray-300 w-full my-2"></div>
+//           </DialogHeader>
+//           <RadioGroup
+//             defaultValue={
+//               selectedVouchers ? selectedVouchers.at(0)?.toString() : ""
+//             }
+//             onValueChange={(e) => {
+//               console.log(e);
+//               onVoucherSelect_fix(
+//                 parseInt(e),
+//                 vouchers?.find((v) => v.voucherId === parseInt(e))?.code || "",
+//               );
+//             }}
+//           >
+//             {vouchers &&
+//               vouchers.map((voucher) => (
+//                 <div className="flex pt-4">
+//                   <div className="flex items-center space-x-2 pr-4">
+//                     <RadioGroupItem
+//                       value={voucher.voucherId.toString()}
+//                       id={voucher.voucherId.toString()}
+//                     />
+//                   </div>
+//                   <div className="flex flex-col">
+//                     <div className="flex mb-1">
+//                       <div className="flex mr-2">
+//                         <span className="font-bold">{voucher.name}</span>
+//                         <div className="border-r border-gray-300 h-8 mx-2"></div>
+//                         <span className="font-mono">{voucher.code}</span>
+//                       </div>
+//                     </div>
+//                     <div className="flex mb-1">
+//                       <div className="flex flex-col mr-2">
+//                         <div className="">{voucher.quantity}</div>
+//                         <div className="">
+//                           {voucher.discount}, {voucher.description},{" "}
+//                           {voucher.endDate}
+//                         </div>
+//                       </div>
+//                     </div>
+//                     <div className="flex mt-1"></div>
+//                   </div>
+//                 </div>
+//               ))}
+//           </RadioGroup>
+//           <DialogFooter className="flex gap-4">
+//             <div className="border-t border-gray-300 w-full mb-8"></div>
+//             <DialogClose asChild>
+//               <Button type="button" variant="secondary">
+//                 Hủy
+//               </Button>
+//             </DialogClose>
+//             <DialogClose asChild>
+//               <Button type="submit" onClick={() => null}>
+//                 Xác nhận
+//               </Button>
+//             </DialogClose>
+//           </DialogFooter>
+//         </DialogContent>
+//       </Dialog>
+//     </>
+//   );
+// };
+//
+// export default Vouchers;

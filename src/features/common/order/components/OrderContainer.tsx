@@ -95,7 +95,7 @@ export const OrderContainer = () => {
           const systemVoucherCode = await getSystemVoucherCode(orderDTO);
 
           return {
-            addressId: orderDTO.addressDTO.addressId,
+            addressId: updates.addressId || orderDTO.addressDTO.addressId,
             systemVoucherCode:
               updates.systemVoucherCode === "CANCEL"
                 ? undefined
@@ -388,7 +388,7 @@ const getMultipleOrderRequestWithCartFromMultipleOrderResponse = async (
       shopVoucherCode: shopVoucherCode,
       paymentMethod: orderDTO.paymentMethod,
       shippingMethod: orderDTO.shippingMethod,
-      note: orderDTO.note,
+      note: orderDTO.note || "",
       useLoyaltyPoint: !!orderDTO.loyaltyPointHistoryDTO,
       cartIds: orderDTO.orderItemDTOs.map(({ cartId }) => cartId),
     });
@@ -445,7 +445,7 @@ const handlePlaceOrder = async (
         alert("Đặt hàng thành công");
         console.log("Đặt hàng thành công: ", data);
         // Chuyển hướng đến trang đơn mua
-        window.location.href = "/order-history";
+        window.location.href = "/user/account/history-purchase";
       }
     },
     errorFromServerCallback: (error) => {

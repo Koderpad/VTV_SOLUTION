@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -9,12 +10,21 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useGetAllAddressQuery } from "@/redux/features/common/customer/customerApiSlice";
+import { ListAddressResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ListAddressResponse";
+import { useState } from "react";
 
-export function AddressDialog() {
-  const { data: addresses, isLoading, isSuccess } = useGetAllAddressQuery();
+interface Props {
+  addresses: ListAddressResponse;
+  handleUpdate: (addressId: number) => void;
+  currentAddressId: number;
+}
 
-  if (isLoading) return <div>Loading...</div>;
+export const AddressDialog: React.FC<Props> = ({
+  addresses,
+  handleUpdate,
+  currentAddressId,
+}) => {
+  const [address, setAddress] = useState<number>(currentAddressId);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,14 +39,13 @@ export function AddressDialog() {
           <div className="border-t border-gray-300 w-full my-2"></div>
         </DialogHeader>
         <RadioGroup
-          defaultValue={addresses?.addressDTOs
-            .find((x) => x.status === "ACTIVE")
-            ?.addressId.toString()}
+          defaultValue={currentAddressId.toString()}
           onValueChange={(e) => {
             console.log(e);
+            setAddress(parseInt(e));
           }}
         >
-          {isSuccess &&
+          {addresses &&
             addresses.addressDTOs.map((address) => (
               <div className="flex pt-4">
                 <div className="flex items-center space-x-2 pr-4">
@@ -75,9 +84,18 @@ export function AddressDialog() {
         </RadioGroup>
         <DialogFooter className="flex gap-4">
           <div className="border-t border-gray-300 w-full mb-8"></div>
-          <Button type="submit">Save changes</Button>
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Hủy
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button type="submit" onClick={() => handleUpdate(address)}>
+              Xác nhận
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-}
+};
