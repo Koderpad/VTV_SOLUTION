@@ -62,11 +62,11 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
 
 
         historyCashOrdersByWarehouseUsername: builder.query<CashOrdersByDatesResponse, {
-            wareHouseHold: boolean;
-            shipping: boolean;
+            warehouseHold: boolean;
+            handlePayment: boolean;
         }>({
-            query: ({wareHouseHold, shipping}) => ({
-                url: `shipping/cash-order/history-by-warehouse?wareHouseHold=${wareHouseHold}&shipping=${shipping}`,
+            query: ({warehouseHold, handlePayment}) => ({
+                url: `shipping/cash-order/history-by-warehouse?warehouseHold=${warehouseHold}&handlePayment=${handlePayment}`,
                 method: "GET",
             }),
         }),
