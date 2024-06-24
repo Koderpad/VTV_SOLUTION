@@ -15,6 +15,8 @@ import {useGetDeliverByUsernameRequestMutation} from '@/redux/features/shipping/
 import {TypeWork} from '@/utils/DTOs/extra/TypeWork';
 import {DeliverDTO} from "@/utils/DTOs/shipping/dto/DeliverDTO.ts";
 import dayjs from 'dayjs';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const CanUpdateCashOrderShipper = () => {
     const navigate = useNavigate();
@@ -323,35 +325,40 @@ const CanUpdateCashOrderShipper = () => {
 
                         <br/>
                         <div className="mb-4 ">
-                            <div className="mr-4">
-                                <label htmlFor="warehouseUsername"
-                                       className="block text-gray-700 text-sm font-bold mb-2">
-                                    Tài khoản kho:
-                                </label>
-                                <input
-                                    type="text"
-                                    id="warehouseUsername"
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    value={usernameWarehouse}
-                                    onChange={(e) => {
-                                        handleChangeUsernameWarehouse(e);
-                                    }}
-                                />
+                            <div className="mb-4">
+                                <div className="mr-4">
+                                    <label htmlFor="warehouseUsername"
+                                           className="block text-gray-700 text-sm font-bold mb-2">
+                                        Tài khoản kho:       {!isWarehouseUsernameValid && (
+                                        <h1 className="text-red-500 mt-1">Tài khoản kho không hợp lệ!</h1>
+                                    )}
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            id="warehouseUsername"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            value={usernameWarehouse}
+                                            onChange={(e) => handleChangeUsernameWarehouse(e)}
+                                        />
+
+                                        <FontAwesomeIcon
+                                            icon={faSearch}
+                                            className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 cursor-pointer ${usernameWarehouse.length === 0 ? 'hidden' : 'block'}`}
+                                            onClick={() => validateWarehouseUsername(usernameWarehouse)}
+                                        />
+
+                                    </div>
+                                </div>
                             </div>
 
-                            <div>
-                                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
-                                        disabled={usernameWarehouse.length === 0}
-                                        onClick={() => validateWarehouseUsername(usernameWarehouse)}>
-                                    Kiểm tra tài khoản kho
-
-                                </button>
-                            </div>
 
 
-                            {!isWarehouseUsernameValid && (
-                                <div className="text-red-500 text-sm mt-1">Tài khoản kho không hợp lệ!</div>
-                            )}
+
+
+
+
+
 
                             <br/>
                             {deliver && (
@@ -419,7 +426,7 @@ const CanUpdateCashOrderShipper = () => {
         return (
             <div className="flex justify-between items-center mt-8">
                 <button
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-lime-600"
                     onClick={handleUpdateCashOrdersToWarehouse}
                     disabled={!isWarehouseUsernameValid}
                 >
