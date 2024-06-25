@@ -1,4 +1,4 @@
-import CategoryList from "@/components/organisms/Home/CategoryList";
+import CategoryList from "@/components/organisms/Common/Home/CategoryList";
 import { TemplateV1 } from "../TemplateV1";
 
 export const HomePageTemplate = () => {

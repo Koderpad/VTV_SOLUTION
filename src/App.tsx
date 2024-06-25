@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
-import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
-import CategoryList from "./components/organisms/Home/CategoryList/index.tsx";
+import { HistoryPurchase } from "./components/organisms/Common/Account/HistoryPurchase/index.tsx";
+import CategoryList from "./components/organisms/Common/Home/CategoryList/index.tsx";
 import { DashboardManager } from "./pages/manager/DashboardManager";
 import AddNewCategory from "./features/manager/category/AddNewCategory.tsx";
 import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
@@ -84,23 +84,28 @@ import { ShopProfilePage } from "./pages/vendor/ShopProfilePage.tsx";
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage"),
+  () => import("./pages/common/ProductDetailPage")
 );
 
 // ROLE: CUSTOMER
 const CartPage = lazy(() => import("./pages/common/Cart"));
 const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
-const Profile = lazy(() => import("./components/organisms/Account/Profile"));
-const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges"),
+const Profile = lazy(
+  () => import("./components/organisms/Common/Account/Profile/index.tsx")
 );
-const Address = lazy(() => import("./components/organisms/Account/Address"));
+const PasswordChanges = lazy(
+  () =>
+    import("./components/organisms/Common/Account/PasswordChanges/index.tsx")
+);
+const Address = lazy(
+  () => import("./components/organisms/Common/Account/Address/index.tsx")
+);
 const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail"),
+  () => import("./components/organisms/Common/Account/OrderDetail/index.tsx")
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage"),
+  () => import("./pages/common/CategoryResultsPage")
 );
 
 //ROLE: MANAGER
@@ -108,7 +113,7 @@ const CategoryResultsPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
   const {
     data: notifications,

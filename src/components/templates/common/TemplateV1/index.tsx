@@ -1,5 +1,5 @@
-import { Footer } from "@/components/organisms/Footer";
-import { Header } from "@/components/organisms/Header/index-temp";
+import { Footer } from "@/components/organisms/Common/Footer";
+import { Header } from "@/components/organisms/Common/Header/index-temp";
 import ChatPage from "@/pages/common/ChatPage";
 import { FC } from "react";
 

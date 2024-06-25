@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ChatIcon from "@/components/organisms/Chat/ChatIcon";
-import Chat from "@/components/organisms/Chat";
+import ChatIcon from "@/components/organisms/Common/Chat/ChatIcon";
+import Chat from "@/components/organisms/Common/Chat";
 
 const ChatPage: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);

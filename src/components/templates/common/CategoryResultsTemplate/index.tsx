@@ -1,6 +1,6 @@
-import { Footer } from "@/components/organisms/Footer";
-import { Header } from "@/components/organisms/Header/index-temp";
-import { ProductGrid } from "@/components/organisms/ProductGrid";
+import { Footer } from "@/components/organisms/Common/Footer";
+import { Header } from "@/components/organisms/Common/Header/index-temp";
+import { ProductGrid } from "@/components/organisms/Common/ProductGrid";
 
 export const CategoryResultsTemplate = () => {
   return (

@@ -1,4 +1,4 @@
-import { ProductGrid } from "@/components/organisms/ProductGrid";
+import { ProductGrid } from "@/components/organisms/Common/ProductGrid";
 import { TemplateV1 } from "../TemplateV1";
 
 export const ResultsTemplate = () => {

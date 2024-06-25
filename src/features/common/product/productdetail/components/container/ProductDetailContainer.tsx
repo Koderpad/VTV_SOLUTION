@@ -1,4 +1,4 @@
-import { ProductDetail } from "@/components/organisms/ProductDetail";
+import { ProductDetail } from "@/components/organisms/Common/ProductDetail";
 import { getProductDetail } from "@/services/common/ProductService";
 import { ProductResponse } from "@/utils/DTOs/common/Product/Response/ProductResponse";
 import { useEffect, useState } from "react";

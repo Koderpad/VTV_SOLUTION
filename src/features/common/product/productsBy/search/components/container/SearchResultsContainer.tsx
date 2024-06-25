@@ -1,9 +1,9 @@
-import { SearchItemResultItems } from "@/components/organisms/ProductGrid/SearchItemResult/SearchItemResultItems";
+import { SearchItemResultItems } from "@/components/organisms/Common/ProductGrid/SearchItemResult/SearchItemResultItems";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
-import { FilterContext } from "@/components/organisms/ProductGrid/FilterContext";
+import { FilterContext } from "@/components/organisms/Common/ProductGrid/FilterContext";
 import {
   searchProducts,
   searchProductsInShop,
@@ -31,13 +31,13 @@ export const SearchResultsContainer = () => {
               currentPage,
               10,
               searchTerm ?? "",
-              sortBy ?? "best-selling",
+              sortBy ?? "best-selling"
             )
           : await searchProducts(
               currentPage,
               10,
               searchTerm ?? "",
-              sortBy ?? "best-selling",
+              sortBy ?? "best-selling"
             );
         if (response.status === "OK") {
           allProducts = [...allProducts, ...response.productDTOs];
@@ -66,13 +66,13 @@ export const SearchResultsContainer = () => {
     if (fromPrice !== null && toPrice !== null) {
       filtered = filtered.filter(
         (product) =>
-          product.minPrice >= fromPrice && product.maxPrice <= toPrice,
+          product.minPrice >= fromPrice && product.maxPrice <= toPrice
       );
     }
 
     if (rating.length > 0) {
       filtered = filtered.filter((product) =>
-        rating.some((r) => Number(product.rating) >= r),
+        rating.some((r) => Number(product.rating) >= r)
       );
     }
 

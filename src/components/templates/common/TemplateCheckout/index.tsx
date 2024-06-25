@@ -1,5 +1,5 @@
-import { Footer } from "@/components/organisms/Footer";
-import { NavbarWrapper } from "@/components/organisms/Header/Navbar/NavbarWrapper/index-temp";
+import { Footer } from "@/components/organisms/Common/Footer";
+import { NavbarWrapper } from "@/components/organisms/Common/Header/Navbar/NavbarWrapper/index-temp";
 import { FC } from "react";
 
 type TemplateCheckout = {

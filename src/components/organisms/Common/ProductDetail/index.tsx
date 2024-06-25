@@ -11,8 +11,8 @@ import { RootState } from "@/redux/store";
 import {
   useAddNewCartMutation,
   useGetListCartByUsernameQuery,
-} from "../../../redux/features/common/cart/cartApiSlice";
-import { InputQuantity } from "../../molecules/Inputs/InputQuantity";
+} from "../../../../redux/features/common/cart/cartApiSlice";
+import { InputQuantity } from "../../../molecules/Inputs/InputQuantity";
 
 interface ProductDetailProps {
   data: ProductResponse;
