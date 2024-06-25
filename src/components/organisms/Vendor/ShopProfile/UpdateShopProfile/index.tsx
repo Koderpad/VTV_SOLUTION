@@ -15,8 +15,22 @@ import {
 import { ProvinceDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListProvinceResponse";
 import { DistrictDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListDistrictResponse";
 import { WardDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListWardResponse";
-import { ShopDTO } from "@/utils/DTOs/vendor/shop/Response/ShopResponse";
 
+export interface ShopRequest {
+  shopId: number;
+  name: string;
+  address: string;
+  provinceName: string;
+  districtName: string;
+  wardName: string;
+  phone: string;
+  email: string;
+  avatar: string | File;
+  description: string;
+  openTime: string;
+  closeTime: string;
+  wardCode: string;
+}
 const UpdateShopProfile: React.FC = () => {
   const navigate = useNavigate();
   const { data: shopData, isLoading: isLoadingShop } = useGetProfileShopQuery();
@@ -26,7 +40,7 @@ const UpdateShopProfile: React.FC = () => {
   const [districts, setDistricts] = useState<DistrictDTO[]>([]);
   const [wards, setWards] = useState<WardDTO[]>([]);
 
-  const { control, handleSubmit, setValue, watch } = useForm<ShopDTO>();
+  const { control, handleSubmit, setValue, watch } = useForm<ShopRequest>();
 
   const selectedProvince = watch("provinceName");
   const selectedDistrict = watch("districtName");
@@ -62,12 +76,12 @@ const UpdateShopProfile: React.FC = () => {
   useEffect(() => {
     if (shopData) {
       Object.entries(shopData.shopDTO).forEach(([key, value]) => {
-        setValue(key as keyof ShopDTO, value);
+        setValue(key as keyof ShopRequest, value);
       });
     }
   }, [shopData, setValue]);
 
-  const convertShopDTOToFormData = (data: ShopDTO): FormData => {
+  const convertShopDTOToFormData = (data: ShopRequest): FormData => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("address", data.address);
@@ -92,16 +106,14 @@ const UpdateShopProfile: React.FC = () => {
     return formData;
   };
 
-  const onSubmit = async (data: ShopDTO) => {
+  const onSubmit = async (data: ShopRequest) => {
     try {
       const formData = convertShopDTOToFormData(data);
       await updateShop(formData).unwrap();
       toast.success("Cập nhật cửa hàng thành công");
       navigate("/vendor/shop/profile");
     } catch (error) {
-      toast.error(
-        "Cập nhật cửa hàng thất bại: " + error.data?.message || "Đã xảy ra lỗi",
-      );
+      toast.error("Cập nhật cửa hàng thất bại: " + error || "Đã xảy ra lỗi");
     }
   };
 
