@@ -67,22 +67,41 @@ const UpdateShopProfile: React.FC = () => {
     }
   }, [shopData, setValue]);
 
-  const onSubmit = async (data: ShopDTO) => {
+  const convertShopDTOToFormData = (data: ShopDTO): FormData => {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "avatar" && value instanceof FileList) {
-        formData.append(key, value[0]);
-      } else {
-        formData.append(key, value as string);
-      }
-    });
+    formData.append("name", data.name);
+    formData.append("address", data.address);
+    formData.append("provinceName", data.provinceName);
+    formData.append("districtName", data.districtName);
+    formData.append("wardName", data.wardName);
+    formData.append("wardCode", data.wardCode);
+    formData.append("phone", data.phone);
+    formData.append("email", data.email);
+    formData.append("description", data.description);
+    formData.append("openTime", data.openTime);
+    formData.append("closeTime", data.closeTime);
 
+    // Handle avatar
+    if (data.avatar instanceof File) {
+      formData.append("avatar", data.avatar);
+      formData.append("changeAvatar", "true");
+    } else {
+      formData.append("changeAvatar", "false");
+    }
+
+    return formData;
+  };
+
+  const onSubmit = async (data: ShopDTO) => {
     try {
+      const formData = convertShopDTOToFormData(data);
       await updateShop(formData).unwrap();
       toast.success("Cập nhật cửa hàng thành công");
       navigate("/vendor/shop/profile");
     } catch (error) {
-      toast.error("Cập nhật cửa hàng thất bại");
+      toast.error(
+        "Cập nhật cửa hàng thất bại: " + error.data?.message || "Đã xảy ra lỗi",
+      );
     }
   };
 
@@ -300,6 +319,80 @@ const UpdateShopProfile: React.FC = () => {
           />
 
           <Controller
+            name="description"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Mô tả là bắt buộc" }}
+            render={({ field, fieldState: { error } }) => (
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Mô tả
+                </label>
+                <textarea
+                  {...field}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  rows={4}
+                />
+                {error && (
+                  <p className="text-red-500 text-xs italic">{error.message}</p>
+                )}
+              </div>
+            )}
+          />
+
+          <Controller
+            name="openTime"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Giờ mở cửa là bắt buộc" }}
+            render={({ field, fieldState: { error } }) => (
+              <div>
+                <label
+                  htmlFor="openTime"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Giờ mở cửa
+                </label>
+                <input
+                  {...field}
+                  type="time"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                {error && (
+                  <p className="text-red-500 text-xs italic">{error.message}</p>
+                )}
+              </div>
+            )}
+          />
+
+          <Controller
+            name="closeTime"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Giờ đóng cửa là bắt buộc" }}
+            render={({ field, fieldState: { error } }) => (
+              <div>
+                <label
+                  htmlFor="closeTime"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Giờ đóng cửa
+                </label>
+                <input
+                  {...field}
+                  type="time"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                {error && (
+                  <p className="text-red-500 text-xs italic">{error.message}</p>
+                )}
+              </div>
+            )}
+          />
+          <Controller
             name="avatar"
             control={control}
             defaultValue=""
@@ -403,7 +496,6 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
         </div>
-
         <div className="flex items-center justify-between mt-6">
           <button
             type="submit"
