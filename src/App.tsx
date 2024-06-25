@@ -80,11 +80,12 @@ import HistoryCashOrderWareHouse from "@/features/shipping/deliver/HistoryCashOr
 import CanUpdateCashOrderWareHouse from "@/features/shipping/deliver/CanUpdateCashOrderWareHouse.tsx";
 import { DashboardVendor } from "./pages/vendor/DashboardVendor.tsx";
 import { ShopProfilePage } from "./pages/vendor/ShopProfilePage.tsx";
+import { UpdateShopProfilePage } from "./pages/vendor/UpdateShopProfilePage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage")
+  () => import("./pages/common/ProductDetailPage"),
 );
 
 // ROLE: CUSTOMER
@@ -92,20 +93,20 @@ const CartPage = lazy(() => import("./pages/common/Cart"));
 const Checkout = lazy(() => import("./pages/common/Checkout"));
 const AccountPage = lazy(() => import("./pages/common/Account"));
 const Profile = lazy(
-  () => import("./components/organisms/Common/Account/Profile/index.tsx")
+  () => import("./components/organisms/Common/Account/Profile/index.tsx"),
 );
 const PasswordChanges = lazy(
   () =>
-    import("./components/organisms/Common/Account/PasswordChanges/index.tsx")
+    import("./components/organisms/Common/Account/PasswordChanges/index.tsx"),
 );
 const Address = lazy(
-  () => import("./components/organisms/Common/Account/Address/index.tsx")
+  () => import("./components/organisms/Common/Account/Address/index.tsx"),
 );
 const OrderDetail = lazy(
-  () => import("./components/organisms/Common/Account/OrderDetail/index.tsx")
+  () => import("./components/organisms/Common/Account/OrderDetail/index.tsx"),
 );
 const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage")
+  () => import("./pages/common/CategoryResultsPage"),
 );
 
 //ROLE: MANAGER
@@ -113,7 +114,7 @@ const CategoryResultsPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+    (state: RootState) => state.auth.isAuthenticated,
   );
   const {
     data: notifications,
@@ -397,6 +398,8 @@ function App() {
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}>
             <Route path="/vendor" element={<DashboardVendor />}>
               <Route path="profile" element={<ShopProfilePage />} />
+
+              <Route path="profile/edit" element={<UpdateShopProfilePage />} />
             </Route>
           </Route>
 

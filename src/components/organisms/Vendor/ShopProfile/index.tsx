@@ -14,7 +14,7 @@ const ShopProfile: React.FC = () => {
 
   const handleUpdateShop = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    navigate("/vendor/shop/edit");
+    navigate("/vendor/profile/edit");
   };
 
   if (isLoading) {
