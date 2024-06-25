@@ -1,9 +1,10 @@
+import ShopProfile from "@/components/organisms/Vendor/ShopProfile";
 import { TemplateVendorV1 } from "./TemplateVendorV1";
 
 export const ShopProfileTemplate = () => {
   return (
     <TemplateVendorV1>
-      <h1>Shop Profile</h1>
+      <ShopProfile />
     </TemplateVendorV1>
   );
 };

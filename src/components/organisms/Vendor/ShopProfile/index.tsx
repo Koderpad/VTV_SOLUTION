@@ -1,32 +1,37 @@
+import React from "react";
 import { useGetProfileShopQuery } from "@/redux/features/vendor/shop/shopApiSlice";
 import { ShopDTO } from "@/utils/DTOs/vendor/shop/Response/ShopResponse";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const ShopProfile = () => {
-  const [callShopProfile] = useGetProfileShopQuery;
-
-  const [shopDTO, setShopDTO] = useState<ShopDTO>();
+const ShopProfile: React.FC = () => {
+  const {
+    data: shopResponse,
+    isLoading,
+    isError,
+    error,
+  } = useGetProfileShopQuery();
   const navigate = useNavigate();
 
-  const handleGetShopProfile = async () => {
-    try {
-      const response = await callShopProfile("").unwrap();
-      setShopDTO(response.shopDTO);
-      console.log("response", response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    handleGetShopProfile();
-  }, []);
-
-  const handleUpdateShop = (e: { preventDefault: () => void }) => {
+  const handleUpdateShop = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     navigate("/vendor/shop/edit");
   };
+
+  if (isLoading) {
+    return <div className="container mx-auto p-4">Loading...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto p-4">Error: {error.toString()}</div>
+    );
+  }
+
+  const shopDTO: ShopDTO | undefined = shopResponse?.shopDTO;
+
+  if (!shopDTO) {
+    return <div className="container mx-auto p-4">No shop data available.</div>;
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -40,8 +45,8 @@ const ShopProfile = () => {
       <div className="flex flex-col md:flex-row">
         <div className="md:w-1/3 mb-4 md:mb-0">
           <img
-            src={shopDTO?.avatar}
-            alt=""
+            src={shopDTO.avatar}
+            alt={shopDTO.name}
             className="w-full h-auto object-cover rounded"
           />
         </div>
@@ -49,32 +54,44 @@ const ShopProfile = () => {
           <table className="table-auto w-full">
             <tbody>
               <tr>
+                <td className="font-bold pr-2">Mã cửa hàng:</td>
+                <td>{shopDTO.shopId}</td>
+              </tr>
+              <tr>
                 <td className="font-bold pr-2">Tên cửa hàng:</td>
-                <td>{shopDTO?.name}</td>
+                <td>{shopDTO.name}</td>
               </tr>
               <tr>
                 <td className="font-bold pr-2">Địa chỉ:</td>
-                <td>{shopDTO?.address}</td>
+                <td>{shopDTO.address}</td>
               </tr>
               <tr>
                 <td className="font-bold pr-2">Số điện thoại:</td>
-                <td>{shopDTO?.phone}</td>
+                <td>{shopDTO.phone}</td>
               </tr>
               <tr>
                 <td className="font-bold pr-2">Email:</td>
-                <td>{shopDTO?.email}</td>
+                <td>{shopDTO.email}</td>
               </tr>
               <tr>
                 <td className="font-bold pr-2">Giờ mở cửa:</td>
-                <td>{shopDTO?.openTime}</td>
+                <td>{shopDTO.openTime}</td>
               </tr>
               <tr>
                 <td className="font-bold pr-2">Giờ đóng cửa:</td>
-                <td>{shopDTO?.closeTime}</td>
+                <td>{shopDTO.closeTime}</td>
               </tr>
               <tr>
                 <td className="font-bold pr-2">Trạng thái:</td>
-                <td>{shopDTO?.status}</td>
+                <td>{shopDTO.status}</td>
+              </tr>
+              <tr>
+                <td className="font-bold pr-2">Mã khách hàng:</td>
+                <td>{shopDTO.customerId}</td>
+              </tr>
+              <tr>
+                <td className="font-bold pr-2">Tên đăng nhập:</td>
+                <td>{shopDTO.shopUsername}</td>
               </tr>
             </tbody>
           </table>
@@ -82,28 +99,31 @@ const ShopProfile = () => {
       </div>
       <div className="mb-4">
         <h3 className="text-2xl font-bold mb-4">Mô tả cửa hàng</h3>
-        <p>{shopDTO?.description}</p>
+        <p>{shopDTO.description}</p>
       </div>
-
-      <div className={"mb-4"}>
+      <div className="mb-4">
         <h3 className="text-2xl font-bold mb-4">Địa chỉ cửa hàng</h3>
         <table className="table-auto w-full">
           <tbody>
             <tr>
               <td className="font-bold pr-2">Tỉnh/Thành phố:</td>
-              <td>{shopDTO?.province}</td>
+              <td>{shopDTO.provinceName}</td>
             </tr>
             <tr>
               <td className="font-bold pr-2">Quận/Huyện:</td>
-              <td>{shopDTO?.district}</td>
+              <td>{shopDTO.districtName}</td>
             </tr>
             <tr>
               <td className="font-bold pr-2">Phường/Xã:</td>
-              <td>{shopDTO?.ward}</td>
+              <td>{shopDTO.wardName}</td>
+            </tr>
+            <tr>
+              <td className="font-bold pr-2">Mã phường/xã:</td>
+              <td>{shopDTO.wardCode}</td>
             </tr>
             <tr>
               <td className="font-bold pr-2">Địa chỉ chi tiết:</td>
-              <td>{shopDTO?.address}</td>
+              <td>{shopDTO.address}</td>
             </tr>
           </tbody>
         </table>
