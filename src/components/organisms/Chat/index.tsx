@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import {
+  disconnectSocket,
   initSocket,
   isSocketConnected,
   subscribeToRoomMessages,
@@ -25,13 +26,16 @@ const Chat: React.FC = () => {
   const { data, isLoading } = useGetRoomChatListQuery({ page: 1, size: 10 });
   const roomChats = useSelector(selectRoomChats);
 
-  // ... (rest of the component remains the same)
   useEffect(() => {
     if (token) {
       initSocket(token)
         .then(() => console.log("Socket connected successfully"))
         .catch((error) => console.error("Socket connection failed:", error));
     }
+
+    return () => {
+      disconnectSocket();
+    };
   }, [token]);
 
   useEffect(() => {
@@ -46,6 +50,7 @@ const Chat: React.FC = () => {
     const unsubscribes = await Promise.all(
       roomChats.map(async (roomChat) => {
         try {
+          console.log("Subscribing to room...", roomChat.roomChatId);
           return await subscribeToRoomMessages(roomChat.roomChatId);
         } catch (error) {
           console.error(
@@ -58,6 +63,7 @@ const Chat: React.FC = () => {
     );
 
     return () => {
+      console.log("Unsubscribing from rooms...");
       unsubscribes.forEach((unsubscribe) => {
         if (typeof unsubscribe === "function") {
           unsubscribe();

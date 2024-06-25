@@ -1,4 +1,4 @@
-import { Client } from "@stomp/stompjs";
+import { Client, StompSubscription } from "@stomp/stompjs";
 import { store } from "@/redux/store";
 import {
   addMessage,
@@ -7,13 +7,9 @@ import {
 } from "@/redux/features/common/chat/chatSlice";
 import { ChatMessageRequest } from "../DTOs/chat/Request/ChatMessageRequest";
 
-let isConnected = false;
 let stompClient: Client | null = null;
 let connectPromise: Promise<void> | null = null;
-
-export const isSocketConnected = (): boolean => {
-  return isConnected;
-};
+const subscriptions: { [key: string]: StompSubscription } = {};
 
 export const initSocket = (token: string): Promise<void> => {
   if (!token) return Promise.reject("No token provided");
@@ -35,11 +31,14 @@ export const initSocket = (token: string): Promise<void> => {
   });
 
   connectPromise = new Promise((resolve, reject) => {
-    stompClient!.onConnect = (frame) => {
-      console.log("socket connected");
-      isConnected = true;
+    if (!stompClient) {
+      reject(new Error("STOMP client not initialized"));
+      return;
+    }
+    stompClient.onConnect = (frame) => {
+      console.log("Socket connected");
       if (frame) {
-        console.log("frame: ", frame);
+        console.log("Frame: ", frame);
       }
       resolve();
     };
@@ -50,7 +49,7 @@ export const initSocket = (token: string): Promise<void> => {
       reject(new Error("STOMP connection error"));
     };
 
-    stompClient!.activate();
+    stompClient.activate();
   });
 
   return connectPromise;
@@ -58,26 +57,35 @@ export const initSocket = (token: string): Promise<void> => {
 
 export const disconnectSocket = () => {
   if (stompClient) {
+    Object.values(subscriptions).forEach((subscription) =>
+      subscription.unsubscribe()
+    );
     stompClient.deactivate();
     stompClient = null;
-    isConnected = false;
-    connectPromise = null;
   }
+  connectPromise = null;
 };
 
-export const subscribeToRoomMessages = async (roomChatId: string) => {
+export const subscribeToRoomMessages = async (
+  roomChatId: string
+): Promise<() => void> => {
   if (!stompClient) {
     throw new Error("STOMP client not initialized");
   }
 
-  // Ensure the connection is established before subscribing
-  if (!isConnected) {
-    await connectPromise;
+  await connectPromise;
+
+  console.log("subscribeToRoomMessages roomChatId: ", roomChatId);
+
+  if (subscriptions[roomChatId]) {
+    console.log("Already subscribed to room: ", roomChatId);
+    return () => {};
   }
 
-  const subscription = stompClient.subscribe(
+  subscriptions[roomChatId] = stompClient.subscribe(
     `/room/${roomChatId}/chat`,
     (message) => {
+      console.log("Received message in room: ", roomChatId, message);
       if (message.body) {
         const newMessage = JSON.parse(message.body);
         store.dispatch(addMessage(newMessage));
@@ -87,7 +95,10 @@ export const subscribeToRoomMessages = async (roomChatId: string) => {
   );
 
   return () => {
-    subscription.unsubscribe();
+    if (subscriptions[roomChatId]) {
+      subscriptions[roomChatId].unsubscribe();
+      delete subscriptions[roomChatId];
+    }
   };
 };
 
@@ -97,9 +108,7 @@ export const sendMessage = async (msgRequest: any) => {
   }
 
   // Ensure the connection is established before sending
-  if (!isConnected) {
-    await connectPromise;
-  }
+  await connectPromise;
 
   const chatMessageRequest: ChatMessageRequest = {
     content: msgRequest.content,
@@ -121,6 +130,10 @@ export const sendMessage = async (msgRequest: any) => {
     console.error("Error sending message:", error);
     store.dispatch(addFailedMessage(msgRequest));
   }
+};
+
+export const isSocketConnected = (): boolean => {
+  return stompClient?.connected ?? false;
 };
 
 // import { Client } from "@stomp/stompjs";
