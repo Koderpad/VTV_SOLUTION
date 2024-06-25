@@ -75,9 +75,9 @@ import { useGetListCartByUsernameQuery } from "./redux/features/common/cart/cart
 import { setCarts } from "./redux/features/common/cart/cartSlice.ts";
 import CashOrderDetail from "@/features/shipping/deliver/CashOrderDetail.tsx";
 import HistoryCashOrderShipper from "@/features/shipping/deliver/HistoryCashOrderShipper.tsx";
-import CanUpdateCashOrderShipper from "@/features/shipping/deliver/CanUpdateCashOrderShipper.tsx";
+import UpdateCashOrderShipper from "@/features/shipping/deliver/CanUpdateCashOrderShipper.tsx";
 import HistoryCashOrderWareHouse from "@/features/shipping/deliver/HistoryCashOrderWareHouse.tsx";
-import CanUpdateCashOrderWareHouse from "@/features/shipping/deliver/CanUpdateCashOrderWareHouse.tsx";
+import UpdateCashOrderWareHouse from "@/features/shipping/deliver/CanUpdateCashOrderWareHouse.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -339,12 +339,12 @@ function App() {
               />
 
               <Route
-                  path="cash-order/shipper/can-update"
-                  element={<CanUpdateCashOrderShipper/>}
+                  path="cash-order/shipper/update"
+                  element={<UpdateCashOrderShipper/>}
               />
               <Route
-                  path="cash-order/warehouse/can-update"
-                  element={<CanUpdateCashOrderWareHouse/>}
+                  path="cash-order/warehouse/update"
+                  element={<UpdateCashOrderWareHouse/>}
               />
 
             </Route>

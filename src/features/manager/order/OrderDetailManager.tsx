@@ -148,7 +148,7 @@ const OrderDetailManager = () => {
                         <div>
                             <dt className="text-neutral-800  text-xl font-bold">Trạng thái vận chuyển:</dt>
                             <dd className={`mt-1 text-${getTransportStatusColor(orderResponse.transportDTO.status)}`}>
-                                {transportStatusToString()[orderResponse.transportDTO.status]}
+                                {transportStatusToString[orderResponse.transportDTO.status]}
                             </dd>
                         </div>
                         <div>
@@ -162,7 +162,7 @@ const OrderDetailManager = () => {
                                     {orderResponse.transportDTO.transportHandleDTOs.map((transportHandle, index) => (
                                         <li key={index} className="list-disc list-inside">
                                             <span
-                                                className="font-bold">{transportHandle.username}</span> - {transportStatusToString()[transportHandle.transportStatus]}
+                                                className="font-bold">{transportHandle.username}</span> - {transportStatusToString[transportHandle.transportStatus]}
                                             <br/>
                                             <span
                                                 className={`text-${getTransportStatusColor(transportHandle.transportStatus)}-500`}>{transportHandle.messageStatus}</span>
