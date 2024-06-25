@@ -78,6 +78,8 @@ import HistoryCashOrderShipper from "@/features/shipping/deliver/HistoryCashOrde
 import CanUpdateCashOrderShipper from "@/features/shipping/deliver/CanUpdateCashOrderShipper.tsx";
 import HistoryCashOrderWareHouse from "@/features/shipping/deliver/HistoryCashOrderWareHouse.tsx";
 import CanUpdateCashOrderWareHouse from "@/features/shipping/deliver/CanUpdateCashOrderWareHouse.tsx";
+import { DashboardVendor } from "./pages/vendor/DashboardVendor.tsx";
+import { ShopProfilePage } from "./pages/vendor/ShopProfilePage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -324,29 +326,28 @@ function App() {
                 element={<CashOrderWareHousePage />}
               />
 
-            <Route
+              <Route
                 path="cash-order/detail/:cashOrderId"
                 element={<CashOrderDetail />}
               />
               <Route
-                  path="cash-order/shipper/history"
-                  element={<HistoryCashOrderShipper/>}
+                path="cash-order/shipper/history"
+                element={<HistoryCashOrderShipper />}
               />
 
               <Route
-                  path="cash-order/warehouse/history"
-                  element={<HistoryCashOrderWareHouse/>}
+                path="cash-order/warehouse/history"
+                element={<HistoryCashOrderWareHouse />}
               />
 
               <Route
-                  path="cash-order/shipper/can-update"
-                  element={<CanUpdateCashOrderShipper/>}
+                path="cash-order/shipper/can-update"
+                element={<CanUpdateCashOrderShipper />}
               />
               <Route
-                  path="cash-order/warehouse/can-update"
-                  element={<CanUpdateCashOrderWareHouse/>}
+                path="cash-order/warehouse/can-update"
+                element={<CanUpdateCashOrderWareHouse />}
               />
-
             </Route>
           </Route>
 
@@ -388,15 +389,13 @@ function App() {
             </Route>
           </Route>
 
-          <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
+          <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}>
+            <Route path="/vendor" element={<DashboardVendor />}>
+              <Route path="profile" element={<ShopProfilePage />} />
+            </Route>
+          </Route>
 
           <Route element={<RequireAuth allowedRoles={["CUSTOMER"]} />}>
-            {/* <Route path="address" element={<Address />} /> */}
-            {/* <Route path="products/:id" element={<ProductsByCategory />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="checkout" element={<PayMent />} />
-            <Route path="checkout/:id" element={<OrderDetailsForm />} /> */}
-
             {/* cart */}
             <Route path="/cart" element={<CartPage />} />
 
@@ -412,22 +411,9 @@ function App() {
               <Route path="order/:id" element={<OrderDetail />} />
               {/* <Route path="favorite-products" element={<FavoriteProducts />} />
               <Route path="voucher-wallet" element={<VoucherList />} />
-              <Route
-                path="checkout/add/review/order-item/:id"
-                element={<AddReview />}
-              />
-              <Route
-                path="checkout/review/order-item/:id"
-                element={<Review />}
-              /> */}
+               */}
             </Route>
           </Route>
-
-          {/* TEST */}
-          {/* <Route path="/test" element={<SearchResultsTemplate />} /> */}
-          {/* <Route path="/test" element={<ProductDetailTemplate />} /> */}
-
-          {/* private routes */}
         </Routes>
       </Suspense>
     </BrowserRouter>
