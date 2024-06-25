@@ -17,12 +17,18 @@ export const shopApi = apiSlice.injectEndpoints({
       }),
     }),
 
-    updateShop: builder.mutation({
+    updateShop: builder.mutation<ShopResponse, FormData>({
       query: (data) => ({
         url: `/vendor/shop/update`,
         method: "PUT",
         body: data,
       }),
+      extraOptions: {
+        prepareHeaders: (headers: Headers) => {
+          headers.set("Content-Type", "multipart/form-data");
+          return headers;
+        },
+      },
     }),
 
     getAllProvince: builder.mutation({
