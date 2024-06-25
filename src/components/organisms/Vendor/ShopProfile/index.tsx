@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useGetProfileShopQuery } from "@/redux/features/vendor/shop/shopApiSlice";
 import { ShopDTO } from "@/utils/DTOs/vendor/shop/Response/ShopResponse";
 import { useNavigate } from "react-router-dom";
@@ -9,8 +9,13 @@ const ShopProfile: React.FC = () => {
     isLoading,
     isError,
     error,
+    refetch,
   } = useGetProfileShopQuery();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const handleUpdateShop = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

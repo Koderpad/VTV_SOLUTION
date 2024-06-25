@@ -25,7 +25,7 @@ export interface ShopRequest {
   wardName: string;
   phone: string;
   email: string;
-  avatar: string | File;
+  avatar: string | File | null;
   description: string;
   openTime: string;
   closeTime: string;
@@ -33,12 +33,17 @@ export interface ShopRequest {
 }
 const UpdateShopProfile: React.FC = () => {
   const navigate = useNavigate();
-  const { data: shopData, isLoading: isLoadingShop } = useGetProfileShopQuery();
+  const {
+    data: shopData,
+    isLoading: isLoadingShop,
+    refetch,
+  } = useGetProfileShopQuery();
   const [updateShop] = useUpdateShopMutation();
 
   const [provinces, setProvinces] = useState<ProvinceDTO[]>([]);
   const [districts, setDistricts] = useState<DistrictDTO[]>([]);
   const [wards, setWards] = useState<WardDTO[]>([]);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const { control, handleSubmit, setValue, watch } = useForm<ShopRequest>();
 
@@ -51,6 +56,7 @@ const UpdateShopProfile: React.FC = () => {
       setProvinces(data.provinceDTOs);
     };
     fetchProvinces();
+    refetch();
   }, []);
 
   useEffect(() => {
@@ -78,6 +84,7 @@ const UpdateShopProfile: React.FC = () => {
       Object.entries(shopData.shopDTO).forEach(([key, value]) => {
         setValue(key as keyof ShopRequest, value);
       });
+      setAvatarPreview(shopData.shopDTO.avatar);
     }
   }, [shopData, setValue]);
 
@@ -111,7 +118,7 @@ const UpdateShopProfile: React.FC = () => {
       const formData = convertShopDTOToFormData(data);
       await updateShop(formData).unwrap();
       toast.success("Cập nhật cửa hàng thành công");
-      navigate("/vendor/shop/profile");
+      navigate("/vendor/profile");
     } catch (error) {
       toast.error("Cập nhật cửa hàng thất bại: " + error || "Đã xảy ra lỗi");
     }
@@ -120,7 +127,6 @@ const UpdateShopProfile: React.FC = () => {
   if (isLoadingShop) {
     return <div>Loading...</div>;
   }
-
   return (
     <div className="flex flex-col items-center justify-center bg-gray-200 min-h-screen p-4">
       <h1 className="text-4xl font-bold mb-6 text-blue-600">
@@ -330,84 +336,84 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
-          <Controller
-            name="description"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Mô tả là bắt buộc" }}
-            render={({ field, fieldState: { error } }) => (
-              <div>
-                <label
-                  htmlFor="description"
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Mô tả
-                </label>
-                <textarea
-                  {...field}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  rows={4}
-                />
-                {error && (
-                  <p className="text-red-500 text-xs italic">{error.message}</p>
-                )}
-              </div>
-            )}
-          />
-
-          <Controller
-            name="openTime"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Giờ mở cửa là bắt buộc" }}
-            render={({ field, fieldState: { error } }) => (
-              <div>
-                <label
-                  htmlFor="openTime"
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Giờ mở cửa
-                </label>
-                <input
-                  {...field}
-                  type="time"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                {error && (
-                  <p className="text-red-500 text-xs italic">{error.message}</p>
-                )}
-              </div>
-            )}
-          />
-
-          <Controller
-            name="closeTime"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Giờ đóng cửa là bắt buộc" }}
-            render={({ field, fieldState: { error } }) => (
-              <div>
-                <label
-                  htmlFor="closeTime"
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Giờ đóng cửa
-                </label>
-                <input
-                  {...field}
-                  type="time"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                {error && (
-                  <p className="text-red-500 text-xs italic">{error.message}</p>
-                )}
-              </div>
-            )}
-          />
+          {/* <Controller */}
+          {/*   name="description" */}
+          {/*   control={control} */}
+          {/*   defaultValue="" */}
+          {/*   rules={{ required: "Mô tả là bắt buộc" }} */}
+          {/*   render={({ field, fieldState: { error } }) => ( */}
+          {/*     <div> */}
+          {/*       <label */}
+          {/*         htmlFor="description" */}
+          {/*         className="block text-gray-700 text-sm font-bold mb-2" */}
+          {/*       > */}
+          {/*         Mô tả */}
+          {/*       </label> */}
+          {/*       <textarea */}
+          {/*         {...field} */}
+          {/*         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" */}
+          {/*         rows={4} */}
+          {/*       /> */}
+          {/*       {error && ( */}
+          {/*         <p className="text-red-500 text-xs italic">{error.message}</p> */}
+          {/*       )} */}
+          {/*     </div> */}
+          {/*   )} */}
+          {/* /> */}
+          {/**/}
+          {/* <Controller */}
+          {/*   name="openTime" */}
+          {/*   control={control} */}
+          {/*   defaultValue="" */}
+          {/*   rules={{ required: "Giờ mở cửa là bắt buộc" }} */}
+          {/*   render={({ field, fieldState: { error } }) => ( */}
+          {/*     <div> */}
+          {/*       <label */}
+          {/*         htmlFor="openTime" */}
+          {/*         className="block text-gray-700 text-sm font-bold mb-2" */}
+          {/*       > */}
+          {/*         Giờ mở cửa */}
+          {/*       </label> */}
+          {/*       <input */}
+          {/*         {...field} */}
+          {/*         type="time" */}
+          {/*         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" */}
+          {/*       /> */}
+          {/*       {error && ( */}
+          {/*         <p className="text-red-500 text-xs italic">{error.message}</p> */}
+          {/*       )} */}
+          {/*     </div> */}
+          {/*   )} */}
+          {/* /> */}
+          {/**/}
+          {/* <Controller */}
+          {/*   name="closeTime" */}
+          {/*   control={control} */}
+          {/*   defaultValue="" */}
+          {/*   rules={{ required: "Giờ đóng cửa là bắt buộc" }} */}
+          {/*   render={({ field, fieldState: { error } }) => ( */}
+          {/*     <div> */}
+          {/*       <label */}
+          {/*         htmlFor="closeTime" */}
+          {/*         className="block text-gray-700 text-sm font-bold mb-2" */}
+          {/*       > */}
+          {/*         Giờ đóng cửa */}
+          {/*       </label> */}
+          {/*       <input */}
+          {/*         {...field} */}
+          {/*         type="time" */}
+          {/*         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" */}
+          {/*       /> */}
+          {/*       {error && ( */}
+          {/*         <p className="text-red-500 text-xs italic">{error.message}</p> */}
+          {/*       )} */}
+          {/*     </div> */}
+          {/*   )} */}
+          {/* /> */}
           <Controller
             name="avatar"
             control={control}
-            defaultValue=""
+            defaultValue={null}
             render={({ field: { onChange, value, ...field } }) => (
               <div>
                 <label
@@ -419,12 +425,22 @@ const UpdateShopProfile: React.FC = () => {
                 <input
                   {...field}
                   type="file"
-                  onChange={(e) => onChange(e.target.files)}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    onChange(file);
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setAvatarPreview(reader.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
-                {value && (
+                {avatarPreview && (
                   <img
-                    src={value}
+                    src={avatarPreview}
                     alt="Avatar Preview"
                     className="mt-2 w-32 h-32 object-cover"
                   />
@@ -432,7 +448,6 @@ const UpdateShopProfile: React.FC = () => {
               </div>
             )}
           />
-
           <Controller
             name="description"
             control={control}
@@ -517,7 +532,7 @@ const UpdateShopProfile: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate("/vendor/shop/profile")}
+            onClick={() => navigate("/vendor/profile")}
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Quay lại
