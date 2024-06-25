@@ -19,7 +19,16 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
 
         shipperUpdateCashOrdersByWareHouse: builder.mutation<CashOrdersResponse, CashOrdersRequest>({
             query: (body) => ({
-                url: `shipping/cash-order/updates/confirm-money-shipper`,
+                url: `shipping/cash-order/updates/confirm-money-warehouse`,
+                method: "POST",
+                body,
+            })
+        }),
+
+
+        wareHouseUpdateCashOrdersByWaveHouse: builder.mutation<CashOrdersResponse, string[]>({
+            query: (body) => ({
+                url: `shipping/cash-order/updates/warehouse-confirm`,
                 method: "POST",
                 body,
             })
@@ -62,11 +71,11 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
 
 
         historyCashOrdersByWarehouseUsername: builder.query<CashOrdersByDatesResponse, {
-            wareHouseHold: boolean;
-            shipping: boolean;
+            warehouseHold: boolean;
+            handlePayment: boolean;
         }>({
-            query: ({wareHouseHold, shipping}) => ({
-                url: `shipping/cash-order/history-by-warehouse?wareHouseHold=${wareHouseHold}&shipping=${shipping}`,
+            query: ({warehouseHold, handlePayment}) => ({
+                url: `shipping/cash-order/history-by-warehouse?warehouseHold=${warehouseHold}&handlePayment=${handlePayment}`,
                 method: "GET",
             }),
         }),
@@ -86,6 +95,14 @@ export const CashOrderApiSlice = apiSlice.injectEndpoints({
         }),
 
 
+        getCashOrdersCanUpdateByWareHouseUsername: builder.query<CashOrdersResponse, void>({
+            query: () => ({
+                url: `shipping/cash-order/list/ware-house/can-update`,
+                method: "GET",
+            })
+        }),
+
+
     }),
 });
 
@@ -93,6 +110,7 @@ export const {
 
     useShipperUpdateCashOrdersByShipperMutation,
     useShipperUpdateCashOrdersByWareHouseMutation,
+    useWareHouseUpdateCashOrdersByWaveHouseMutation,
     useGetCashOrdersByWareHouseUsernameQuery,
     useGetAllCashOrdersByShipperUsernameQuery,
     useHistoryCashOrdersByShipperUsernameQuery,
@@ -100,6 +118,7 @@ export const {
     useHistoryCashOrdersByWarehouseUsernameQuery,
     useGetDetailCashOrderQuery,
     useGetCashOrdersCanUpdateByShipperUsernameQuery,
+    useGetCashOrdersCanUpdateByWareHouseUsernameQuery,
 
 
 } = CashOrderApiSlice;
