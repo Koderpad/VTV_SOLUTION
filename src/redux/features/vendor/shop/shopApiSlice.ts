@@ -1,4 +1,5 @@
 import { apiSlice } from "@/redux/api";
+import { ShopResponse } from "@/utils/DTOs/vendor/shop/Response/ShopResponse";
 
 export const shopApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,7 +11,7 @@ export const shopApi = apiSlice.injectEndpoints({
       }),
     }),
 
-    getProfileShop: builder.query({
+    getProfileShop: builder.query<ShopResponse, void>({
       query: () => ({
         url: `/vendor/shop/profile`,
       }),

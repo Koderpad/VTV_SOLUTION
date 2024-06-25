@@ -1,23 +1,7 @@
 import { useGetProfileShopQuery } from "@/redux/features/vendor/shop/shopApiSlice";
+import { ShopDTO } from "@/utils/DTOs/vendor/shop/Response/ShopResponse";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-interface ShopDTO {
-  shopId: number;
-  name: string;
-  address: string;
-  province: string;
-  district: string;
-  ward: string;
-  phone: string;
-  email: string;
-  avatar: string;
-  description: string;
-  openTime: string;
-  closeTime: string;
-  status: string;
-  customerId: number;
-}
 
 const ShopProfile = () => {
   const [callShopProfile] = useGetProfileShopQuery;
