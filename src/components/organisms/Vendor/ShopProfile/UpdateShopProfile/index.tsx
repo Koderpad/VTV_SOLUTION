@@ -15,29 +15,27 @@ import {
 import { ProvinceDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListProvinceResponse";
 import { DistrictDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListDistrictResponse";
 import { WardDTO } from "@/utils/DTOs/common/ProfileCustomer/Response/ListWardResponse";
+import { ShopDTO } from "@/utils/DTOs/vendor/shop/Response/ShopResponse";
 
 export interface ShopRequest {
-  shopId: number;
   name: string;
   address: string;
   provinceName: string;
   districtName: string;
   wardName: string;
+  wardCode: string;
   phone: string;
   email: string;
   avatar: string | File | null;
+  changeAvatar: boolean;
   description: string;
   openTime: string;
   closeTime: string;
-  wardCode: string;
 }
+
 const UpdateShopProfile: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    data: shopData,
-    isLoading: isLoadingShop,
-    refetch,
-  } = useGetProfileShopQuery();
+  const { data: shopData, isLoading: isLoadingShop } = useGetProfileShopQuery();
   const [updateShop] = useUpdateShopMutation();
 
   const [provinces, setProvinces] = useState<ProvinceDTO[]>([]);
@@ -47,8 +45,9 @@ const UpdateShopProfile: React.FC = () => {
 
   const { control, handleSubmit, setValue, watch } = useForm<ShopRequest>();
 
-  const selectedProvince = watch("provinceName");
-  const selectedDistrict = watch("districtName");
+  const selectedProvinceName = watch("provinceName");
+  const selectedDistrictName = watch("districtName");
+  const selectedWardCode = watch("wardCode");
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -56,37 +55,87 @@ const UpdateShopProfile: React.FC = () => {
       setProvinces(data.provinceDTOs);
     };
     fetchProvinces();
-    refetch();
   }, []);
 
   useEffect(() => {
-    if (selectedProvince) {
+    if (selectedProvinceName) {
       const fetchDistricts = async () => {
-        const data = await getDistrictsByProvinceCode(selectedProvince);
-        setDistricts(data.districtDTOs);
+        const province = provinces.find((p) => p.name === selectedProvinceName);
+        if (province) {
+          const data = await getDistrictsByProvinceCode(province.provinceCode);
+          setDistricts(data.districtDTOs);
+        }
       };
       fetchDistricts();
     }
-  }, [selectedProvince]);
+  }, [selectedProvinceName, provinces]);
 
   useEffect(() => {
-    if (selectedDistrict) {
+    if (selectedDistrictName) {
       const fetchWards = async () => {
-        const data = await getWardsByDistrictCode(selectedDistrict);
-        setWards(data.wardDTOs);
+        const district = districts.find((d) => d.name === selectedDistrictName);
+        if (district) {
+          const data = await getWardsByDistrictCode(district.districtCode);
+          setWards(data.wardDTOs);
+        }
       };
       fetchWards();
     }
-  }, [selectedDistrict]);
+  }, [selectedDistrictName, districts]);
 
   useEffect(() => {
     if (shopData) {
-      Object.entries(shopData.shopDTO).forEach(([key, value]) => {
-        setValue(key as keyof ShopRequest, value);
+      const { shopDTO } = shopData;
+      Object.keys(shopDTO).forEach((key) => {
+        if (key in shopDTO) {
+          setValue(key as keyof ShopRequest, shopDTO[key]);
+        }
       });
-      setAvatarPreview(shopData.shopDTO.avatar);
+      setAvatarPreview(shopDTO.avatar);
+
+      // Fetch address data based on wardCode
+      const fetchAddressData = async () => {
+        const provincesData = await getProvinces();
+        setProvinces(provincesData.provinceDTOs);
+
+        for (const province of provincesData.provinceDTOs) {
+          const districtsData = await getDistrictsByProvinceCode(
+            province.provinceCode,
+          );
+          const district = districtsData.districtDTOs.find(
+            (d) => d.name === shopDTO.districtName,
+          );
+          if (district) {
+            setDistricts(districtsData.districtDTOs);
+            const wardsData = await getWardsByDistrictCode(
+              district.districtCode,
+            );
+            setWards(wardsData.wardDTOs);
+            break;
+          }
+        }
+      };
+
+      fetchAddressData();
     }
   }, [shopData, setValue]);
+
+  // const convertShopDTOToFormData = (data: ShopRequest): FormData => {
+  //   const formData = new FormData();
+  //   Object.entries(data).forEach(([key, value]) => {
+  //     if (key === "avatar") {
+  //       if (value instanceof File) {
+  //         formData.append(key, value);
+  //       }
+  //     } else if (key === "changeAvatar") {
+  //       formData.append(key, value.toString());
+  //     } else if (value !== null && value !== undefined) {
+  //       formData.append(key, value.toString());
+  //     }
+  //   });
+  //
+  //   return formData;
+  // };
 
   const convertShopDTOToFormData = (data: ShopRequest): FormData => {
     const formData = new FormData();
@@ -120,13 +169,17 @@ const UpdateShopProfile: React.FC = () => {
       toast.success("Cập nhật cửa hàng thành công");
       navigate("/vendor/profile");
     } catch (error) {
-      toast.error("Cập nhật cửa hàng thất bại: " + error || "Đã xảy ra lỗi");
+      toast.error(
+        "Cập nhật cửa hàng thất bại: " + (error as Error).message ||
+          "Đã xảy ra lỗi",
+      );
     }
   };
 
   if (isLoadingShop) {
     return <div>Loading...</div>;
   }
+
   return (
     <div className="flex flex-col items-center justify-center bg-gray-200 min-h-screen p-4">
       <h1 className="text-4xl font-bold mb-6 text-blue-600">
@@ -137,6 +190,7 @@ const UpdateShopProfile: React.FC = () => {
         className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Name field */}
           <Controller
             name="name"
             control={control}
@@ -162,6 +216,7 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
+          {/* Address field */}
           <Controller
             name="address"
             control={control}
@@ -187,6 +242,7 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
+          {/* Province field */}
           <Controller
             name="provinceName"
             control={control}
@@ -202,6 +258,12 @@ const UpdateShopProfile: React.FC = () => {
                 </label>
                 <select
                   {...field}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setValue("districtName", "");
+                    setValue("wardCode", "");
+                    setValue("wardName", "");
+                  }}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                   <option value="">Chọn Tỉnh/Thành phố</option>
@@ -218,6 +280,7 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
+          {/* District field */}
           <Controller
             name="districtName"
             control={control}
@@ -233,6 +296,11 @@ const UpdateShopProfile: React.FC = () => {
                 </label>
                 <select
                   {...field}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setValue("wardCode", "");
+                    setValue("wardName", "");
+                  }}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                   <option value="">Chọn Quận/Huyện</option>
@@ -249,26 +317,34 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
+          {/* Ward field */}
           <Controller
-            name="wardName"
+            name="wardCode"
             control={control}
             defaultValue=""
             rules={{ required: "Phường/Xã là bắt buộc" }}
             render={({ field, fieldState: { error } }) => (
               <div>
                 <label
-                  htmlFor="wardName"
+                  htmlFor="wardCode"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   Phường/Xã
                 </label>
                 <select
                   {...field}
+                  onChange={(e) => {
+                    const selectedWard = wards.find(
+                      (w) => w.wardCode === e.target.value,
+                    );
+                    field.onChange(e.target.value);
+                    setValue("wardName", selectedWard?.name || "");
+                  }}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                   <option value="">Chọn Phường/Xã</option>
                   {wards.map((ward) => (
-                    <option key={ward.wardCode} value={ward.name}>
+                    <option key={ward.wardCode} value={ward.wardCode}>
                       {ward.name}
                     </option>
                   ))}
@@ -280,6 +356,7 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
+          {/* Phone field */}
           <Controller
             name="phone"
             control={control}
@@ -305,6 +382,7 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
+          {/* Email field */}
           <Controller
             name="email"
             control={control}
@@ -336,80 +414,6 @@ const UpdateShopProfile: React.FC = () => {
             )}
           />
 
-          {/* <Controller */}
-          {/*   name="description" */}
-          {/*   control={control} */}
-          {/*   defaultValue="" */}
-          {/*   rules={{ required: "Mô tả là bắt buộc" }} */}
-          {/*   render={({ field, fieldState: { error } }) => ( */}
-          {/*     <div> */}
-          {/*       <label */}
-          {/*         htmlFor="description" */}
-          {/*         className="block text-gray-700 text-sm font-bold mb-2" */}
-          {/*       > */}
-          {/*         Mô tả */}
-          {/*       </label> */}
-          {/*       <textarea */}
-          {/*         {...field} */}
-          {/*         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" */}
-          {/*         rows={4} */}
-          {/*       /> */}
-          {/*       {error && ( */}
-          {/*         <p className="text-red-500 text-xs italic">{error.message}</p> */}
-          {/*       )} */}
-          {/*     </div> */}
-          {/*   )} */}
-          {/* /> */}
-          {/**/}
-          {/* <Controller */}
-          {/*   name="openTime" */}
-          {/*   control={control} */}
-          {/*   defaultValue="" */}
-          {/*   rules={{ required: "Giờ mở cửa là bắt buộc" }} */}
-          {/*   render={({ field, fieldState: { error } }) => ( */}
-          {/*     <div> */}
-          {/*       <label */}
-          {/*         htmlFor="openTime" */}
-          {/*         className="block text-gray-700 text-sm font-bold mb-2" */}
-          {/*       > */}
-          {/*         Giờ mở cửa */}
-          {/*       </label> */}
-          {/*       <input */}
-          {/*         {...field} */}
-          {/*         type="time" */}
-          {/*         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" */}
-          {/*       /> */}
-          {/*       {error && ( */}
-          {/*         <p className="text-red-500 text-xs italic">{error.message}</p> */}
-          {/*       )} */}
-          {/*     </div> */}
-          {/*   )} */}
-          {/* /> */}
-          {/**/}
-          {/* <Controller */}
-          {/*   name="closeTime" */}
-          {/*   control={control} */}
-          {/*   defaultValue="" */}
-          {/*   rules={{ required: "Giờ đóng cửa là bắt buộc" }} */}
-          {/*   render={({ field, fieldState: { error } }) => ( */}
-          {/*     <div> */}
-          {/*       <label */}
-          {/*         htmlFor="closeTime" */}
-          {/*         className="block text-gray-700 text-sm font-bold mb-2" */}
-          {/*       > */}
-          {/*         Giờ đóng cửa */}
-          {/*       </label> */}
-          {/*       <input */}
-          {/*         {...field} */}
-          {/*         type="time" */}
-          {/*         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" */}
-          {/*       /> */}
-          {/*       {error && ( */}
-          {/*         <p className="text-red-500 text-xs italic">{error.message}</p> */}
-          {/*       )} */}
-          {/*     </div> */}
-          {/*   )} */}
-          {/* /> */}
           <Controller
             name="avatar"
             control={control}

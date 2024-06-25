@@ -103,7 +103,7 @@ export const DashboardVendor = () => {
               >
                 <FontAwesomeIcon icon={faHome} size="sm" color="#666" />
                 <div className="ml-2" />
-                Trang Quản Trị
+                Trang Thông Tin Cửa Hàng
               </Link>
             </li>
             <li>
@@ -287,4 +287,3 @@ export const DashboardVendor = () => {
     </div>
   );
 };
-
