@@ -16,7 +16,7 @@ const StatisticsProducts = () => {
     const endDate = `${selectedYear}-${selectedMonth}-${dayjs(`${selectedYear}-${selectedMonth}`).daysInMonth()}`;
 
     const {data, error, isLoading} = useGetTopProductByLimitAndDateQuery({
-        limit: 20, // Fetch top 20 products
+        limit: 50, // Fetch top 20 products
         startDate: startDate,
         endDate: endDate
     });
