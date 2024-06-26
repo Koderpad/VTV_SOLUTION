@@ -4,7 +4,7 @@ import { SkuInputOfVariation } from "./InputContentVariation/SkuInputOfVariation
 import { StockInputOfVariation } from "./InputContentVariation/StockInputOfVariation";
 import { VariationEditItem } from "./VariationEditItem/VariationEditItem";
 import { useDispatch } from "react-redux";
-import { addAttribute } from "../../../../../../redux/reducer/addProductSlice";
+// import { addAttribute } from "../../../../../../redux/reducer/addProductSlice";
 import { TableData } from "./TableVariation/TableData";
 
 type OnDataChangeType = (

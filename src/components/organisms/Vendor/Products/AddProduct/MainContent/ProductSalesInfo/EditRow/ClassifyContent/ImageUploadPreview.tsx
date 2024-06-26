@@ -1,11 +1,13 @@
 type ImageUploadPreviewProps = {
   src?: string;
   handleCropClick?: () => void;
+  handleDeleteClick?: () => void;
 };
 
 export const ImageUploadPreview = ({
   src,
   handleCropClick,
+  handleDeleteClick,
 }: ImageUploadPreviewProps) => {
   return (
     <div
@@ -67,6 +69,7 @@ export const ImageUploadPreview = ({
               className=" w-[24px] h-[24px] 
                        flex items-center justify-center cursor-pointer
                       "
+              onClick={handleDeleteClick}
             >
               <i id="shopee-icon" className="h-[16px] w-[16px]">
                 <span>
