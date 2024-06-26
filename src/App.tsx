@@ -84,11 +84,15 @@ import Profile from "./components/organisms/Common/Account/Profile/index.tsx";
 import Address from "./components/organisms/Common/Account/Address/index.tsx";
 import { HistoryPurchase } from "./components/organisms/Common/Account/HistoryPurchase/index.tsx";
 import OrderDetail from "./components/organisms/Common/Account/OrderDetail/index.tsx";
+import { DashboardVendor } from "./pages/vendor/DashboardVendor.tsx";
+import { ShopProfilePage } from "./pages/vendor/ShopProfilePage.tsx";
+import { UpdateShopProfilePage } from "./pages/vendor/UpdateShopProfilePage.tsx";
+import { AddProductPage } from "./pages/vendor/AddProductPage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage")
+  () => import("./pages/common/ProductDetailPage"),
 );
 
 // ROLE: CUSTOMER
@@ -112,7 +116,7 @@ const ProductDetailPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+    (state: RootState) => state.auth.isAuthenticated,
   );
   const {
     data: notifications,
@@ -386,15 +390,17 @@ function App() {
             </Route>
           </Route>
 
-          <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}></Route>
+          <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}>
+            <Route path="/vendor" element={<DashboardVendor />}>
+              <Route path="profile" element={<ShopProfilePage />} />
+              <Route path="profile/edit" element={<UpdateShopProfilePage />} />
+
+              {/* products */}
+              <Route path="product/new" element={<AddProductPage />} />
+            </Route>
+          </Route>
 
           <Route element={<RequireAuth allowedRoles={["CUSTOMER"]} />}>
-            {/* <Route path="address" element={<Address />} /> */}
-            {/* <Route path="products/:id" element={<ProductsByCategory />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="checkout" element={<PayMent />} />
-            <Route path="checkout/:id" element={<OrderDetailsForm />} /> */}
-
             {/* cart */}
             <Route path="/cart" element={<CartPage />} />
 
@@ -410,14 +416,7 @@ function App() {
               <Route path="order/:id" element={<OrderDetail />} />
               {/* <Route path="favorite-products" element={<FavoriteProducts />} />
               <Route path="voucher-wallet" element={<VoucherList />} />
-              <Route
-                path="checkout/add/review/order-item/:id"
-                element={<AddReview />}
-              />
-              <Route
-                path="checkout/review/order-item/:id"
-                element={<Review />}
-              /> */}
+               */}
             </Route>
           </Route>
         </Routes>
