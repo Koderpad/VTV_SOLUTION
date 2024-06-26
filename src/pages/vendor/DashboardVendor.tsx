@@ -275,15 +275,15 @@ export const DashboardVendor = () => {
 
         {isShow ? (
           <div className="w-auto m-4 col-start-2 col-end-7  p-8 bg-white rounded-xl flex ">
-            <p className="font-medium text-gray-600">
+            <div className="font-medium text-gray-600">
               <StatisticsFeeOrder />
-            </p>
+            </div>
           </div>
         ) : (
           <div className="w-auto m-4 col-start-2 col-end-7  p-8 bg-white rounded-xl flex ">
-            <p className="font-medium text-gray-600">
+            <div className="font-medium text-gray-600 w-full">
               <Outlet />
-            </p>
+            </div>
           </div>
         )}
       </div>

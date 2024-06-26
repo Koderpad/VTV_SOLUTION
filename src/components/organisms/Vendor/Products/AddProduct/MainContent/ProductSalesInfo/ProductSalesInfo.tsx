@@ -240,7 +240,7 @@ export const ProductSalesInfo = () => {
   };
 
   return (
-    <section className="bg-white shadow-lg rounded-lg p-6 mb-8">
+    <section className="bg-white shadow-lg rounded-lg p-6 mb-8 w-full">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
         Thông tin bán hàng
       </h2>
