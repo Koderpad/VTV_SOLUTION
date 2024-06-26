@@ -17,6 +17,11 @@ export const ProductBasicInfo = () => {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [searchText, setSearchText] = useState("");
 
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
+  );
+  const [selectedCategoryPath, setSelectedCategoryPath] = useState<string>("");
+
   useEffect(() => {
     fetchAllCategories();
   }, []);
@@ -60,11 +65,11 @@ export const ProductBasicInfo = () => {
     setSelectedCategories(getSelectedCategoryPath());
   };
 
-  const closeCategoryModal = () => {
-    setIsCategoryModalVisible(false);
-    setSelectedCategories([]);
-    setSearchText("");
-  };
+  // const closeCategoryModal = () => {
+  //   setIsCategoryModalVisible(false);
+  //   setSelectedCategories([]);
+  //   setSearchText("");
+  // };
 
   const handleCategoryClick = (categoryDTO: CategoryDTO) => {
     const genLevel = getGenLevel(categoryDTO);
@@ -124,6 +129,54 @@ export const ProductBasicInfo = () => {
     return categories.some((cat) => cat.parentId === categoryId);
   };
 
+  // const getCategoryPath = (): string => {
+  //   let path = "";
+  //   selectedCategories.forEach((categoryId) => {
+  //     const category = categories.find((cat) => cat.categoryId === categoryId);
+  //     if (category) {
+  //       path += category.name + " -> ";
+  //     }
+  //   });
+  //   return path.slice(0, -4);
+  // };
+
+  // const getSelectedCategoryPath = (): number[] => {
+  //   // Implement this function based on your requirements
+  //   return [];
+  // };
+
+  const getSelectedCategoryPath = (): number[] => {
+    const path: number[] = [];
+    let currentCategoryId = selectedCategoryId;
+
+    while (currentCategoryId !== null) {
+      const category = categories.find(
+        (cat) => cat.categoryId === currentCategoryId
+      );
+      if (category) {
+        path.unshift(category.categoryId);
+        currentCategoryId = category.parentId;
+      } else {
+        break;
+      }
+    }
+
+    return path;
+  };
+
+  const closeCategoryModal = () => {
+    if (selectedCategories.length > 0) {
+      const selectedCategoryId =
+        selectedCategories[selectedCategories.length - 1];
+      setSelectedCategoryId(selectedCategoryId);
+      setSelectedCategoryPath(getCategoryPath());
+    }
+
+    setIsCategoryModalVisible(false);
+    setSelectedCategories([]);
+    setSearchText("");
+  };
+
   const getCategoryPath = (): string => {
     let path = "";
     selectedCategories.forEach((categoryId) => {
@@ -133,11 +186,6 @@ export const ProductBasicInfo = () => {
       }
     });
     return path.slice(0, -4);
-  };
-
-  const getSelectedCategoryPath = (): number[] => {
-    // Implement this function based on your requirements
-    return [];
   };
 
   return (
@@ -400,9 +448,7 @@ export const ProductBasicInfo = () => {
                                   onClick={openCategoryModal}
                                   className="py-3 px-4 pe-16 block border-gray-300 rounded-lg text-xl focus:border-blue-500 focus:ring-blue-500 w-full text-left"
                                 >
-                                  {selectedCategories.length > 0
-                                    ? getCategoryPath()
-                                    : "Chọn danh mục"}
+                                  {selectedCategoryPath || "Chọn danh mục"}
                                 </button>
                               </div>
                             </div>
@@ -527,6 +573,7 @@ export const ProductBasicInfo = () => {
         <button onClick={handleCloseModal}>Close Modal</button>
       </ReactModal>
 
+      {/* Category Selection Modal */}
       {/* Category Selection Modal */}
       {isCategoryModalVisible && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
