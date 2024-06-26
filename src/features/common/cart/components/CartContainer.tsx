@@ -1,4 +1,4 @@
-import { Cart } from "@/components/organisms/Cart";
+import { Cart } from "@/components/organisms/Common/Cart";
 import { useGetListCartByUsernameQuery } from "@/redux/features/common/cart/cartApiSlice";
 import { useCreateMultiOrderMutation } from "@/redux/features/common/order/orderApiSlice";
 

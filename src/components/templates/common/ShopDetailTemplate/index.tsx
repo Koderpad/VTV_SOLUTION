@@ -1,4 +1,4 @@
-import ShopDetail from "@/components/organisms/ShopDetail";
+import ShopDetail from "@/components/organisms/Common/ShopDetail";
 import { TemplateV1 } from "../TemplateV1";
 import { CarouselItemProductListContainer } from "@/features/common/shared/CarouselItemProductListContainer";
 

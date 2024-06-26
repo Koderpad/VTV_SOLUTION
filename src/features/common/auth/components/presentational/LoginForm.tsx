@@ -1,4 +1,8 @@
-import { FieldConfig, Form, FormProps } from "@/components/organisms/Form";
+import {
+  FieldConfig,
+  Form,
+  FormProps,
+} from "@/components/organisms/Common/Form";
 import { FC } from "react";
 
 interface LoginFormProps extends Omit<FormProps, "fields" | "onSubmit"> {

@@ -37,14 +37,17 @@ export const DashboardVendor = () => {
       setIsShow(false);
     }
 
-    if (currentPath === "customers") {
-      setSelectedTitle("ManagerCustomer");
+    if (currentPath === "profile") {
+      setSelectedTitle("Profile");
     }
     if (currentPath === "vouchers") {
       setSelectedTitle("ManagerVoucher");
     }
-    if (currentPath === "products") {
-      setSelectedTitle("ManagerProduct");
+    if (
+      currentPath === "product" ||
+      (currentPath[-1] === "new" && currentPath[-2] === "product")
+    ) {
+      setSelectedTitle("Products");
     }
 
     if (currentPath === "orders") {
@@ -95,30 +98,30 @@ export const DashboardVendor = () => {
               <Link
                 to="profile"
                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                  selectedTitle === "Home"
+                  selectedTitle === "Profile"
                     ? "bg-gray-100 hover:bg-green-100"
                     : "hover:bg-green-100"
                 }`}
-                onClick={() => handleTitleClick("Home")}
+                onClick={() => handleTitleClick("Profile")}
               >
                 <FontAwesomeIcon icon={faHome} size="sm" color="#666" />
                 <div className="ml-2" />
-                Trang Quản Trị
+                Trang Thông Tin Cửa Hàng
               </Link>
             </li>
             <li>
               <Link
-                to="customers"
+                to="product/new"
                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                  selectedTitle === "ManagerCustomer"
+                  selectedTitle === "Products"
                     ? "bg-gray-100 hover:bg-green-100"
                     : "hover:bg-green-100"
                 }`}
-                onClick={() => handleTitleClick("ManagerCustomer")}
+                onClick={() => handleTitleClick("Products")}
               >
                 <FontAwesomeIcon icon={faUsers} size="sm" color="#666" />
                 <div className="ml-2" />
-                Quản lý người dùng
+                Quản lý sản phẩm
               </Link>
             </li>
 
@@ -287,4 +290,3 @@ export const DashboardVendor = () => {
     </div>
   );
 };
-

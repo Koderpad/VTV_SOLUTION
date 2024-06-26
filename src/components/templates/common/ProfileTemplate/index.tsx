@@ -1,4 +1,4 @@
-import { Account } from "@/components/organisms/Account";
+import { Account } from "@/components/organisms/Common/Account";
 import { TemplateV1 } from "../TemplateV1";
 
 export const AccountTemplate = () => {

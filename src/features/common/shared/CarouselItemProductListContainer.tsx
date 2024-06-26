@@ -1,4 +1,4 @@
-import CarouselItemProductList from "@/components/organisms/shared/CarouselItemProductList";
+import CarouselItemProductList from "@/components/organisms/Common/shared/CarouselItemProductList";
 import { getRandomProductPage } from "@/services/common/ProductSuggestionService";
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ProductPageResponse";
 import { useEffect, useState } from "react";

@@ -1,12 +1,12 @@
-import { FilterContext } from "@/components/organisms/ProductGrid/FilterContext";
-import { SearchItemResultItems } from "@/components/organisms/ProductGrid/SearchItemResult/SearchItemResultItems";
+import { FilterContext } from "@/components/organisms/Common/ProductGrid/FilterContext";
+import { SearchItemResultItems } from "@/components/organisms/Common/ProductGrid/SearchItemResult/SearchItemResultItems";
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export const CategoryResultsContainer = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const { filters  } = useContext(FilterContext);
+  const { filters } = useContext(FilterContext);
   const { fromPrice, toPrice, sortBy, rating } = filters;
 
   const [products, setProducts] = useState<ProductDTO[]>([]);

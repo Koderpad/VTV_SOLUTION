@@ -1,4 +1,4 @@
-import { ProductReviews } from "@/components/organisms/ProductDetail/ProductReviews";
+import { ProductReviews } from "@/components/organisms/Common/ProductDetail/ProductReviews";
 import { ProductDetailContainer } from "@/features/common/product/productdetail/components/container/ProductDetailContainer";
 import { TemplateV1 } from "../TemplateV1";
 
