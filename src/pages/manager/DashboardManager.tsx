@@ -17,6 +17,9 @@ import {
     faUserCog
 } from "@fortawesome/free-solid-svg-icons";
 import StatisticsFeeOrder from "@/features/manager/manager/StatisticsFeeOrder.tsx";
+import {ProfileCustomerResponse} from "@/utils/DTOs/manager/response/ProfileCustomerResponse.ts";
+import {useGetProfileCustomerMutation} from "@/redux/features/manager/CustomerManagerApiSlice.ts";
+import {Role} from "@/utils/DTOs/extra/Role.ts";
 
 export const DashboardManager = () => {
     const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -25,6 +28,35 @@ export const DashboardManager = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isShow, setIsShow] = useState(true);
+    // const [profileCustomerResponse, setProfileCustomerResponse] = useState<ProfileCustomerResponse>();
+    const [isRoleAdmin, setIsRoleAdmin] = useState<boolean>(false);
+    const [getProfileCustomer] = useGetProfileCustomerMutation();
+
+    // useEffect(() => {
+    //     getProfileCustomer().unwrap().then((res) => {
+    //         for(let i = 0; i < res.roles.length; i++){
+    //             if(res.customerDTO.roles.get[1].value === "ADMIN"){
+    //                 setIsRoleAdmin(true);
+    //             }
+    //         }
+    //     });
+    // }, []);
+
+    useEffect(() => {
+        getProfileCustomer()
+            .unwrap()
+            .then((res: ProfileCustomerResponse) => { // Type the response
+                const roles = Array.from(res.customerDTO.roles);  // Convert Set to Array
+                const isAdmin = roles.some(role => role.valueOf() === Role.ADMIN);
+                setIsRoleAdmin(isAdmin);
+            })
+            .catch((error) => {
+                console.error("Error fetching profile:", error); // Handle potential errors
+            });
+    }, []);
+
+
+
 
     useEffect(() => {
         const currentPath = location.pathname.split("/").pop();
@@ -235,21 +267,24 @@ export const DashboardManager = () => {
                         </li>
 
 
-                        <li>
-                            <Link
-                                to="managers"
-                                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "Manager"
-                                        ? "bg-gray-100 hover:bg-green-100"
-                                        : "hover:bg-green-100"
-                                }`}
-                                onClick={() => handleTitleClick("Manager")}
-                            >
-                                <FontAwesomeIcon icon={faUserCog} size="sm" color="#666"/>
-                                <div className="ml-2"/>
-                                Quản lý quản trị viên
-                            </Link>
-                        </li>
+                        {isRoleAdmin &&
+                            <li>
+                                <Link
+                                    to="managers"
+                                    className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                        selectedTitle === "Manager"
+                                            ? "bg-gray-100 hover:bg-green-100"
+                                            : "hover:bg-green-100"
+                                    }`}
+                                    onClick={() => handleTitleClick("Manager")}
+                                >
+                                    <FontAwesomeIcon icon={faUserCog} size="sm" color="#666"/>
+                                    <div className="ml-2"/>
+                                    Quản lý quản trị viên
+                                </Link>
+                            </li>
+
+                        }
 
 
                     </ul>
