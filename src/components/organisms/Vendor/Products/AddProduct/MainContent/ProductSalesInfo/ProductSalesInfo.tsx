@@ -95,18 +95,60 @@ export const ProductSalesInfo = () => {
     const newGroups = [...attributeGroups];
     newGroups[index].name = name;
     setAttributeGroups(newGroups);
+
+    // Update variant data with new group name
+    setVariantData((prevData) =>
+      prevData.map((variant) => ({
+        ...variant,
+        productAttributeRequests: variant.productAttributeRequests.map(
+          (attr, i) => (i === index ? { ...attr, name } : attr)
+        ),
+      }))
+    );
   };
 
   const handleAttributeValueChange = (groupIndex: number, values: string[]) => {
     const newGroups = [...attributeGroups];
+    const oldValues = newGroups[groupIndex].values;
     newGroups[groupIndex].values = values;
     setAttributeGroups(newGroups);
+
+    // Update variant data
+    setVariantData((prevData) => {
+      const updatedData = prevData.filter(
+        (variant) =>
+          variant.productAttributeRequests[groupIndex].value !== "" &&
+          values.includes(variant.productAttributeRequests[groupIndex].value)
+      );
+
+      const newCombinations = generateVariantData(newGroups);
+      const additionalData = newCombinations.filter(
+        (newVariant) =>
+          !updatedData.some(
+            (existingVariant) =>
+              JSON.stringify(existingVariant.productAttributeRequests) ===
+              JSON.stringify(newVariant.productAttributeRequests)
+          )
+      );
+
+      return [...updatedData, ...additionalData];
+    });
   };
 
   const handleDeleteAttributeGroup = (index: number) => {
     const newGroups = [...attributeGroups];
     newGroups.splice(index, 1);
     setAttributeGroups(newGroups);
+
+    // Remove the corresponding attribute from variant data
+    setVariantData((prevData) =>
+      prevData.map((variant) => ({
+        ...variant,
+        productAttributeRequests: variant.productAttributeRequests.filter(
+          (_, i) => i !== index
+        ),
+      }))
+    );
   };
 
   const handleDeleteAttributeValue = (
@@ -114,8 +156,17 @@ export const ProductSalesInfo = () => {
     valueIndex: number
   ) => {
     const newGroups = [...attributeGroups];
+    const deletedValue = newGroups[groupIndex].values[valueIndex];
     newGroups[groupIndex].values.splice(valueIndex, 1);
     setAttributeGroups(newGroups);
+
+    // Remove variants that had the deleted value
+    setVariantData((prevData) =>
+      prevData.filter(
+        (variant) =>
+          variant.productAttributeRequests[groupIndex].value !== deletedValue
+      )
+    );
   };
 
   const handleOpenModal = (index: number) => {
