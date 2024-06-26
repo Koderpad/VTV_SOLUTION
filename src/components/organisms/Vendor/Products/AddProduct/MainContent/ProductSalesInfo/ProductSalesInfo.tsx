@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ImageEditor } from "./EditRow/ClassifyContent/ImageEditor";
 import { ImageModal } from "./EditRow/ClassifyContent/ImageModal";
@@ -8,163 +8,211 @@ import { ImageUploadPreview } from "./EditRow/ClassifyContent/ImageUploadPreview
 interface AttributeGroup {
   name: string;
   values: string[];
+  prev_name: string;
+  prev_values: string[];
 }
 
-interface VariantDataItem {
-  productVariantId: number;
-  sku: string;
-  image: string;
-  changeImage: boolean;
-  originalPrice: number;
-  price: number;
-  quantity: number;
-  productAttributeRequests: {
-    name: string;
-    value: string;
-  }[];
+interface CellData {
+  value: string | number | File;
+  type: "attribute" | "originalPrice" | "price" | "quantity" | "sku" | "image";
 }
+
+type MatrixData = CellData[][];
 
 export const ProductSalesInfo = () => {
   const [attributeGroups, setAttributeGroups] = useState<AttributeGroup[]>([]);
-  const [variantData, setVariantData] = useState<VariantDataItem[]>([]);
+  const [matrixData, setMatrixData] = useState<MatrixData>([]);
   const [openModalIndex, setOpenModalIndex] = useState<number | null>(null);
 
-  const generateVariantData = useCallback(
-    (groups: AttributeGroup[]): VariantDataItem[] => {
-      if (groups.length === 0) return [];
+  // Add this ref to track if we need to update the matrix
+  const shouldUpdateMatrix = useRef(false);
 
+  const updateCell = (
+    rowIndex: number,
+    colIndex: number,
+    newValue: CellData["value"]
+  ) => {
+    setMatrixData((prevData) => {
+      const newData = [...prevData];
+      newData[rowIndex] = [...newData[rowIndex]];
+      newData[rowIndex][colIndex] = {
+        ...newData[rowIndex][colIndex],
+        value: newValue,
+      };
+      return newData;
+    });
+  };
+
+  useEffect(() => {
+    if (!shouldUpdateMatrix.current) {
+      return;
+    }
+
+    if (attributeGroups.length === 0) {
+      setMatrixData([]);
+      shouldUpdateMatrix.current = false;
+      return;
+    }
+
+    setMatrixData((prevMatrix) => {
+      const newMatrix: MatrixData = [];
+      const attributeCount = attributeGroups.length;
+
+      // Create a map of existing attribute values
+      const existingValuesMap = new Map<string, Set<string>>();
+      attributeGroups.forEach((group, index) => {
+        existingValuesMap.set(index.toString(), new Set(group.values));
+      });
+
+      // Function to check if a row is valid
+      const isRowValid = (row: CellData[]) => {
+        return attributeGroups.every((group, index) => {
+          const value = row[index].value as string;
+          return existingValuesMap.get(index.toString())?.has(value);
+        });
+      };
+
+      // Filter and update existing rows
+      prevMatrix.forEach((row) => {
+        const updatedRow = row.map((cell, cellIndex) => {
+          if (cell.type === "attribute") {
+            const group = attributeGroups[cellIndex];
+            if (group) {
+              // Check if the cell value matches a previous value
+              const prevValueIndex = group.prev_values.indexOf(
+                cell.value as string
+              );
+              if (prevValueIndex !== -1) {
+                // Update to the new value if it exists
+                return {
+                  ...cell,
+                  value: group.values[prevValueIndex] || cell.value,
+                };
+              }
+            }
+          }
+          return cell;
+        });
+
+        if (isRowValid(updatedRow)) {
+          // Trim or add attribute columns if needed
+          const finalRow = updatedRow
+            .slice(0, attributeCount)
+            .concat(updatedRow.slice(attributeCount));
+          newMatrix.push(finalRow);
+        }
+      });
+
+      // Generate new combinations if needed
       const generateCombinations = (
-        groups: string[][],
         current: string[] = [],
         index: number = 0
-      ): string[][] => {
-        if (index === groups.length) {
-          return [current];
+      ) => {
+        if (index === attributeGroups.length) {
+          const existingRow = newMatrix.find((row) =>
+            current.every((value, i) => row[i].value === value)
+          );
+          if (!existingRow) {
+            newMatrix.push([
+              ...current.map((value) => ({
+                value,
+                type: "attribute" as const,
+              })),
+              { value: 0, type: "originalPrice" as const },
+              { value: 0, type: "price" as const },
+              { value: 0, type: "quantity" as const },
+              { value: `SKU-${uuidv4().slice(0, 8)}`, type: "sku" as const },
+              { value: "", type: "image" as const },
+            ]);
+          }
+          return;
         }
-
-        return groups[index].flatMap((item) =>
-          generateCombinations(groups, [...current, item], index + 1)
+        attributeGroups[index].values.forEach((value) =>
+          generateCombinations([...current, value], index + 1)
         );
       };
 
-      const combinations = generateCombinations(
-        groups.map((group) => group.values)
-      );
+      generateCombinations();
 
-      return combinations.map((combo) => ({
-        productVariantId: 0,
-        sku: `SKU-${uuidv4().slice(0, 8)}`,
-        image: "",
-        changeImage: true,
-        originalPrice: 0,
-        price: 0,
-        quantity: 0,
-        productAttributeRequests: groups.map((group, index) => ({
-          name: group.name,
-          value: combo[index] || "",
-        })),
-      }));
-    },
-    []
-  );
-
-  useEffect(() => {
-    const newVariantData = generateVariantData(attributeGroups);
-    setVariantData((prevData) => {
-      const updatedData = newVariantData.map((newVariant) => {
-        const existingVariant = prevData.find(
-          (v) =>
-            JSON.stringify(v.productAttributeRequests) ===
-            JSON.stringify(newVariant.productAttributeRequests)
-        );
-        return existingVariant
-          ? { ...newVariant, ...existingVariant }
-          : newVariant;
-      });
-      return updatedData;
+      return newMatrix;
     });
-  }, [attributeGroups, generateVariantData]);
+
+    // Update prev_name and prev_values after processing
+    setAttributeGroups((prevGroups) =>
+      prevGroups.map((group) => ({
+        ...group,
+        prev_name: group.name,
+        prev_values: [...group.values],
+      }))
+    );
+
+    shouldUpdateMatrix.current = false;
+  }, [attributeGroups]);
 
   const handleAddAttributeGroup = () => {
     if (attributeGroups.length < 2) {
-      setAttributeGroups([...attributeGroups, { name: "", values: [] }]);
+      setAttributeGroups([
+        ...attributeGroups,
+        { name: "", values: [], prev_name: "", prev_values: [] },
+      ]);
+      shouldUpdateMatrix.current = true;
     }
   };
 
   const handleAttributeGroupChange = (index: number, name: string) => {
-    const newGroups = [...attributeGroups];
-    newGroups[index].name = name;
-    setAttributeGroups(newGroups);
-
-    // Update variant data with new group name
-    setVariantData((prevData) =>
-      prevData.map((variant) => ({
-        ...variant,
-        productAttributeRequests: variant.productAttributeRequests.map(
-          (attr, i) => (i === index ? { ...attr, name } : attr)
-        ),
-      }))
-    );
+    setAttributeGroups((prevGroups) => {
+      const newGroups = [...prevGroups];
+      newGroups[index] = { ...newGroups[index], name };
+      return newGroups;
+    });
+    shouldUpdateMatrix.current = true;
   };
 
   const handleAttributeValueChange = (groupIndex: number, values: string[]) => {
-    const newGroups = [...attributeGroups];
-    const oldValues = newGroups[groupIndex].values;
-    newGroups[groupIndex].values = values;
-    setAttributeGroups(newGroups);
-
-    // Update variant data
-    setVariantData((prevData) => {
-      const updatedData = prevData.filter(
-        (variant) =>
-          variant.productAttributeRequests[groupIndex].value !== "" &&
-          values.includes(variant.productAttributeRequests[groupIndex].value)
-      );
-
-      const newCombinations = generateVariantData(newGroups);
-      const additionalData = newCombinations.filter(
-        (newVariant) =>
-          !updatedData.some(
-            (existingVariant) =>
-              JSON.stringify(existingVariant.productAttributeRequests) ===
-              JSON.stringify(newVariant.productAttributeRequests)
-          )
-      );
-
-      return [...updatedData, ...additionalData];
+    setAttributeGroups((prevGroups) => {
+      const newGroups = [...prevGroups];
+      newGroups[groupIndex] = { ...newGroups[groupIndex], values };
+      return newGroups;
     });
+    shouldUpdateMatrix.current = true;
+  };
+
+  const removeColumn = (index: number) => {
+    setMatrixData((prevData) =>
+      prevData.map((row) => {
+        const newRow = [...row];
+        newRow.splice(index, 1);
+        return newRow;
+      })
+    );
   };
 
   const handleDeleteAttributeGroup = (index: number) => {
-    const newGroups = [...attributeGroups];
-    newGroups.splice(index, 1);
-    setAttributeGroups(newGroups);
-
-    // Remove the corresponding attribute from variant data
-    setVariantData((prevData) =>
-      prevData.map((variant) => ({
-        ...variant,
-        productAttributeRequests: variant.productAttributeRequests.filter(
-          (_, i) => i !== index
-        ),
-      }))
+    setAttributeGroups((prevGroups) =>
+      prevGroups.filter((_, i) => i !== index)
     );
+    // removeColumn(index);
+    shouldUpdateMatrix.current = true;
   };
 
   const handleDeleteAttributeValue = (
     groupIndex: number,
     valueIndex: number
   ) => {
-    const newGroups = [...attributeGroups];
-    const deletedValue = newGroups[groupIndex].values[valueIndex];
-    newGroups[groupIndex].values.splice(valueIndex, 1);
-    setAttributeGroups(newGroups);
+    setAttributeGroups((prevGroups) => {
+      const newGroups = [...prevGroups];
+      newGroups[groupIndex] = {
+        ...newGroups[groupIndex],
+        values: newGroups[groupIndex].values.filter((_, i) => i !== valueIndex),
+      };
+      return newGroups;
+    });
 
-    // Remove variants that had the deleted value
-    setVariantData((prevData) =>
+    setMatrixData((prevData) =>
       prevData.filter(
-        (variant) =>
-          variant.productAttributeRequests[groupIndex].value !== deletedValue
+        (row) =>
+          row[groupIndex].value !==
+          attributeGroups[groupIndex].values[valueIndex]
       )
     );
   };
@@ -177,16 +225,18 @@ export const ProductSalesInfo = () => {
     setOpenModalIndex(null);
   };
 
-  const handleImageChange = (index: number, imageData: string) => {
-    const newData = [...variantData];
-    newData[index] = { ...newData[index], image: imageData };
-    setVariantData(newData);
+  const handleImageChange = (rowIndex: number, imageData: string | File) => {
+    const imageColumnIndex = matrixData[0].findIndex(
+      (cell) => cell.type === "image"
+    );
+    updateCell(rowIndex, imageColumnIndex, imageData);
   };
 
-  const handleDeleteImage = (index: number) => {
-    const newData = [...variantData];
-    newData[index] = { ...newData[index], image: "" };
-    setVariantData(newData);
+  const handleDeleteImage = (rowIndex: number) => {
+    const imageColumnIndex = matrixData[0].findIndex(
+      (cell) => cell.type === "image"
+    );
+    updateCell(rowIndex, imageColumnIndex, "");
   };
 
   return (
@@ -224,8 +274,8 @@ export const ProductSalesInfo = () => {
       </div>
       <VariantTable
         attributeGroups={attributeGroups}
-        variantData={variantData}
-        setVariantData={setVariantData}
+        matrixData={matrixData}
+        updateCell={updateCell}
         onOpenModal={handleOpenModal}
         onImageChange={handleImageChange}
         onDeleteImage={handleDeleteImage}
@@ -233,7 +283,10 @@ export const ProductSalesInfo = () => {
       {openModalIndex !== null && (
         <ImageModal isOpen={true} onClose={handleCloseModal}>
           <ImageEditor
-            src={variantData[openModalIndex].image}
+            src={
+              (matrixData[openModalIndex].find((cell) => cell.type === "image")
+                ?.value as string) || ""
+            }
             onSave={(imageData) => {
               handleImageChange(openModalIndex, imageData);
               handleCloseModal();
@@ -321,40 +374,30 @@ const AttributeGroupInput = ({
 
 const VariantTable = ({
   attributeGroups,
-  variantData,
-  setVariantData,
+  matrixData,
+  updateCell,
   onOpenModal,
   onImageChange,
   onDeleteImage,
 }: {
   attributeGroups: AttributeGroup[];
-  variantData: VariantDataItem[];
-  setVariantData: React.Dispatch<React.SetStateAction<VariantDataItem[]>>;
+  matrixData: MatrixData;
+  updateCell: (
+    rowIndex: number,
+    colIndex: number,
+    newValue: CellData["value"]
+  ) => void;
   onOpenModal: (index: number) => void;
-  onImageChange: (index: number, imageData: string) => void;
+  onImageChange: (index: number, imageData: string | File) => void;
   onDeleteImage: (index: number) => void;
 }) => {
-  const handleInputChange = (
-    index: number,
-    field: keyof VariantDataItem,
-    value: string | number
-  ) => {
-    const newData = [...variantData];
-    newData[index] = { ...newData[index], [field]: value };
-    setVariantData(newData);
-  };
-
   const handleFileChange = (
-    index: number,
+    rowIndex: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        onImageChange(index, reader.result as string);
-      });
-      reader.readAsDataURL(file);
+      onImageChange(rowIndex, file);
     }
   };
 
@@ -389,82 +432,57 @@ const VariantTable = ({
           </tr>
         </thead>
         <tbody>
-          {variantData.map((variant, index) => (
-            <tr key={index} className="border-t border-gray-200">
-              {attributeGroups.map((group, groupIndex) => (
-                <td key={groupIndex} className="px-4 py-2">
-                  {
-                    variant.productAttributeRequests.find(
-                      (attr) => attr.name === group.name
-                    )?.value
-                  }
-                </td>
-              ))}
-              <td className="px-4 py-2">
-                <input
-                  type="number"
-                  value={variant.originalPrice}
-                  onChange={(e) =>
-                    handleInputChange(
-                      index,
-                      "originalPrice",
-                      parseInt(e.target.value)
-                    )
-                  }
-                  className="w-full p-1 border border-gray-300 rounded"
-                />
-              </td>
-              <td className="px-4 py-2">
-                <input
-                  type="number"
-                  value={variant.price}
-                  onChange={(e) =>
-                    handleInputChange(index, "price", parseInt(e.target.value))
-                  }
-                  className="w-full p-1 border border-gray-300 rounded"
-                />
-              </td>
-              <td className="px-4 py-2">
-                <input
-                  type="number"
-                  value={variant.quantity}
-                  onChange={(e) =>
-                    handleInputChange(
-                      index,
-                      "quantity",
-                      parseInt(e.target.value)
-                    )
-                  }
-                  className="w-full p-1 border border-gray-300 rounded"
-                />
-              </td>
-              <td className="px-4 py-2">
-                <input
-                  type="text"
-                  value={variant.sku}
-                  onChange={(e) =>
-                    handleInputChange(index, "sku", e.target.value)
-                  }
-                  className="w-full p-1 border border-gray-300 rounded"
-                />
-              </td>
-              <td className="px-4 py-2">
-                <div className="w-[96px] h-[96px]">
-                  {variant.image ? (
-                    <ImageUploadPreview
-                      src={variant.image}
-                      handleCropClick={() => onOpenModal(index)}
-                      handleDeleteClick={() => onDeleteImage(index)}
-                    />
-                  ) : (
-                    <ImageUpload
-                      fileInputRef={null}
-                      handleFileChange={(e) => handleFileChange(index, e)}
-                      handleButtonClick={() => {}}
-                    />
-                  )}
-                </div>
-              </td>
+          {matrixData.map((row, rowIndex) => (
+            <tr key={rowIndex} className="border-t border-gray-200">
+              {row.map((cell, cellIndex) => {
+                if (cell.type === "attribute") {
+                  return (
+                    <td key={cellIndex} className="px-4 py-2">
+                      {cell.value as string}
+                    </td>
+                  );
+                } else if (cell.type === "image") {
+                  const imageValue = cell.value as string | File;
+                  const imagePreview =
+                    imageValue instanceof File
+                      ? URL.createObjectURL(imageValue)
+                      : imageValue;
+                  return (
+                    <td key={cellIndex} className="px-4 py-2">
+                      <div className="w-[96px] h-[96px]">
+                        {imagePreview ? (
+                          <ImageUploadPreview
+                            src={imagePreview}
+                            handleCropClick={() => onOpenModal(rowIndex)}
+                            handleDeleteClick={() => onDeleteImage(rowIndex)}
+                          />
+                        ) : (
+                          <ImageUpload
+                            fileInputRef={null}
+                            handleFileChange={(e) =>
+                              handleFileChange(rowIndex, e)
+                            }
+                            handleButtonClick={() => {}}
+                          />
+                        )}
+                      </div>
+                    </td>
+                  );
+                } else {
+                  return (
+                    <td key={cellIndex} className="px-4 py-2">
+                      <input
+                        type={cell.type === "sku" ? "text" : "number"}
+                        value={cell.value as string | number}
+                        onChange={(e) =>
+                          updateCell(rowIndex, cellIndex, e.target.value)
+                        }
+                        className="w-full p-1 border border-gray-300 rounded"
+                      />
+                    </td>
+                  );
+                }
+              })}
             </tr>
           ))}
         </tbody>
