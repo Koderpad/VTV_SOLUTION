@@ -81,6 +81,7 @@ import CanUpdateCashOrderWareHouse from "@/features/shipping/deliver/CanUpdateCa
 import { DashboardVendor } from "./pages/vendor/DashboardVendor.tsx";
 import { ShopProfilePage } from "./pages/vendor/ShopProfilePage.tsx";
 import { UpdateShopProfilePage } from "./pages/vendor/UpdateShopProfilePage.tsx";
+import { AddProductPage } from "./pages/vendor/AddProductPage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -398,8 +399,10 @@ function App() {
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}>
             <Route path="/vendor" element={<DashboardVendor />}>
               <Route path="profile" element={<ShopProfilePage />} />
-
               <Route path="profile/edit" element={<UpdateShopProfilePage />} />
+
+              {/* products */}
+              <Route path="product/new" element={<AddProductPage />} />
             </Route>
           </Route>
 
