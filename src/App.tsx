@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
-import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
-import CategoryList from "./components/organisms/Home/CategoryList/index.tsx";
+// import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
+// import CategoryList from "./components/organisms/Home/CategoryList/index.tsx";
 import { DashboardManager } from "./pages/manager/DashboardManager";
 import AddNewCategory from "./features/manager/category/AddNewCategory.tsx";
 import { CategoryManagerPage } from "./pages/manager/CategoryManagerPage";
@@ -49,9 +49,7 @@ import StatisticsTransports from "@/features/manager/shipping/StatisticsTranspor
 import { DashboardProvider } from "./pages/provider/DashboardProvider.tsx";
 // import CustomerProviderPage from "./pages/provider/CustomerProviderPage.tsx";
 import { DashboardDeliver } from "./pages/deliver/DashboardDeliver.tsx";
-import CustomerDeliverPage from "./pages/deliver/CustomerDeliverPage.tsx";
 import { DashboardDeliverManager } from "./pages/deliver-manager/DashboardDeliverManager.tsx";
-import CustomerDeliver_ManagerPage from "./pages/deliver-manager/CustomerDeliver_ManagerPage.tsx";
 import Unauthorized from "@/features/Unauthorized.tsx";
 import ProviderInformationPage from "@/pages/provider/ProviderInformationPage.tsx";
 import UpdateInformationTransportProvider from "@/features/shipping/provider/UpdateInformationTransportProvider.tsx";
@@ -78,35 +76,43 @@ import HistoryCashOrderShipper from "@/features/shipping/deliver/HistoryCashOrde
 import UpdateCashOrderShipper from "@/features/shipping/deliver/CanUpdateCashOrderShipper.tsx";
 import HistoryCashOrderWareHouse from "@/features/shipping/deliver/HistoryCashOrderWareHouse.tsx";
 import UpdateCashOrderWareHouse from "@/features/shipping/deliver/CanUpdateCashOrderWareHouse.tsx";
+import CartPage from "./pages/common/Cart.tsx";
+import Checkout from "./pages/common/Checkout.tsx";
+import AccountPage from "./pages/common/Account.tsx";
+import PasswordChanges from "./components/organisms/Common/Account/PasswordChanges/index.tsx";
+import Profile from "./components/organisms/Common/Account/Profile/index.tsx";
+import Address from "./components/organisms/Common/Account/Address/index.tsx";
+import { HistoryPurchase } from "./components/organisms/Common/Account/HistoryPurchase/index.tsx";
+import OrderDetail from "./components/organisms/Common/Account/OrderDetail/index.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage"),
+  () => import("./pages/common/ProductDetailPage")
 );
 
 // ROLE: CUSTOMER
-const CartPage = lazy(() => import("./pages/common/Cart"));
-const Checkout = lazy(() => import("./pages/common/Checkout"));
-const AccountPage = lazy(() => import("./pages/common/Account"));
-const Profile = lazy(() => import("./components/organisms/Account/Profile"));
-const PasswordChanges = lazy(
-  () => import("./components/organisms/Account/PasswordChanges"),
-);
-const Address = lazy(() => import("./components/organisms/Account/Address"));
-const OrderDetail = lazy(
-  () => import("./components/organisms/Account/OrderDetail"),
-);
-const CategoryResultsPage = lazy(
-  () => import("./pages/common/CategoryResultsPage"),
-);
+// const CartPage = lazy(() => import("./pages/common/Cart"));
+// const Checkout = lazy(() => import("./pages/common/Checkout"));
+// const AccountPage = lazy(() => import("./pages/common/Account"));
+// const Profile = lazy(() => import("./components/organisms/Account/Profile"));
+// const PasswordChanges = lazy(
+//   () => import("./components/organisms/Account/PasswordChanges"),
+// );
+// const Address = lazy(() => import("./components/organisms/Account/Address"));
+// const OrderDetail = lazy(
+//   () => import("./components/organisms/Account/OrderDetail"),
+// );
+// const CategoryResultsPage = lazy(
+//   () => import("./pages/common/CategoryResultsPage"),
+// );
 
 //ROLE: MANAGER
 
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
   const {
     data: notifications,
@@ -168,13 +174,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
-          <Route path="/test" element={<CategoryList />} />
-
-          {/* category results */}
-          {/* <Route */}
-          {/*   path="/category/:categoryId" */}
-          {/*   element={<CategoryResultsPage />} */}
-          {/* /> */}
           <Route path="/category/:categoryId" element={<ResultsPage />} />
           <Route path="/search/:searchTerm" element={<ResultsPage />} />
 
@@ -324,29 +323,28 @@ function App() {
                 element={<CashOrderWareHousePage />}
               />
 
-            <Route
+              <Route
                 path="cash-order/detail/:cashOrderId"
                 element={<CashOrderDetail />}
               />
               <Route
-                  path="cash-order/shipper/history"
-                  element={<HistoryCashOrderShipper/>}
+                path="cash-order/shipper/history"
+                element={<HistoryCashOrderShipper />}
               />
 
               <Route
-                  path="cash-order/warehouse/history"
-                  element={<HistoryCashOrderWareHouse/>}
+                path="cash-order/warehouse/history"
+                element={<HistoryCashOrderWareHouse />}
               />
 
               <Route
-                  path="cash-order/shipper/update"
-                  element={<UpdateCashOrderShipper/>}
+                path="cash-order/shipper/update"
+                element={<UpdateCashOrderShipper />}
               />
               <Route
-                  path="cash-order/warehouse/update"
-                  element={<UpdateCashOrderWareHouse/>}
+                path="cash-order/warehouse/update"
+                element={<UpdateCashOrderWareHouse />}
               />
-
             </Route>
           </Route>
 
@@ -422,12 +420,6 @@ function App() {
               /> */}
             </Route>
           </Route>
-
-          {/* TEST */}
-          {/* <Route path="/test" element={<SearchResultsTemplate />} /> */}
-          {/* <Route path="/test" element={<ProductDetailTemplate />} /> */}
-
-          {/* private routes */}
         </Routes>
       </Suspense>
     </BrowserRouter>

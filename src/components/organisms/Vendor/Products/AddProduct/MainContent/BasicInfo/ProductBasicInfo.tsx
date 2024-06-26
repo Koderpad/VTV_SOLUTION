@@ -1,7 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactModal from "react-modal";
 import { Cropper, CropperPreview } from "react-advanced-cropper";
-
+import { getAllCategories } from "@/services/manager/CategoryManagerService.ts";
+import { CategoryDTO } from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 ReactModal.setAppElement("#root");
 
 export const ProductBasicInfo = () => {
@@ -11,11 +12,24 @@ export const ProductBasicInfo = () => {
   const cropperRef = useRef(null);
   const previewRef = useRef(null);
 
-  const [categories, setCategories] = useState<string[]>([
-    "Category 1",
-    "Category 2",
-    "Category 3",
-  ]);
+  const [categories, setCategories] = useState<CategoryDTO[]>([]);
+  const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    fetchAllCategories();
+  }, []);
+
+  const fetchAllCategories = async () => {
+    try {
+      const response = await getAllCategories();
+      setCategories(response.categoryDTOs);
+    } catch (error) {
+      // @ts-ignore
+      toast.error(error.response.data.message);
+    }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -39,6 +53,91 @@ export const ProductBasicInfo = () => {
   const handleSave = () => {
     // Logic for saving cropped image
     setIsModalOpen(false);
+  };
+
+  const openCategoryModal = () => {
+    setIsCategoryModalVisible(true);
+    setSelectedCategories(getSelectedCategoryPath());
+  };
+
+  const closeCategoryModal = () => {
+    setIsCategoryModalVisible(false);
+    setSelectedCategories([]);
+    setSearchText("");
+  };
+
+  const handleCategoryClick = (categoryDTO: CategoryDTO) => {
+    const genLevel = getGenLevel(categoryDTO);
+    setSelectedCategories((prevSelected) => {
+      const newSelected = prevSelected.slice(0, genLevel - 1);
+      newSelected[genLevel - 1] = categoryDTO.categoryId;
+      return newSelected;
+    });
+  };
+
+  const getGenLevel = (category: CategoryDTO): number => {
+    if (category.parentId === null) {
+      return 1;
+    }
+
+    const parentCategory = categories.find(
+      (cat) => cat.categoryId === category.parentId
+    );
+    if (parentCategory) {
+      return getGenLevel(parentCategory) + 1;
+    }
+
+    return 1;
+  };
+
+  const renderCategoryTree = (genLevel: number) => {
+    const parentId = genLevel > 1 ? selectedCategories[genLevel - 2] : null;
+    const filteredCategories = categories.filter(
+      (category) =>
+        category.parentId === parentId &&
+        category.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+
+    return (
+      <div className="flex flex-col space-y-2 max-h-64 overflow-y-auto">
+        {filteredCategories.map((category) => (
+          <div
+            key={category.categoryId}
+            onClick={() => handleCategoryClick(category)}
+            className={`px-4 py-2 cursor-pointer rounded flex items-center ${
+              selectedCategories[genLevel - 1] === category.categoryId
+                ? "bg-green-500 text-white"
+                : "bg-gray-100 hover:bg-gray-200"
+            }`}
+          >
+            {category.name}
+            {hasChildCategory(category.categoryId) && (
+              <span className="ml-auto">&gt;</span>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const hasChildCategory = (categoryId: number): boolean => {
+    return categories.some((cat) => cat.parentId === categoryId);
+  };
+
+  const getCategoryPath = (): string => {
+    let path = "";
+    selectedCategories.forEach((categoryId) => {
+      const category = categories.find((cat) => cat.categoryId === categoryId);
+      if (category) {
+        path += category.name + " -> ";
+      }
+    });
+    return path.slice(0, -4);
+  };
+
+  const getSelectedCategoryPath = (): number[] => {
+    // Implement this function based on your requirements
+    return [];
   };
 
   return (
@@ -297,34 +396,14 @@ export const ProductBasicInfo = () => {
                               className="flex flex-col"
                             >
                               <div className="relative">
-                                <select
-                                  id="select-1"
-                                  className="py-3 px-4 pe-16 block border-red-500 rounded-lg text-xl focus:border-red-500 focus:ring-red-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                <button
+                                  onClick={openCategoryModal}
+                                  className="py-3 px-4 pe-16 block border-gray-300 rounded-lg text-xl focus:border-blue-500 focus:ring-blue-500 w-full text-left"
                                 >
-                                  <option selected>Chọn thể loại</option>
-                                  {categories.map((category) => (
-                                    <option key={category}>{category}</option>
-                                  ))}
-                                </select>
-                                <div className="absolute inset-y-0 end-0 flex items-center pointer-events-none pe-8">
-                                  {/* Warning icon SVG */}
-                                  <svg
-                                    className="flex-shrink-0 h-4 w-4 text-red-500"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="12" x2="12" y1="8" y2="12" />
-                                    <line x1="12" x2="12.01" y1="16" y2="16" />
-                                  </svg>
-                                </div>
+                                  {selectedCategories.length > 0
+                                    ? getCategoryPath()
+                                    : "Chọn danh mục"}
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -447,6 +526,46 @@ export const ProductBasicInfo = () => {
         </div>
         <button onClick={handleCloseModal}>Close Modal</button>
       </ReactModal>
+
+      {/* Category Selection Modal */}
+      {isCategoryModalVisible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 max-h-screen overflow-y-auto">
+            <div className="px-6 py-4">
+              <h2 className="text-xl font-bold mb-4">Chọn Danh Mục</h2>
+              <input
+                type="text"
+                placeholder="Vui lòng nhập tối thiểu 1 ký tự"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="border border-black focus:border-green-500 focus:ring-green-500 rounded px-4 py-2 mb-4 w-full shadow-sm sm:text-sm"
+              />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>{renderCategoryTree(1)}</div>
+                <div>{renderCategoryTree(2)}</div>
+                <div>{renderCategoryTree(3)}</div>
+              </div>
+              <div className="mt-4">
+                <p>Đã chọn: {getCategoryPath()}</p>
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-gray-100 flex justify-end space-x-2">
+              <button
+                onClick={() => setIsCategoryModalVisible(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={closeCategoryModal}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
