@@ -71,7 +71,7 @@ const HomeDeliverManagerPage = () => {
 
                         <br/>
 
-                        <h1 className="text-4xl font-bold text-center text-gray-900">Quản lý vận chuyển</h1>
+                        <h1 className="text-4xl font-bold text-center text-gray-900">Trang chủ</h1>
                         <br/>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
