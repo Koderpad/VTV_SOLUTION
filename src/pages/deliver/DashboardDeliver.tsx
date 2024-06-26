@@ -1,21 +1,22 @@
-import { useEffect, useState } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { logOut } from "@/redux/features/common/auth/authSlice";
-import { useDispatch } from "react-redux";
-import { persistor } from "@/redux/store";
+import {useEffect, useState} from "react";
+import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
+import {logOut} from "@/redux/features/common/auth/authSlice";
+import {useDispatch} from "react-redux";
+import {persistor} from "@/redux/store";
 import {
   faHome,
   faInfoCircle,
-  faUser,
-  faTruck,
-  faChartLine,
-  faSignOutAlt,
   faMoneyBillWave,
-  faWarehouse, faPenToSquare,
+  faPenToSquare,
+  faSignOutAlt,
+  faTruck,
+  faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import HomeDeliverManager from "@/pages/deliver-manager/HomeDeliverManagerPage.tsx";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import HomeDeliverPage from "@/pages/deliver/HomeDeliverPage.tsx";
+import {useGetDeliverInfoMutation} from "@/redux/features/shipping/DeliverApiSlice.ts";
+import {DeliverDTO} from "@/utils/DTOs/shipping/dto/DeliverDTO.ts";
+import {TypeWork} from "@/utils/DTOs/extra/TypeWork.ts";
 
 export const DashboardDeliver = () => {
   const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -24,6 +25,23 @@ export const DashboardDeliver = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isShow, setIsShow] = useState(true);
+  const [getDeliverInfo] = useGetDeliverInfoMutation();
+  const [deliverInfo, setDeliverInfo] = useState<DeliverDTO>();
+
+  const fetchData = async () => {
+    try {
+      const response = await getDeliverInfo().unwrap();
+      setDeliverInfo(response.deliverDTO);
+    } catch (e) {
+      console.error("Error fetching data:", e);
+    }
+  };
+
+  useEffect(() => {
+
+    fetchData();
+  }, []);
+
 
   useEffect(() => {
     const currentPath = location.pathname.split("/").pop();
@@ -155,20 +173,24 @@ export const DashboardDeliver = () => {
                 </Link>
               </li>
 
-              <li>
-                <Link
-                    to="/deliver/cash-order/warehouse"
-                    className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                        selectedTitle === "DeliverCashOrderWareHouse"
-                            ? "bg-gray-100 hover:bg-green-100"
-                            : "hover:bg-green-100"
-                    }`}
-                    onClick={() => handleTitleClick("DeliverCashOrderWareHouse")}
-                >
-                  <FontAwesomeIcon icon={faWarehouse} className="mr-3 h-6 w-6" />
-                  Quản lý tiền của nhân kho
-                </Link>
-              </li>
+              {deliverInfo?.typeWork === TypeWork.WAREHOUSE &&
+                  <li>
+                    <Link
+                        to="/deliver/cash-order/warehouse"
+                        className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                            selectedTitle === "DeliverCashOrderWareHouse"
+                                ? "bg-gray-100 hover:bg-green-100"
+                                : "hover:bg-green-100"
+                        }`}
+                        onClick={() => handleTitleClick("DeliverCashOrderWareHouse")}
+                    >
+                      <FontAwesomeIcon icon={faWarehouse} className="mr-3 h-6 w-6"/>
+                      Quản lý tiền của nhân kho
+                    </Link>
+                  </li>
+
+              }
+
             </ul>
 
             <a
@@ -176,7 +198,7 @@ export const DashboardDeliver = () => {
                 onClick={handleLogout}
                 className="flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg hover:bg-green-100"
             >
-              <FontAwesomeIcon icon={faSignOutAlt} className="mr-3 h-6 w-6" />
+              <FontAwesomeIcon icon={faSignOutAlt} className="mr-3 h-6 w-6"/>
               Đăng xuất
             </a>
           </div>
@@ -186,7 +208,7 @@ export const DashboardDeliver = () => {
                   className="w-auto m-4 col-start-2 col-end-7  p-8 bg-white rounded-xl flex "
               >
                 <p className="font-medium text-gray-600">
-                  <HomeDeliverPage />
+                  <HomeDeliverPage/>
                 </p>
               </div>
           ) : (

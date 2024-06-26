@@ -5,7 +5,6 @@ import { typeWorkToString } from '@/utils/DTOs/extra/convertToString/typeWorkToS
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useEffect, useState } from "react";
-import { useGetTransportProviderByUsernameQuery } from "@/redux/features/shipping/TransportProviderApiSlice.ts";
 
 
 const DeliverInformationPage = () => {

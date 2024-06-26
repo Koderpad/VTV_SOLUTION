@@ -137,7 +137,7 @@ export const DashboardProvider = () => {
                                 onClick={() => handleTitleClick("StatisticsRevenue")}
                             >
                                 <FontAwesomeIcon icon={faChartLine} className="mr-3 h-6 w-6"/>
-                                Thống kê doanh thu
+                                Thống kê vận chuyển
                             </Link>
                         </li>
 

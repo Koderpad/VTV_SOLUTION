@@ -133,7 +133,7 @@ const CashOrderWareHousePage = () => {
                 </button>
                 <button
                     className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600"
-                    onClick={() => navigate("/deliver/cash-order/warehouse/can-update")}
+                    onClick={() => navigate("/deliver/cash-order/warehouse/update")}
                 >
                     Xác nhận chuyển tiền
                 </button>
