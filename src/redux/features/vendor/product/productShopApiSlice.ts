@@ -42,6 +42,22 @@ export const productShopApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
       }),
     }),
+    updateProduct: builder.mutation<
+      ProductResponse,
+      { productId: number; data: FormData }
+    >({
+      query: ({ productId, data }) => ({
+        url: `/vendor/product/update/${productId}`,
+        method: "POST",
+        body: data,
+      }),
+      extraOptions: {
+        prepareHeaders: (headers: Headers) => {
+          headers.set("Content-Type", "multipart/form-data");
+          return headers;
+        },
+      },
+    }),
   }),
 });
 
@@ -50,6 +66,7 @@ export const {
   useGetPageProductByStatusQuery,
   useUpdateProductStatusMutation,
   useRestoreProductMutation,
+  useUpdateProductMutation,
 } = productShopApiSlice;
 
 // import { apiSlice } from "@/redux/api";
@@ -71,7 +88,6 @@ export const {
 //         },
 //       },
 //     }),
-
 //     getPageProductByStatus: builder.query<
 //       ProductPageResponse,
 //       { page: number; size: number; status: string }
@@ -82,8 +98,27 @@ export const {
 //         params: { page, size },
 //       }),
 //     }),
+//     updateProductStatus: builder.mutation<
+//       ProductResponse,
+//       { productId: number; status: string }
+//     >({
+//       query: ({ productId, status }) => ({
+//         url: `/vendor/product/update/${productId}/status/${status}`,
+//         method: "PATCH",
+//       }),
+//     }),
+//     restoreProduct: builder.mutation<ProductResponse, number>({
+//       query: (productId) => ({
+//         url: `/vendor/product/restore/${productId}`,
+//         method: "PATCH",
+//       }),
+//     }),
 //   }),
 // });
 
-// export const { useAddProductMutation, useGetPageProductByStatusQuery } =
-//   productShopApiSlice;
+// export const {
+//   useAddProductMutation,
+//   useGetPageProductByStatusQuery,
+//   useUpdateProductStatusMutation,
+//   useRestoreProductMutation,
+// } = productShopApiSlice;

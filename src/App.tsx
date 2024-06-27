@@ -89,6 +89,7 @@ import { ShopProfilePage } from "./pages/vendor/ShopProfilePage.tsx";
 import { UpdateShopProfilePage } from "./pages/vendor/UpdateShopProfilePage.tsx";
 import { AddProductPage } from "./pages/vendor/AddProductPage.tsx";
 import { ProductsPage } from "./pages/vendor/ProductsPage.tsx";
+import { UpdateProductPage } from "./pages/vendor/UpdateProductPage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -399,6 +400,10 @@ function App() {
               {/* products */}
               <Route path="product/new" element={<AddProductPage />} />
               <Route path="products" element={<ProductsPage />} />
+              <Route
+                path="product/edit/:productId"
+                element={<UpdateProductPage />}
+              />
             </Route>
           </Route>
 
