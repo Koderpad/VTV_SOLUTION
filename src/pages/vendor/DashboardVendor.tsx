@@ -111,7 +111,7 @@ export const DashboardVendor = () => {
             </li>
             <li>
               <Link
-                to="product/new"
+                to="products"
                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
                   selectedTitle === "Products"
                     ? "bg-gray-100 hover:bg-green-100"

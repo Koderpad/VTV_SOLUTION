@@ -88,11 +88,12 @@ import { DashboardVendor } from "./pages/vendor/DashboardVendor.tsx";
 import { ShopProfilePage } from "./pages/vendor/ShopProfilePage.tsx";
 import { UpdateShopProfilePage } from "./pages/vendor/UpdateShopProfilePage.tsx";
 import { AddProductPage } from "./pages/vendor/AddProductPage.tsx";
+import { ProductsPage } from "./pages/vendor/ProductsPage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
 const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage"),
+  () => import("./pages/common/ProductDetailPage")
 );
 
 // ROLE: CUSTOMER
@@ -116,7 +117,7 @@ const ProductDetailPage = lazy(
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
   const {
     data: notifications,
@@ -397,6 +398,7 @@ function App() {
 
               {/* products */}
               <Route path="product/new" element={<AddProductPage />} />
+              <Route path="products" element={<ProductsPage />} />
             </Route>
           </Route>
 
