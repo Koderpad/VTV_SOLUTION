@@ -13,6 +13,8 @@ export const ProductBasicInfo = () => {
     register,
     setValue,
     watch,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useFormContext<ProductRequest>();
   const [imageData, setImageData] = useState<string | null>(null);
@@ -42,19 +44,54 @@ export const ProductBasicInfo = () => {
       toast.error(error.response.data.message);
     }
   };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      setValue("image", file);
-      setValue("changeImage", true);
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        setImageData(reader.result as string);
-      });
-      reader.readAsDataURL(file);
+      if (file) {
+        // Validate file type
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+        if (!allowedTypes.includes(file.type)) {
+          setError("image", {
+            type: "manual",
+            message: "Chỉ chấp nhận file ảnh (JPEG, PNG, GIF)",
+          });
+          return;
+        }
+
+        // Validate file size (e.g., max 5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          setError("image", {
+            type: "manual",
+            message: "Kích thước file không được vượt quá 5MB",
+          });
+          return;
+        }
+
+        setValue("image", file);
+        setValue("changeImage", true);
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          setImageData(reader.result as string);
+        });
+        reader.readAsDataURL(file);
+        clearErrors("image");
+      }
     }
   };
+
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files.length > 0) {
+  //     const file = event.target.files[0];
+  //     setValue("image", file);
+  //     setValue("changeImage", true);
+  //     const reader = new FileReader();
+  //     reader.addEventListener("load", () => {
+  //       setImageData(reader.result as string);
+  //     });
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   const handleCropClick = () => {
     setIsModalOpen(true);
@@ -62,6 +99,15 @@ export const ProductBasicInfo = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleDeleteImage = () => {
+    setImageData(null);
+    setValue("image", "");
+    setValue("changeImage", false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleSave = () => {
@@ -244,8 +290,25 @@ export const ProductBasicInfo = () => {
                                 <span
                                   id="shopee-image-manager__icon shopee-image-manager__icon--delete"
                                   className="w-[24px] h-[24px] flex items-center justify-center cursor-pointer"
+                                  onClick={handleDeleteImage}
                                 >
                                   {/* Delete icon SVG */}
+                                  <i
+                                    id="shopee-icon"
+                                    className="h-[16px] w-[16px]"
+                                  >
+                                    <span>
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 20.48 20.48"
+                                        className="icon"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path d="M3.2 5.12H1.92a.64.64 0 0 1 0-1.28h5.12V1.919a.64.64 0 0 1 .64-.64h5.12a.64.64 0 0 1 .64.64V3.84h5.12a.64.64 0 1 1 0 1.28h-1.28v13.44a.64.64 0 0 1-.64.64H3.84a.64.64 0 0 1-.64-.64V5.12zm8.96-1.28V2.56H8.32v1.28h3.84zM4.48 17.92H16V5.12H4.48v12.8zm3.84-2.56a.64.64 0 0 1-.64-.64v-6.4a.64.64 0 0 1 1.28 0v6.4a.64.64 0 0 1-.64.64zm3.84 0a.64.64 0 0 1-.64-.64v-6.4a.64.64 0 0 1 1.28 0v6.4a.64.64 0 0 1-.64.64z" />
+                                      </svg>
+                                    </span>
+                                  </i>
                                 </span>
                               </div>
                             </div>
@@ -311,6 +374,17 @@ export const ProductBasicInfo = () => {
                   </div>
                 </div>
               </div>
+              <input
+                hidden
+                {...register("image", {
+                  required: "Hình ảnh sản phẩm là bắt buộc",
+                })}
+              />
+              {errors.image && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.image.message}
+                </span>
+              )}
 
               {/* Name Product */}
               <div id="edit-row">
@@ -359,6 +433,7 @@ export const ProductBasicInfo = () => {
               </div>
 
               {/* Category Product */}
+              {/* Category Product */}
               <div id="edit-row is-last-edit-row" className="flex">
                 <div
                   id="edit-label edit-row-left"
@@ -367,7 +442,7 @@ export const ProductBasicInfo = () => {
                   <div id="mandatory">
                     <span style={{ color: "#ee4d2d" }}>*</span>
                   </div>
-                  <span>Ngành hàng</span>
+                  <span>Danh mục</span>
                 </div>
                 <div
                   id="degrade-wrap edit-row-right-full"
@@ -389,10 +464,17 @@ export const ProductBasicInfo = () => {
                                 <button
                                   type="button"
                                   onClick={openCategoryModal}
-                                  className="py-3 px-4 pe-16 block border-gray-300 rounded-lg text-xl focus:border-blue-500 focus:ring-blue-500 w-full text-left"
+                                  className="py-3 px-4 block border-gray-300 rounded-lg text-xl focus:border-blue-500 focus:ring-blue-500 w-full text-left"
                                 >
                                   {selectedCategoryPath || "Chọn danh mục"}
                                 </button>
+                                <input
+                                  className="mt-4"
+                                  hidden
+                                  {...register("categoryId", {
+                                    required: "Danh mục sản phẩm là bắt buộc",
+                                  })}
+                                />
                               </div>
                             </div>
                           </div>
@@ -402,6 +484,7 @@ export const ProductBasicInfo = () => {
                   </div>
                 </div>
               </div>
+
               {errors.categoryId && (
                 <span className="text-red-500 text-sm mt-1">
                   {errors.categoryId.message}

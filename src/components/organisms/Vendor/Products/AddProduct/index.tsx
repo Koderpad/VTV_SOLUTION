@@ -17,7 +17,7 @@ export const AddProduct = () => {
 
   const methods = useForm<ProductRequest>({
     defaultValues: {
-      productId: 0,
+      // productId: 0,
       name: "",
       image: "",
       changeImage: false,
@@ -31,7 +31,7 @@ export const AddProduct = () => {
 
   const convertProductRequestToFormData = (data: ProductRequest): FormData => {
     const formData = new FormData();
-    formData.append("productId", data.productId.toString());
+    // formData.append("productId", data.productId.toString());
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("information", data.information);
@@ -46,10 +46,10 @@ export const AddProduct = () => {
     }
 
     data.productVariantRequests.forEach((variant, index) => {
-      formData.append(
-        `productVariantRequests[${index}].productVariantId`,
-        variant.productVariantId.toString()
-      );
+      // formData.append(
+      //   `productVariantRequests[${index}].productVariantId`,
+      //   variant.productVariantId.toString()
+      // );
       formData.append(`productVariantRequests[${index}].sku`, variant.sku);
       formData.append(
         `productVariantRequests[${index}].originalPrice`,

@@ -4,9 +4,9 @@ export interface ProductAttributeRequest {
 }
 
 export interface ProductVariantRequest {
-  productVariantId: number;
+  // productVariantId: number;
   sku: string;
-  image: string | File; // Assuming binary data will be handled as a string (e.g., base64)
+  image: string | File | null;
   changeImage: boolean;
   originalPrice: number;
   price: number;
@@ -15,9 +15,9 @@ export interface ProductVariantRequest {
 }
 
 export interface ProductRequest {
-  productId: number;
+  // productId: number;
   name: string;
-  image: string | File; // Assuming binary data will be handled as a string (e.g., base64)
+  image: string | File | null;
   changeImage: boolean;
   description: string;
   information: string;
