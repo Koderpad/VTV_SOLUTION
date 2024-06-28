@@ -24,6 +24,11 @@ export const CustomerManagerApiSlice = apiSlice.injectEndpoints({
         }),
 
 
+        getProfileCustomer: builder.mutation<ProfileCustomerResponse, void>({
+            query: () => `/customer/profile`,
+        }),
+
+
 
     }),
 });
@@ -33,4 +38,5 @@ export const {
     useGetPageCustomerByStatusAndSortQuery,
     useSearchPageCustomerByFullNameAndStatusQuery,
     useGetCustomerDetailByCustomerIdQuery,
+    useGetProfileCustomerMutation,
 } = CustomerManagerApiSlice;

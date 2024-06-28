@@ -141,7 +141,7 @@ const AddNewBrand = () => {
 
                     <div>
                         <label htmlFor="information"
-                               className="block text-sm font-medium text-gray-700">Information:</label>
+                               className="block text-sm font-medium text-gray-700">Thông tin:</label>
                         <textarea
                             id="information"
                             name="information"
@@ -152,7 +152,7 @@ const AddNewBrand = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="origin" className="block text-sm font-medium text-gray-700">Origin:</label>
+                        <label htmlFor="origin" className="block text-sm font-medium text-gray-700">Xuất xứ:</label>
                         <input
                             type="text"
                             id="origin"
@@ -165,8 +165,9 @@ const AddNewBrand = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="allCategories" className="block text-sm font-medium text-gray-700">All
-                            Categories:</label>
+                        <label htmlFor="allCategories" className="block text-sm font-medium text-gray-700">
+                            Tất cả danh mục:
+                        </label>
                         <input
                             type="checkbox"
                             id="allCategories"
@@ -178,7 +179,7 @@ const AddNewBrand = () => {
                     </div>
                     <div>
                         <label htmlFor="categoryIds"
-                               className="block text-sm font-medium text-gray-700">Categories:</label>
+                               className="block text-sm font-medium text-gray-700">Danh mục:</label>
                         <div style={{maxHeight: '200px', overflow: 'auto'}}>
                             {categories.map((category) => (
                                 <div key={category.categoryId}>

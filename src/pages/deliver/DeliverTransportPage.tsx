@@ -300,7 +300,7 @@ const DeliverTransportPage = () => {
                     <h2 className="text-2xl font-bold text-black mb-4">
                         Danh sách đơn vận chuyển của
                         {selectedDistrictCode ? ` quận ${districts.find(d => d.districtCode === selectedDistrictCode)?.name}` :
-                            (selectedWardCode ? ` phường ${deliverInfo.wardsWork.find(w => w.wardCode === selectedWardCode)?.name}` : "tất cả")}
+                            (selectedWardCode ? ` phường ${deliverInfo.wardsWork.find(w => w.wardCode === selectedWardCode)?.name}` : " tất cả")}
                     </h2>
                     {selectedDistrictCode
                         ? (transportsDataByDistrictCode && renderTransportsByWard(transportsDataByDistrictCode.shopAndTransportsDTOs))

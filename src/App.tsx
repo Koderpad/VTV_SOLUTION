@@ -229,9 +229,6 @@ function App() {
               <Route path="shop/detail/:shopId" element={<ShopDetail />} />
               <Route path="shops/locked" element={<ManagerShops />} />
 
-              <Route path="managers" element={<ManagerPage />} />
-              <Route path="manager_id/:managerId" element={<ManagerDetail />} />
-              <Route path="add_manager" element={<AddNewManager />} />
 
               <Route path="products" element={<ProductManagerPage />} />
               <Route
@@ -248,9 +245,7 @@ function App() {
               />
               <Route path="order/revenue" element={<StatisticsOrders />} />
 
-              <Route path="managers" element={<ManagerPage />} />
-              <Route path="manager_id/:managerId" element={<ManagerDetail />} />
-              <Route path="add_manager" element={<AddNewManager />} />
+
 
               <Route
                 path="transport-providers"
@@ -278,6 +273,94 @@ function App() {
               />
             </Route>
           </Route>
+
+          <Route element={<RequireAuth allowedRoles={["ADMIN"]} />}>
+            <Route path="/manager" element={<DashboardManager />}>
+              <Route path="categories" element={<CategoryManagerPage />} />
+              <Route path="category/add" element={<AddNewCategory />} />
+              <Route
+                  path="category/update/:categoryId"
+                  element={<UpdateCategory />}
+              />
+              <Route path="category/:categoryId" element={<CategoryDetail />} />
+
+              <Route path="brands" element={<BrandManagerPage />} />
+              <Route path="brand/add" element={<AddNewBrand />} />
+              <Route path="brand/update/:brandId" element={<UpdateBrand />} />
+              <Route path="brand/:brandId" element={<BrandDetail />} />
+
+              <Route path="vouchers" element={<VoucherSystemManagerPage />} />
+              <Route path="voucher/add" element={<AddNewVoucherSystem />} />
+              <Route
+                  path="voucher/update/:voucherId"
+                  element={<UpdateVoucherSystem />}
+              />
+              <Route
+                  path="voucher/:voucherId"
+                  element={<VoucherSystemDetail />}
+              />
+
+              <Route path="customers" element={<CustomerManagerPage />} />
+              <Route
+                  path="customers/revenue"
+                  element={<StatisticsCustomers />}
+              />
+              <Route
+                  path="customer/detail/:customerId"
+                  element={<CustomerDetail />}
+              />
+
+              <Route path="shops" element={<ShopManagerPage />} />
+              <Route path="shop/detail/:shopId" element={<ShopDetail />} />
+              <Route path="shops/locked" element={<ManagerShops />} />
+
+
+              <Route path="products" element={<ProductManagerPage />} />
+              <Route
+                  path="product/detail/:productId"
+                  element={<ProductDetail />}
+              />
+              <Route path="products/locked" element={<ManagerProducts />} />
+              <Route path="product/revenue" element={<StatisticsProducts />} />
+
+              <Route path="orders" element={<OrderManagerPage />} />
+              <Route
+                  path="order/detail/:orderId"
+                  element={<OrderDetailManager />}
+              />
+              <Route path="order/revenue" element={<StatisticsOrders />} />
+
+              <Route path="managers" element={<ManagerPage />} />
+              <Route path="manager_id/:managerId" element={<ManagerDetail />} />
+              <Route path="add_manager" element={<AddNewManager />} />
+
+              <Route
+                  path="transport-providers"
+                  element={<TransportProviderManagerPage />}
+              />
+              <Route
+                  path="transport-provider/add"
+                  element={<AddNewTransportProvider />}
+              />
+              <Route
+                  path="transport-provider/detail/:transportProviderId"
+                  element={<TransportProviderDetail />}
+              />
+              <Route
+                  path="transport-provider/update/:transportProviderId"
+                  element={<UpdateTransportProviderProvinces />}
+              />
+              <Route
+                  path="transport-provider/update-fee-shipping/:transportProviderId"
+                  element={<UpdateTransportProviderFeeShipping />}
+              />
+              <Route
+                  path="transport-provider/revenue"
+                  element={<StatisticsTransports />}
+              />
+            </Route>
+          </Route>
+
 
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
