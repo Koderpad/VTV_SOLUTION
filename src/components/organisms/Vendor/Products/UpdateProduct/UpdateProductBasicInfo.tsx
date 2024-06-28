@@ -5,6 +5,8 @@ import { getAllCategories } from "@/services/manager/CategoryManagerService.ts";
 import { CategoryDTO } from "@/utils/DTOs/manager/dto/CategoryDTO.ts";
 import { useFormContext } from "react-hook-form";
 import { ProductRequest } from "@/utils/DTOs/vendor/product/Request/ProductRequest";
+import { ImageUploadPreview } from "./EditRow/ClassifyContent/ImageUploadPreview";
+import { ImageUpload } from "./EditRow/ClassifyContent/ImageUpload";
 
 ReactModal.setAppElement("#root");
 
@@ -29,33 +31,49 @@ export const UpdateProductBasicInfo = () => {
   const [searchText, setSearchText] = useState("");
 
   const selectedCategoryId = watch("categoryId");
+  const imageFromForm = watch("image");
   const [selectedCategoryPath, setSelectedCategoryPath] = useState<string>("");
 
   useEffect(() => {
+    const fetchAllCategories = async () => {
+      try {
+        const response = await getAllCategories();
+        setCategories(() => {
+          console.log("categories: ", response.categoryDTOs);
+          return response.categoryDTOs;
+        });
+      } catch (error) {
+        // @ts-ignore
+        toast.error(error.response.data.message);
+      }
+    };
     fetchAllCategories();
   }, []);
 
   useEffect(() => {
-    const image = watch("image");
-    if (typeof image === "string" && image) {
-      setImageData(image);
+    if (selectedCategoryId) {
+      const path = getCategoryPathTwoParams(selectedCategoryId, categories);
+      setSelectedCategoryPath(path);
+      console.log("selectedCategoryId: ", selectedCategoryId);
+    } else {
+      setSelectedCategoryPath("");
     }
-  }, [watch("image")]);
-
-  const fetchAllCategories = async () => {
-    try {
-      const response = await getAllCategories();
-      setCategories(response.categoryDTOs);
-    } catch (error) {
-      // @ts-ignore
-      toast.error(error.response.data.message);
+    if (typeof imageFromForm === "string" && imageFromForm) {
+      setImageData(imageFromForm);
+    } else if (imageFromForm instanceof File) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImageData(e.target?.result as string);
+      };
+      reader.readAsDataURL(imageFromForm);
     }
-  };
+  }, [selectedCategoryId, categories, imageFromForm]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       if (file) {
+        // Validate file type
         const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
         if (!allowedTypes.includes(file.type)) {
           setError("image", {
@@ -65,6 +83,7 @@ export const UpdateProductBasicInfo = () => {
           return;
         }
 
+        // Validate file size (e.g., max 5MB)
         const maxSize = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSize) {
           setError("image", {
@@ -86,6 +105,19 @@ export const UpdateProductBasicInfo = () => {
     }
   };
 
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files.length > 0) {
+  //     const file = event.target.files[0];
+  //     setValue("image", file);
+  //     setValue("changeImage", true);
+  //     const reader = new FileReader();
+  //     reader.addEventListener("load", () => {
+  //       setImageData(reader.result as string);
+  //     });
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
   const handleCropClick = () => {
     setIsModalOpen(true);
   };
@@ -97,7 +129,7 @@ export const UpdateProductBasicInfo = () => {
   const handleDeleteImage = () => {
     setImageData(null);
     setValue("image", "");
-    setValue("changeImage", true);
+    setValue("changeImage", false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -250,119 +282,19 @@ export const UpdateProductBasicInfo = () => {
                   </div>
                   <div id="edit-main vtc-image-manager">
                     <div id="container" className="flex flex-wrap h-[96px]">
-                      {imageData && (
-                        <div
-                          id="can-drag vtc-image-manager__itembox"
-                          className="w-[96px] mb-[16px] mr-[16px] max-w-[80px] max-h-[80px]"
-                        >
-                          <div id="popover-wrap" className=" h-[80px]">
-                            <div
-                              id="shopee-image-manager__content content-fill"
-                              className="relative h-full"
-                            >
-                              <img
-                                src={imageData}
-                                alt="image"
-                                className="absolute border-[0.8px]"
-                              />
-                              <div
-                                id="shopee-image-manager__tools"
-                                className="flex justify-center gap-3 absolute bottom-0 right-0 left-0 h-[24px] w-[80px] bg-[#D6D3D1] bg-opacity-100"
-                              >
-                                <span
-                                  id="shopee-image-manager__icon shopee-image-manager__icon--crop"
-                                  className="w-[24px] h-[24px] flex items-center justify-center cursor-pointer"
-                                  onClick={handleCropClick}
-                                >
-                                  {/* Crop icon SVG */}
-                                </span>
-                                <span
-                                  id="decollator"
-                                  className="border-l h-auto w-[1px] border-gray-400"
-                                ></span>
-                                <span
-                                  id="shopee-image-manager__icon shopee-image-manager__icon--delete"
-                                  className="w-[24px] h-[24px] flex items-center justify-center cursor-pointer"
-                                  onClick={handleDeleteImage}
-                                >
-                                  {/* Delete icon SVG */}
-                                  <i
-                                    id="shopee-icon"
-                                    className="h-[16px] w-[16px]"
-                                  >
-                                    <span>
-                                      <svg
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 20.48 20.48"
-                                        className="icon"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path d="M3.2 5.12H1.92a.64.64 0 0 1 0-1.28h5.12V1.919a.64.64 0 0 1 .64-.64h5.12a.64.64 0 0 1 .64.64V3.84h5.12a.64.64 0 1 1 0 1.28h-1.28v13.44a.64.64 0 0 1-.64.64H3.84a.64.64 0 0 1-.64-.64V5.12zm8.96-1.28V2.56H8.32v1.28h3.84zM4.48 17.92H16V5.12H4.48v12.8zm3.84-2.56a.64.64 0 0 1-.64-.64v-6.4a.64.64 0 0 1 1.28 0v6.4a.64.64 0 0 1-.64.64zm3.84 0a.64.64 0 0 1-.64-.64v-6.4a.64.64 0 0 1 1.28 0v6.4a.64.64 0 0 1-.64.64z" />
-                                      </svg>
-                                    </span>
-                                  </i>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                      {imageData ? (
+                        <ImageUploadPreview
+                          src={imageData}
+                          handleCropClick={() => null}
+                          handleDeleteClick={handleDeleteImage}
+                        />
+                      ) : (
+                        <ImageUpload
+                          fileInputRef={fileInputRef}
+                          handleFileChange={handleFileChange}
+                          handleButtonClick={() => {}}
+                        />
                       )}
-                      <div
-                        id="vtc-image-manager__itembox"
-                        className="w-[96px] mb-[16px] mr-[16px] max-w-[80px] max-h-[80px]"
-                      >
-                        <div
-                          id="vtc-image-manager__content"
-                          className="relative pt-[80x] h-0"
-                        >
-                          <div
-                            id="vtc-image-manager__upload"
-                            className="flex flex-col h-[80px] border-[0.8px] hover:bg-gray-200"
-                          >
-                            <div
-                              id="vtc-file-upload"
-                              className="border-[0.8px] h-full"
-                            >
-                              <div id="vtc-upload" className="relative h-full">
-                                <div
-                                  id="vtc-upload-wrapper vtc-upload-dragger"
-                                  className="flex items-center justify-center h-full"
-                                >
-                                  <input
-                                    ref={fileInputRef}
-                                    id="vtc-upload__input"
-                                    type="file"
-                                    accept="image/*"
-                                    className="h-full w-full absolute cursor-pointer"
-                                    style={{ opacity: "0", aspectRatio: "1/1" }}
-                                    onChange={handleFileChange}
-                                  />
-                                  <div
-                                    id="vtc-image-manager__upload__content"
-                                    className="flex flex-col items-center px-[2px]"
-                                    style={{ color: "#ee4d2d" }}
-                                  >
-                                    <div id="vtc-image-manager__upload__content__icon">
-                                      {/* Upload icon SVG */}
-                                    </div>
-                                    <div
-                                      id="vtc-image-manager__upload__content__text"
-                                      style={{
-                                        fontSize: "12px",
-                                        lineHeight: "14px",
-                                        textAlign: "center",
-                                      }}
-                                    >
-                                      Thêm hình ảnh (1/9)
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -425,6 +357,7 @@ export const UpdateProductBasicInfo = () => {
                 </div>
               </div>
 
+              {/* Category Product */}
               {/* Category Product */}
               <div id="edit-row is-last-edit-row" className="flex">
                 <div
@@ -666,4 +599,26 @@ export const UpdateProductBasicInfo = () => {
       )}
     </section>
   );
+};
+
+const getCategoryPathTwoParams = (
+  categoryId: number,
+  categories: CategoryDTO[]
+): string => {
+  const path: string[] = [];
+  let currentCategoryId = categoryId;
+
+  while (currentCategoryId) {
+    const category = categories.find(
+      (cat) => cat.categoryId === currentCategoryId
+    );
+    if (category) {
+      path.unshift(category.name);
+      currentCategoryId = category.parentId;
+    } else {
+      break;
+    }
+  }
+
+  return path.join(" > ");
 };
