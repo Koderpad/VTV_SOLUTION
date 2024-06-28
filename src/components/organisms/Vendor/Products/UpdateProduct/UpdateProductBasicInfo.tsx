@@ -443,7 +443,7 @@ export const UpdateProductBasicInfo = () => {
                             message: "Mô tả sản phẩm phải có ít nhất 100 ký tự",
                           },
                           maxLength: {
-                            value: 3000,
+                            value: 113000,
                             message:
                               "Mô tả sản phẩm không được vượt quá 3000 ký tự",
                           },
@@ -487,7 +487,7 @@ export const UpdateProductBasicInfo = () => {
                               "Thông tin sản phẩm phải có ít nhất 50 ký tự",
                           },
                           maxLength: {
-                            value: 1000,
+                            value: 111000,
                             message:
                               "Thông tin sản phẩm không được vượt quá 1000 ký tự",
                           },

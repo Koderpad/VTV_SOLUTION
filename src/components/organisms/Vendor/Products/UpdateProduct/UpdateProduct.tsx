@@ -87,10 +87,16 @@ export const UpdateProduct = () => {
     }
 
     data.productVariantRequests.forEach((variant, index) => {
-      formData.append(
-        `productVariantRequests[${index}].productVariantId`,
-        variant.productVariantId.toString()
-      );
+      // formData.append(
+      //   `productVariantRequests[${index}].productVariantId`,
+      //   variant.productVariantId.toString() || ""
+      // );
+      if (variant.productVariantId) {
+        formData.append(
+          `productVariantRequests[${index}].productVariantId`,
+          variant.productVariantId.toString()
+        );
+      }
       formData.append(`productVariantRequests[${index}].sku`, variant.sku);
       formData.append(
         `productVariantRequests[${index}].originalPrice`,
@@ -117,6 +123,8 @@ export const UpdateProduct = () => {
           "false"
         );
       }
+
+      console.log("Variant loi: ", variant);
 
       variant.productAttributeRequests.forEach((attr, attrIndex) => {
         formData.append(
@@ -147,7 +155,7 @@ export const UpdateProduct = () => {
       successCallback: (response) => {
         toast.success("Cập nhật sản phẩm thành công");
         console.log("Cập nhật sản phẩm: ", response);
-        navigate("/vendor/shop/products");
+        navigate("/vendor/products");
       },
       errorFromServerCallback: (error) => {
         if (error.status === "BAD_REQUEST") {

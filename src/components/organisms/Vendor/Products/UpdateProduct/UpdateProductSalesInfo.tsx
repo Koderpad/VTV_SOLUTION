@@ -8,7 +8,7 @@ import { useFormContext } from "react-hook-form";
 import {
   ProductRequest,
   ProductVariantRequest,
-} from "@/utils/DTOs/vendor/product/Request/ProductRequest";
+} from "@/utils/DTOs/vendor/product/Request/ProductRequest_Update";
 
 interface AttributeGroup {
   name: string;
@@ -248,27 +248,56 @@ export const UpdateProductSalesInfo = () => {
       generateCombinations();
 
       // Update the form state with the new matrix data
+      // Update productVariantRequests
+      const currentProductVariants = watch("productVariantRequests");
       const newProductVariantRequests: ProductVariantRequest[] = newMatrix.map(
         (row) => {
           const attributeCells = row.filter(
             (cell) => cell.type === "attribute"
           );
+          const attributeValues = attributeCells.map(
+            (cell) => cell.value as string
+          );
+
+          // Find existing variant with matching attributes or positions
+          const existingVariant = currentProductVariants.find(
+            (variant, index) => {
+              // Check if the variant is at the same position in the array
+              if (index === newMatrix.indexOf(row)) {
+                return true;
+              }
+              // Or check if all attributes match
+              return variant.productAttributeRequests.every(
+                (attr, attrIndex) => attr.value === attributeValues[attrIndex]
+              );
+            }
+          );
+
           return {
-            productVariantId: null,
+            productVariantId: existingVariant?.productVariantId ?? null,
             sku:
-              (row.find((cell) => cell.type === "sku")?.value as string) || "",
+              existingVariant?.sku ||
+              (row.find((cell) => cell.type === "sku")?.value as string) ||
+              `SKU-${uuidv4().slice(0, 8)}`,
             image:
+              existingVariant?.image ||
               (row.find((cell) => cell.type === "image")?.value as string) ||
               "",
-            changeImage: false,
+            changeImage: existingVariant ? existingVariant.changeImage : false,
             originalPrice:
+              existingVariant?.originalPrice ||
               Number(
                 row.find((cell) => cell.type === "originalPrice")?.value
-              ) || 0,
+              ) ||
+              0,
             price:
-              Number(row.find((cell) => cell.type === "price")?.value) || 0,
+              existingVariant?.price ||
+              Number(row.find((cell) => cell.type === "price")?.value) ||
+              0,
             quantity:
-              Number(row.find((cell) => cell.type === "quantity")?.value) || 0,
+              existingVariant?.quantity ||
+              Number(row.find((cell) => cell.type === "quantity")?.value) ||
+              0,
             productAttributeRequests: attributeCells.map((cell, index) => ({
               name: attributeGroups[index]?.name || `Attribute ${index + 1}`,
               value: cell.value as string,
@@ -277,7 +306,10 @@ export const UpdateProductSalesInfo = () => {
         }
       );
 
-      console.log("productVariantRequests: ", newProductVariantRequests);
+      console.log(
+        "Updated productVariantRequests: ",
+        newProductVariantRequests
+      );
 
       setValue("productVariantRequests", newProductVariantRequests);
 
@@ -294,7 +326,148 @@ export const UpdateProductSalesInfo = () => {
     );
 
     shouldUpdateMatrix.current = false;
-  }, [attributeGroups, setValue]);
+  }, [attributeGroups, setValue, watch]);
+
+  // useEffect(() => {
+  //   if (!shouldUpdateMatrix.current) {
+  //     return;
+  //   }
+
+  //   if (attributeGroups.length === 0) {
+  //     setMatrixData([]);
+  //     setValue("productVariantRequests", []);
+  //     shouldUpdateMatrix.current = false;
+  //     return;
+  //   }
+
+  //   setMatrixData((prevMatrix) => {
+  //     const newMatrix: MatrixData = [];
+  //     const attributeCount = attributeGroups.length;
+
+  //     // Create a map of existing attribute values
+  //     const existingValuesMap = new Map<string, Set<string>>();
+  //     attributeGroups.forEach((group, index) => {
+  //       existingValuesMap.set(index.toString(), new Set(group.values));
+  //     });
+
+  //     // Function to check if a row is valid
+  //     const isRowValid = (row: CellData[]) => {
+  //       return attributeGroups.every((group, index) => {
+  //         const value = row[index].value as string;
+  //         return existingValuesMap.get(index.toString())?.has(value);
+  //       });
+  //     };
+
+  //     // Filter and update existing rows
+  //     prevMatrix.forEach((row) => {
+  //       const updatedRow = row.map((cell, cellIndex) => {
+  //         if (cell.type === "attribute") {
+  //           const group = attributeGroups[cellIndex];
+  //           if (group) {
+  //             // Check if the cell value matches a previous value
+  //             const prevValueIndex = group.prev_values.indexOf(
+  //               cell.value as string
+  //             );
+  //             if (prevValueIndex !== -1) {
+  //               // Update to the new value if it exists
+  //               return {
+  //                 ...cell,
+  //                 value: group.values[prevValueIndex] || cell.value,
+  //               };
+  //             }
+  //           }
+  //         }
+  //         return cell;
+  //       });
+
+  //       if (isRowValid(updatedRow)) {
+  //         // Trim or add attribute columns if needed
+  //         const finalRow = updatedRow
+  //           .slice(0, attributeCount)
+  //           .concat(updatedRow.slice(attributeCount));
+  //         newMatrix.push(finalRow);
+  //       }
+  //     });
+
+  //     // Generate new combinations if needed
+  //     const generateCombinations = (
+  //       current: string[] = [],
+  //       index: number = 0
+  //     ) => {
+  //       if (index === attributeGroups.length) {
+  //         const existingRow = newMatrix.find((row) =>
+  //           current.every((value, i) => row[i].value === value)
+  //         );
+  //         if (!existingRow) {
+  //           newMatrix.push([
+  //             ...current.map((value) => ({
+  //               value,
+  //               type: "attribute" as const,
+  //             })),
+  //             { value: 0, type: "originalPrice" as const },
+  //             { value: 0, type: "price" as const },
+  //             { value: 0, type: "quantity" as const },
+  //             { value: `SKU-${uuidv4().slice(0, 8)}`, type: "sku" as const },
+  //             { value: "", type: "image" as const },
+  //           ]);
+  //         }
+  //         return;
+  //       }
+  //       attributeGroups[index].values.forEach((value) =>
+  //         generateCombinations([...current, value], index + 1)
+  //       );
+  //     };
+
+  //     generateCombinations();
+
+  //     // Update the form state with the new matrix data
+  //     const newProductVariantRequests: ProductVariantRequest[] = newMatrix.map(
+  //       (row) => {
+  //         const attributeCells = row.filter(
+  //           (cell) => cell.type === "attribute"
+  //         );
+  //         return {
+  //           productVariantId: null,
+  //           sku:
+  //             (row.find((cell) => cell.type === "sku")?.value as string) || "",
+  //           image:
+  //             (row.find((cell) => cell.type === "image")?.value as string) ||
+  //             "",
+  //           changeImage: false,
+  //           originalPrice:
+  //             Number(
+  //               row.find((cell) => cell.type === "originalPrice")?.value
+  //             ) || 0,
+  //           price:
+  //             Number(row.find((cell) => cell.type === "price")?.value) || 0,
+  //           quantity:
+  //             Number(row.find((cell) => cell.type === "quantity")?.value) || 0,
+  //           productAttributeRequests: attributeCells.map((cell, index) => ({
+  //             name: attributeGroups[index]?.name || `Attribute ${index + 1}`,
+  //             value: cell.value as string,
+  //           })),
+  //         };
+  //       }
+  //     );
+
+  //     console.log("productVariantRequests: ", newProductVariantRequests);
+
+  //     setValue("productVariantRequests", newProductVariantRequests);
+
+  //     return newMatrix;
+  //   });
+
+  //   // Update prev_name and prev_values after processing
+  //   setAttributeGroups((prevGroups) =>
+  //     prevGroups.map((group) => ({
+  //       ...group,
+  //       prev_name: group.name,
+  //       prev_values: [...group.values],
+  //     }))
+  //   );
+
+  //   shouldUpdateMatrix.current = false;
+  // }, [attributeGroups, setValue]);
 
   const handleAddAttributeGroup = () => {
     if (attributeGroups.length < 2) {
@@ -390,6 +563,10 @@ export const UpdateProductSalesInfo = () => {
     groupIndex: number,
     valueIndex: number
   ) => {
+    const deletedValue = attributeGroups[groupIndex].values[valueIndex];
+    console.log("deletedValue:", deletedValue);
+
+    // Update attributeGroups
     setAttributeGroups((prevGroups) => {
       const newGroups = [...prevGroups];
       newGroups[groupIndex] = {
@@ -399,14 +576,111 @@ export const UpdateProductSalesInfo = () => {
       return newGroups;
     });
 
+    // Update matrixData
     setMatrixData((prevData) =>
-      prevData.filter(
-        (row) =>
-          row[groupIndex].value !==
-          attributeGroups[groupIndex].values[valueIndex]
-      )
+      prevData.filter((row) => row[groupIndex].value !== deletedValue)
     );
+
+    console.log("productVariantRequests:", productVariants);
+
+    const updatedVariants = productVariants.filter(
+      (variant) =>
+        variant.productAttributeRequests[groupIndex].value !== deletedValue
+    );
+
+    console.log("updatedVariants:", updatedVariants);
+
+    // Update productVariantRequests in form
+    setValue("productVariantRequests", updatedVariants);
+
+    // Trigger validation after a short delay to ensure state updates have been processed
+    setTimeout(() => {
+      trigger("productVariantRequests");
+    }, 0);
   };
+
+  // const handleDeleteAttributeValue = (
+  //   groupIndex: number,
+  //   valueIndex: number
+  // ) => {
+  //   const deletedValue = attributeGroups[groupIndex].values[valueIndex];
+  //   console.log("deletedValue:", deletedValue);
+
+  //   // Update attributeGroups
+  //   setAttributeGroups((prevGroups) => {
+  //     const newGroups = [...prevGroups];
+  //     newGroups[groupIndex] = {
+  //       ...newGroups[groupIndex],
+  //       values: newGroups[groupIndex].values.filter((_, i) => i !== valueIndex),
+  //     };
+  //     return newGroups;
+  //   });
+
+  //   // Update matrixData
+  //   setMatrixData((prevData) =>
+  //     prevData.filter((row) => row[groupIndex].value !== deletedValue)
+  //   );
+
+  //   console.log("productVariantRequests:", productVariants);
+
+  //   const updatedVariants = productVariants.map((variant) => {
+  //     if (variant.productAttributeRequests[groupIndex].value !== deletedValue) {
+  //       return {
+  //         ...variant,
+  //       };
+  //     }
+  //     return null;
+  //   });
+  //   const filteredVariants: ProductVariantRequest[] = updatedVariants.filter(
+  //     (variant) => variant !== null
+  //   );
+  //   console.log("filteredVariants:", filteredVariants);
+
+  //   // Update productVariantRequests in form
+  //   setValue("productVariantRequests", () => filteredVariants);
+
+  //   // Trigger validation after a short delay to ensure state updates have been processed
+  //   setTimeout(() => {
+  //     trigger("productVariantRequests");
+  //   }, 0);
+  // };
+
+  // const handleDeleteAttributeValue = (
+  //   groupIndex: number,
+  //   valueIndex: number
+  // ) => {
+  //   setAttributeGroups((prevGroups) => {
+  //     const newGroups = [...prevGroups];
+  //     newGroups[groupIndex] = {
+  //       ...newGroups[groupIndex],
+  //       values: newGroups[groupIndex].values.filter((_, i) => i !== valueIndex),
+  //     };
+  //     return newGroups;
+  //   });
+
+  //   setMatrixData((prevData) =>
+  //     prevData.filter(
+  //       (row) =>
+  //         row[groupIndex].value !==
+  //         attributeGroups[groupIndex].values[valueIndex]
+  //     )
+  //   );
+
+  //   // Update the form state
+  //   setValue("productVariantRequests", (prevVariants) => {
+  //     const updatedVariants = prevVariants.map((variant) => {
+  //       const newAttributes = variant.productAttributeRequests.filter(
+  //         (_, i) => i !== groupIndex
+  //       );
+  //       return {
+  //         ...variant,
+  //         productAttributeRequests: newAttributes,
+  //       };
+  //     });
+
+  //     return updatedVariants;
+  //   });
+  // };
 
   const handleOpenModal = (index: number) => {
     setOpenModalIndex(index);
@@ -569,6 +843,7 @@ const AttributeGroupInput = ({
               className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
+              type="button"
               onClick={() => onDeleteValue(index)}
               className="ml-2 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded transition duration-300"
             >

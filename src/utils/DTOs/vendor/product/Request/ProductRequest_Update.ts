@@ -4,7 +4,7 @@ export interface ProductAttributeRequest {
 }
 
 export interface ProductVariantRequest {
-  productVariantId: number;
+  productVariantId: number | null;
   sku: string;
   image: string | File | null;
   changeImage: boolean;
