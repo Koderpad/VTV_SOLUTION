@@ -4,7 +4,7 @@ import { UpdateProductBasicInfo } from "./UpdateProductBasicInfo";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProductRequest } from "@/utils/DTOs/vendor/product/Request/ProductRequest";
+import { ProductRequest } from "@/utils/DTOs/vendor/product/Request/ProductRequest_Update";
 import { useUpdateProductMutation } from "@/redux/features/vendor/product/productShopApiSlice";
 import { ServerError } from "@/utils/DTOs/common/ServerError";
 import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
@@ -46,7 +46,7 @@ export const UpdateProduct = () => {
         // Set product variants
         const productVariants = productDTO.productVariantDTOs.map(
           (variant) => ({
-            // productVariantId: variant.productVariantId,
+            productVariantId: variant.productVariantId,
             sku: variant.sku,
             image: variant.image,
             originalPrice: variant.originalPrice,
@@ -87,10 +87,10 @@ export const UpdateProduct = () => {
     }
 
     data.productVariantRequests.forEach((variant, index) => {
-      // formData.append(
-      //   `productVariantRequests[${index}].productVariantId`,
-      //   variant.productVariantId.toString()
-      // );
+      formData.append(
+        `productVariantRequests[${index}].productVariantId`,
+        variant.productVariantId.toString()
+      );
       formData.append(`productVariantRequests[${index}].sku`, variant.sku);
       formData.append(
         `productVariantRequests[${index}].originalPrice`,
