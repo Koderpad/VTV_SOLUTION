@@ -90,6 +90,7 @@ import { UpdateShopProfilePage } from "./pages/vendor/UpdateShopProfilePage.tsx"
 import { AddProductPage } from "./pages/vendor/AddProductPage.tsx";
 import { ProductsPage } from "./pages/vendor/ProductsPage.tsx";
 import { UpdateProductPage } from "./pages/vendor/UpdateProductPage.tsx";
+import { CategoriesPage } from "./pages/vendor/CategoriesPage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -229,7 +230,6 @@ function App() {
               <Route path="shop/detail/:shopId" element={<ShopDetail />} />
               <Route path="shops/locked" element={<ManagerShops />} />
 
-
               <Route path="products" element={<ProductManagerPage />} />
               <Route
                 path="product/detail/:productId"
@@ -244,8 +244,6 @@ function App() {
                 element={<OrderDetailManager />}
               />
               <Route path="order/revenue" element={<StatisticsOrders />} />
-
-
 
               <Route
                 path="transport-providers"
@@ -279,8 +277,8 @@ function App() {
               <Route path="categories" element={<CategoryManagerPage />} />
               <Route path="category/add" element={<AddNewCategory />} />
               <Route
-                  path="category/update/:categoryId"
-                  element={<UpdateCategory />}
+                path="category/update/:categoryId"
+                element={<UpdateCategory />}
               />
               <Route path="category/:categoryId" element={<CategoryDetail />} />
 
@@ -292,41 +290,40 @@ function App() {
               <Route path="vouchers" element={<VoucherSystemManagerPage />} />
               <Route path="voucher/add" element={<AddNewVoucherSystem />} />
               <Route
-                  path="voucher/update/:voucherId"
-                  element={<UpdateVoucherSystem />}
+                path="voucher/update/:voucherId"
+                element={<UpdateVoucherSystem />}
               />
               <Route
-                  path="voucher/:voucherId"
-                  element={<VoucherSystemDetail />}
+                path="voucher/:voucherId"
+                element={<VoucherSystemDetail />}
               />
 
               <Route path="customers" element={<CustomerManagerPage />} />
               <Route
-                  path="customers/revenue"
-                  element={<StatisticsCustomers />}
+                path="customers/revenue"
+                element={<StatisticsCustomers />}
               />
               <Route
-                  path="customer/detail/:customerId"
-                  element={<CustomerDetail />}
+                path="customer/detail/:customerId"
+                element={<CustomerDetail />}
               />
 
               <Route path="shops" element={<ShopManagerPage />} />
               <Route path="shop/detail/:shopId" element={<ShopDetail />} />
               <Route path="shops/locked" element={<ManagerShops />} />
 
-
               <Route path="products" element={<ProductManagerPage />} />
               <Route
-                  path="product/detail/:productId"
-                  element={<ProductDetail />}
+                path="product/detail/:productId"
+                element={<ProductDetail />}
               />
               <Route path="products/locked" element={<ManagerProducts />} />
               <Route path="product/revenue" element={<StatisticsProducts />} />
 
               <Route path="orders" element={<OrderManagerPage />} />
               <Route
-                  path="order/detail/:orderId"
-                  element={<OrderDetailManager />}
+                path="order/detail/:orderId"
+                element={<OrderDetailManager />}
               />
               <Route path="order/revenue" element={<StatisticsOrders />} />
 
@@ -335,32 +332,31 @@ function App() {
               <Route path="add_manager" element={<AddNewManager />} />
 
               <Route
-                  path="transport-providers"
-                  element={<TransportProviderManagerPage />}
+                path="transport-providers"
+                element={<TransportProviderManagerPage />}
               />
               <Route
-                  path="transport-provider/add"
-                  element={<AddNewTransportProvider />}
+                path="transport-provider/add"
+                element={<AddNewTransportProvider />}
               />
               <Route
-                  path="transport-provider/detail/:transportProviderId"
-                  element={<TransportProviderDetail />}
+                path="transport-provider/detail/:transportProviderId"
+                element={<TransportProviderDetail />}
               />
               <Route
-                  path="transport-provider/update/:transportProviderId"
-                  element={<UpdateTransportProviderProvinces />}
+                path="transport-provider/update/:transportProviderId"
+                element={<UpdateTransportProviderProvinces />}
               />
               <Route
-                  path="transport-provider/update-fee-shipping/:transportProviderId"
-                  element={<UpdateTransportProviderFeeShipping />}
+                path="transport-provider/update-fee-shipping/:transportProviderId"
+                element={<UpdateTransportProviderFeeShipping />}
               />
               <Route
-                  path="transport-provider/revenue"
-                  element={<StatisticsTransports />}
+                path="transport-provider/revenue"
+                element={<StatisticsTransports />}
               />
             </Route>
           </Route>
-
 
           <Route element={<RequireAuth allowedRoles={["PROVIDER"]} />}>
             <Route path="/provider" element={<DashboardProvider />}>
@@ -487,6 +483,9 @@ function App() {
                 path="product/edit/:productId"
                 element={<UpdateProductPage />}
               />
+
+              {/* category vendor */}
+              <Route path="categories" element={<CategoriesPage />} />
             </Route>
           </Route>
 

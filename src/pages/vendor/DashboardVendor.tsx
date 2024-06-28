@@ -60,8 +60,8 @@ export const DashboardVendor = () => {
     if (currentPath === "brands") {
       setSelectedTitle("ManagerBrand");
     }
-    if (currentPath === "shops") {
-      setSelectedTitle("ManagerShop");
+    if (currentPath === "categories") {
+      setSelectedTitle("Categories");
     }
 
     if (currentPath === "managers") {
@@ -126,17 +126,17 @@ export const DashboardVendor = () => {
             </li>
 
             <Link
-              to="shops"
+              to="categories"
               className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                selectedTitle === "ManagerShop"
+                selectedTitle === "Categories"
                   ? "bg-gray-100 hover:bg-green-100"
                   : "hover:bg-green-100"
               }`}
-              onClick={() => handleTitleClick("ManagerShop")}
+              onClick={() => handleTitleClick("Categories")}
             >
               <FontAwesomeIcon icon={faStore} size="sm" color="#666" />
               <div className="ml-2" />
-              Quản lý cửa hàng
+              Quản lý danh mục
             </Link>
 
             <Link
