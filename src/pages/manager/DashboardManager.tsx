@@ -150,7 +150,7 @@ export const DashboardManager = () => {
                             >
                                 <FontAwesomeIcon icon={faUsers} size="sm" color="#666"/>
                                 <div className="ml-2"/>
-                                Quản lý người dùng
+                                Quản lý khách hàng
                             </Link>
                         </li>
 
@@ -197,7 +197,7 @@ export const DashboardManager = () => {
                             >
                                 <FontAwesomeIcon icon={faTicketAlt} size="sm" color="#666"/>
                                 <div className="ml-2"/>
-                                Quản lý mã giảm giá
+                                Quản lý mã giảm giá hệ thống
                             </Link>
                         </li>
 
