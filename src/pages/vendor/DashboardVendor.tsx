@@ -54,21 +54,11 @@ export const DashboardVendor = () => {
       setSelectedTitle("ManagerOrder");
     }
 
-    if (currentPath === "categories") {
-      setSelectedTitle("ManagerCategory");
-    }
     if (currentPath === "brands") {
       setSelectedTitle("ManagerBrand");
     }
     if (currentPath === "categories") {
       setSelectedTitle("Categories");
-    }
-
-    if (currentPath === "managers") {
-      setSelectedTitle("Manager");
-    }
-    if (currentPath === "transport-providers") {
-      setSelectedTitle("ManagerTransportProvider");
     }
   }, [location.pathname]);
 
@@ -119,7 +109,7 @@ export const DashboardVendor = () => {
                 }`}
                 onClick={() => handleTitleClick("Products")}
               >
-                <FontAwesomeIcon icon={faUsers} size="sm" color="#666" />
+                <FontAwesomeIcon icon={faBox} size="sm" color="#666" />
                 <div className="ml-2" />
                 Quản lý sản phẩm
               </Link>
@@ -134,23 +124,9 @@ export const DashboardVendor = () => {
               }`}
               onClick={() => handleTitleClick("Categories")}
             >
-              <FontAwesomeIcon icon={faStore} size="sm" color="#666" />
+              <FontAwesomeIcon icon={faTag} size="sm" color="#666" />
               <div className="ml-2" />
               Quản lý danh mục
-            </Link>
-
-            <Link
-              to="transport-providers"
-              className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                selectedTitle === "ManagerTransportProvider"
-                  ? "bg-gray-100 hover:bg-green-100"
-                  : "hover:bg-green-100"
-              }`}
-              onClick={() => handleTitleClick("ManagerTransportProvider")}
-            >
-              <FontAwesomeIcon icon={faTruck} size="sm" color="#666" />
-              <div className="ml-2" />
-              Quản lý nhà cung cấp vận chuyển
             </Link>
 
             <li>
@@ -166,22 +142,6 @@ export const DashboardVendor = () => {
                 <FontAwesomeIcon icon={faTicketAlt} size="sm" color="#666" />
                 <div className="ml-2" />
                 Quản lý mã giảm giá
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                to="products"
-                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                  selectedTitle === "ManagerProduct"
-                    ? "bg-gray-100 hover:bg-green-100"
-                    : "hover:bg-green-100"
-                }`}
-                onClick={() => handleTitleClick("ManagerProduct")}
-              >
-                <FontAwesomeIcon icon={faBox} size="sm" color="#666" />
-                <div className="ml-2" />
-                Quản lý sản phẩm
               </Link>
             </li>
 
@@ -203,22 +163,6 @@ export const DashboardVendor = () => {
 
             <li>
               <Link
-                to="categories"
-                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                  selectedTitle === "ManagerCategory"
-                    ? "bg-gray-100 hover:bg-green-100"
-                    : "hover:bg-green-100"
-                }`}
-                onClick={() => handleTitleClick("ManagerCategory")}
-              >
-                <FontAwesomeIcon icon={faTag} size="sm" color="#666" />
-                <div className="ml-2" />
-                Quản lý danh mục
-              </Link>
-            </li>
-
-            <li>
-              <Link
                 to="brands"
                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
                   selectedTitle === "ManagerBrand"
@@ -230,22 +174,6 @@ export const DashboardVendor = () => {
                 <FontAwesomeIcon icon={faBuildingUser} size="sm" color="#666" />
                 <div className="ml-2" />
                 Quản lý thương hiệu
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                to="managers"
-                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                  selectedTitle === "Manager"
-                    ? "bg-gray-100 hover:bg-green-100"
-                    : "hover:bg-green-100"
-                }`}
-                onClick={() => handleTitleClick("Manager")}
-              >
-                <FontAwesomeIcon icon={faUserCog} size="sm" color="#666" />
-                <div className="ml-2" />
-                Quản lý quản trị viên
               </Link>
             </li>
           </ul>
