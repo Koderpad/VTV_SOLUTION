@@ -79,8 +79,8 @@ export const DashboardVendor = () => {
       <div className="grid grid-cols-2 h-full sm:grid-cols-6">
         <div className="w-auto m-4 col-start-1 col-end-2 flex h-full flex-col rounded-xl bg-white p-8">
           <div className="flex flex-col items-center">
-            <h2 className="text-2xl font-semibold text-gray-700 mt-4">
-              Bảng điều khiển
+            <h2 className="text-2xl font-semibold text-gray-700 ">
+              Bảng điều khiển cửa hàng
             </h2>
           </div>
           <ul className="space-y-2">

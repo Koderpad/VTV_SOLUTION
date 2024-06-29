@@ -92,6 +92,7 @@ import { ProductsPage } from "./pages/vendor/ProductsPage.tsx";
 import { UpdateProductPage } from "./pages/vendor/UpdateProductPage.tsx";
 import { CategoriesPage } from "./pages/vendor/CategoriesPage.tsx";
 import { OrdersPage } from "./pages/vendor/OrdersPage.tsx";
+import { VouchersPage } from "./pages/vendor/VouchersPage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -490,6 +491,9 @@ function App() {
 
               {/* order */}
               <Route path="orders" element={<OrdersPage />} />
+
+              {/* voucher */}
+              <Route path="vouchers" element={<VouchersPage />} />
             </Route>
           </Route>
 
