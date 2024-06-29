@@ -126,7 +126,7 @@ const AddNewTransportProvider = () => {
                 Quay Lại
             </button>
 
-            <h1 className="text-4xl font-bold text-black mb-8 text-center">Thêm Nhà Cung Cấp Vận Chuyển Mới</h1>
+            <h1 className="text-4xl font-bold text-black mb-8 text-center">Thêm Đơn Vị Cung Cấp Vận Chuyển Mới</h1>
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
