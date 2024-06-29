@@ -120,16 +120,20 @@ export const Vouchers: React.FC = () => {
 
   const handleEditDialog = (voucher: VoucherDTO) => {
     // setSelectedVoucher(voucherId);
+    setSelectedVoucher(voucher.voucherId);
     setSelectedVoucherDTO(() => voucher);
     resetEditForm();
     setIsEditDialogOpen(true);
   };
 
   const handleEditVoucher = async (data: VoucherShopRequest) => {
-    if (selectedVoucher) {
+    if (selectedVoucherDTO) {
       handleApiCall<VoucherShopResponse, ServerError>({
         callbackFn: async () => {
-          return await updateVoucher({ voucherId: selectedVoucher, data });
+          return await updateVoucher({
+            voucherId: selectedVoucherDTO.voucherId,
+            data,
+          });
         },
         successCallback: (response) => {
           toast.success("Voucher đã được cập nhật thành công");
