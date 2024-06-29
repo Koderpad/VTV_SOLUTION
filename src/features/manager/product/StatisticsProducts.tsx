@@ -83,7 +83,7 @@ const StatisticsProducts = () => {
                     Danh sách sản phẩm
                 </button>
             </div>
-            <h1 className="text-2xl font-bold mb-4 text-center">Thống Kê Sản Phẩm</h1>
+            <h1 className="text-2xl font-bold mb-4 text-center">Thống Kê Sản Phẩm Bán Chạy</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label className="block mb-2 font-medium">
