@@ -17,6 +17,7 @@ import {
   faUserCog,
 } from "@fortawesome/free-solid-svg-icons";
 import StatisticsFeeOrder from "@/features/manager/manager/StatisticsFeeOrder.tsx";
+import { RevenuePage } from "./RevenuePage";
 
 export const DashboardVendor = () => {
   const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -30,7 +31,7 @@ export const DashboardVendor = () => {
     const currentPath = location.pathname.split("/").pop();
     if (currentPath === undefined) return;
 
-    if (currentPath === "manager") {
+    if (currentPath === "vendor") {
       setSelectedTitle("Home");
       setIsShow(true);
     } else {
@@ -79,9 +80,18 @@ export const DashboardVendor = () => {
       <div className="grid grid-cols-2 h-full sm:grid-cols-6">
         <div className="w-auto m-4 col-start-1 col-end-2 flex h-full flex-col rounded-xl bg-white p-8">
           <div className="flex flex-col items-center">
-            <h2 className="text-2xl font-semibold text-gray-700 ">
+            <Link
+              to="/vendor"
+              // className="text-2xl font-semibold text-gray-700 "
+              className={`text-2xl font-semibold text-gray-700 rounded-lg ${
+                selectedTitle === "Home"
+                  ? "hover:bg-green-100 text-green-400 "
+                  : "hover:bg-green-100 "
+              }`}
+              onClick={() => handleTitleClick("Home")}
+            >
               Bảng điều khiển cửa hàng
-            </h2>
+            </Link>
           </div>
           <ul className="space-y-2">
             <li>
@@ -160,22 +170,6 @@ export const DashboardVendor = () => {
                 Quản lý đơn hàng
               </Link>
             </li>
-
-            <li>
-              <Link
-                to="brands"
-                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                  selectedTitle === "ManagerBrand"
-                    ? "bg-gray-100 hover:bg-green-100"
-                    : "hover:bg-green-100"
-                }`}
-                onClick={() => handleTitleClick("ManagerBrand")}
-              >
-                <FontAwesomeIcon icon={faBuildingUser} size="sm" color="#666" />
-                <div className="ml-2" />
-                Quản lý thương hiệu
-              </Link>
-            </li>
           </ul>
 
           <a
@@ -203,8 +197,8 @@ export const DashboardVendor = () => {
 
         {isShow ? (
           <div className="w-auto m-4 col-start-2 col-end-7  p-8 bg-white rounded-xl flex ">
-            <div className="font-medium text-gray-600">
-              <StatisticsFeeOrder />
+            <div className="font-medium text-gray-600 w-full">
+              <RevenuePage />
             </div>
           </div>
         ) : (

@@ -474,6 +474,8 @@ function App() {
           </Route>
 
           <Route element={<RequireAuth allowedRoles={["VENDOR"]} />}>
+            {/* revenue */} // Khong co router, co ui
+            {/* vendor dashboard */}
             <Route path="/vendor" element={<DashboardVendor />}>
               <Route path="profile" element={<ShopProfilePage />} />
               <Route path="profile/edit" element={<UpdateShopProfilePage />} />
