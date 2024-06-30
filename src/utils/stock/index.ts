@@ -10,9 +10,15 @@ import { ChatMessageRequest } from "../DTOs/chat/Request/ChatMessageRequest";
 let stompClient: Client | null = null;
 let connectPromise: Promise<void> | null = null;
 const subscriptions: { [key: string]: StompSubscription } = {};
+let token: string | null = null;
 
-export const initSocket = (token: string): Promise<void> => {
-  if (!token) return Promise.reject("No token provided");
+const RECONNECT_DELAY = 5000;
+const HEARTBEAT_INCOMING = 4000;
+const HEARTBEAT_OUTGOING = 4000;
+
+export const initSocket = (authToken: string): Promise<void> => {
+  if (!authToken) return Promise.reject("No token provided");
+  token = authToken;
 
   if (connectPromise) return connectPromise;
 
@@ -25,9 +31,12 @@ export const initSocket = (token: string): Promise<void> => {
     connectHeaders: {
       Authorization: token,
     },
-    debug: function (str) {
-      console.log(str);
+    debug: (str) => {
+      console.log(`STOMP: ${str}`);
     },
+    reconnectDelay: RECONNECT_DELAY,
+    heartbeatIncoming: HEARTBEAT_INCOMING,
+    heartbeatOutgoing: HEARTBEAT_OUTGOING,
   });
 
   connectPromise = new Promise((resolve, reject) => {
@@ -35,18 +44,23 @@ export const initSocket = (token: string): Promise<void> => {
       reject(new Error("STOMP client not initialized"));
       return;
     }
+
     stompClient.onConnect = (frame) => {
-      console.log("Socket connected");
+      console.log("Socket connected successfully");
       if (frame) {
-        console.log("Frame: ", frame);
+        console.log("Connected frame:", frame);
       }
       resolve();
     };
 
-    stompClient!.onStompError = (frame) => {
-      console.log("Broker reported error: " + frame.headers["message"]);
-      console.log("Additional details: " + frame.body);
-      reject(new Error("STOMP connection error"));
+    stompClient.onStompError = (frame) => {
+      console.error("STOMP error:", frame.headers["message"], frame.body);
+      reject(new Error(`STOMP connection error: ${frame.headers["message"]}`));
+    };
+
+    stompClient.onWebSocketClose = (event) => {
+      console.log("WebSocket connection closed", event);
+      // Reconnection is handled automatically by stompjs
     };
 
     stompClient.activate();
@@ -64,6 +78,7 @@ export const disconnectSocket = () => {
     stompClient = null;
   }
   connectPromise = null;
+  token = null;
 };
 
 export const subscribeToRoomMessages = async (
@@ -75,30 +90,88 @@ export const subscribeToRoomMessages = async (
 
   await connectPromise;
 
-  console.log("subscribeToRoomMessages roomChatId: ", roomChatId);
-
   if (subscriptions[roomChatId]) {
-    console.log("Already subscribed to room: ", roomChatId);
+    console.log("Already subscribed to room:", roomChatId);
     return () => {};
   }
 
-  subscriptions[roomChatId] = stompClient.subscribe(
-    `/room/${roomChatId}/chat`,
-    (message) => {
-      console.log("Received message in room: ", roomChatId, message);
-      if (message.body) {
-        const newMessage = JSON.parse(message.body);
-        store.dispatch(addMessage(newMessage));
-        store.dispatch(updateRoomChat(newMessage));
-      }
+  return new Promise((resolve, reject) => {
+    try {
+      subscriptions[roomChatId] = stompClient!.subscribe(
+        `/room/${roomChatId}/chat`,
+        (message) => {
+          console.log("Received message in room:", roomChatId, message);
+          if (message.body) {
+            const newMessage = JSON.parse(message.body);
+            store.dispatch(addMessage(newMessage));
+            store.dispatch(updateRoomChat(newMessage));
+          }
+        },
+        {
+          id: `sub-${roomChatId}`,
+          ack: "client",
+        }
+      );
+      resolve(() => {
+        if (subscriptions[roomChatId]) {
+          subscriptions[roomChatId].unsubscribe();
+          delete subscriptions[roomChatId];
+        }
+      });
+    } catch (error) {
+      console.error("Error subscribing to room:", error);
+      reject(error);
     }
-  );
+  });
+};
+
+export const subscribeToMultipleRooms = async (
+  roomChatIds: string[]
+): Promise<() => void> => {
+  if (!stompClient) {
+    throw new Error("STOMP client not initialized");
+  }
+
+  await connectPromise;
+
+  const unsubscribeFunctions: (() => void)[] = [];
+
+  for (const roomChatId of roomChatIds) {
+    if (subscriptions[roomChatId]) {
+      console.log("Already subscribed to room:", roomChatId);
+      continue;
+    }
+
+    try {
+      subscriptions[roomChatId] = stompClient!.subscribe(
+        `/room/${roomChatId}/chat`,
+        (message) => {
+          console.log("Received message in room:", roomChatId, message);
+          if (message.body) {
+            const newMessage = JSON.parse(message.body);
+            store.dispatch(addMessage(newMessage));
+            store.dispatch(updateRoomChat(newMessage));
+          }
+        },
+        {
+          id: `sub-${roomChatId}`,
+          ack: "client",
+        }
+      );
+
+      unsubscribeFunctions.push(() => {
+        if (subscriptions[roomChatId]) {
+          subscriptions[roomChatId].unsubscribe();
+          delete subscriptions[roomChatId];
+        }
+      });
+    } catch (error) {
+      console.error("Error subscribing to room:", roomChatId, error);
+    }
+  }
 
   return () => {
-    if (subscriptions[roomChatId]) {
-      subscriptions[roomChatId].unsubscribe();
-      delete subscriptions[roomChatId];
-    }
+    unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
   };
 };
 
