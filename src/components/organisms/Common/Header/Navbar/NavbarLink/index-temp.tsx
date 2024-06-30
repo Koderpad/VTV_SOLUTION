@@ -3,8 +3,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { AccountTooltip } from "../../Tooltips/Account";
 
-
-
 export const NavbarLink = () => {
   const content = [
     { name: "Thong bao cua hang ne nha", link: "/thong-bao-cua-hang" },
@@ -17,7 +15,7 @@ export const NavbarLink = () => {
 
   return (
     <div className="flex gap-2 items-center">
-        <NotificationTooltip />
+      <NotificationTooltip />
       {isAuthenticated ? (
         <AccountTooltip username={user!.username} />
       ) : (
@@ -26,9 +24,9 @@ export const NavbarLink = () => {
             text-xl font-medium p-1
             "
         >
-          <a href="/common/Login">Đăng nhập</a>
+          <a href="/login">Đăng nhập</a>
           <span className="mx-2">/</span>
-          <a href="/common/Register">Đăng ký</a>
+          <a href="/register">Đăng ký</a>
         </div>
       )}
     </div>

@@ -1,5 +1,9 @@
 import { FC } from "react";
 import { A } from "@/components/atoms/Link/A";
+import { logOut } from "@/redux/features/common/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { persistor } from "@/redux/store";
 
 interface ContentConfig {
   name: string;
@@ -19,13 +23,22 @@ const content: ContentConfig[] = [
     name: "Đơn mua",
     link: "/user/account/history-purchase",
   },
-  {
-    name: "Đăng xuất",
-    link: "/dang-xuat",
-  },
+  // {
+  //   name: "Đăng xuất",
+  //   link: "/logout",
+  // },
 ];
 
 export const AccountTooltip: FC<AccountTooltipProps> = ({ username }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+    dispatch(logOut());
+    navigate("/login");
+    await persistor.purge();
+  };
   return (
     <>
       <div className="px-3 text-left md:cursor-pointer group ">
@@ -52,6 +65,17 @@ export const AccountTooltip: FC<AccountTooltipProps> = ({ username }) => {
                     </A>
                   </div>
                 ))}
+                <div
+                  key={99}
+                  className=" text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis"
+                >
+                  <span
+                    onClick={handleLogout}
+                    className="flex items-center hover:text-blue-600"
+                  >
+                    Đăng xuất
+                  </span>
+                </div>
               </div>
             </div>
           </div>
