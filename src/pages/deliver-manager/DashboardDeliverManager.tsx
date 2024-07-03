@@ -5,7 +5,6 @@ import {useDispatch} from "react-redux";
 import {persistor} from "@/redux/store";
 import {faHome, faInfoCircle, faUser, faTruck, faChartLine, faSignOutAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import HomeProviderPage from "@/pages/provider/HomeProviderPage.tsx";
 import HomeDeliverManager from "@/pages/deliver-manager/HomeDeliverManagerPage.tsx";
 
 export const DashboardDeliverManager = () => {
@@ -107,7 +106,7 @@ export const DashboardDeliverManager = () => {
                     onClick={() => handleTitleClick("ProviderEmployee")}
                 >
                   <FontAwesomeIcon icon={faUser} className="mr-3 h-6 w-6"/>
-                  Quản lý nhân viên
+                  Quản lý nhân viên vận chuyển của đơn vị vận chuyển
                 </Link>
               </li>
 
