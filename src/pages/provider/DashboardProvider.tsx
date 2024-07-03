@@ -106,7 +106,7 @@ export const DashboardProvider = () => {
                                 onClick={() => handleTitleClick("ProviderEmployee")}
                             >
                                 <FontAwesomeIcon icon={faUser} className="mr-3 h-6 w-6"/>
-                                Quản lý nhân viên
+                                Quản lý nhân viên vận chuyển của đơn vị vận chuyển
                             </Link>
                         </li>
 
