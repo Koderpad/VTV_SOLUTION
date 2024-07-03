@@ -3,6 +3,7 @@ import { apiSlice } from "../../../api";
 import { RegisterRequest } from "@/utils/DTOs/common/Auth/Request/RegisterRequest";
 import { ActiveAccountRequest } from "@/utils/DTOs/common/Auth/Request/ActiveAccountRequest";
 import { SendEmailResponse } from "@/utils/DTOs/common/Auth/Response/SendEmailResponse";
+import { ForgotPasswordRequest } from "@/utils/DTOs/common/Auth/Request/ForgotPasswordRequest";
 
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -35,7 +36,21 @@ export const authApi = apiSlice.injectEndpoints({
         url: `/customer/active-account/send-email`,
         params: { username },
       }),
-      keepUnusedDataFor: 5,
+      keepUnusedDataFor: 10,
+    }),
+    forgotPassword: builder.query<SendEmailResponse, { username: string }>({
+      query: ({ username }) => ({
+        url: `/customer/forgot-password`,
+        params: { username },
+      }),
+      keepUnusedDataFor: 10,
+    }),
+    resetPassword: builder.mutation<RegisterResponse, ForgotPasswordRequest>({
+      query: (data) => ({
+        url: `/customer/reset-password`,
+        method: "PATCH",
+        body: data,
+      }),
     }),
     getUser: builder.query({ query: () => "/customer/profile" }),
     login22: builder.mutation({
@@ -53,6 +68,8 @@ export const {
   useRegisterMutation,
   useActiveAccountMutation,
   useActiveAccountSendEmailQuery,
+  useForgotPasswordQuery,
+  useResetPasswordMutation,
   useGetUserQuery,
   useLogin22Mutation,
 } = authApi;

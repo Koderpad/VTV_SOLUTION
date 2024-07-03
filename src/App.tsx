@@ -96,6 +96,7 @@ import { VouchersPage } from "./pages/vendor/VouchersPage.tsx";
 import { RegisterForm } from "./features/common/auth/components/presentational/RegisterForm.tsx";
 import RegisterPage from "./pages/common/Register.tsx";
 import ActiveAccountPage from "./pages/common/ActiveAccount.tsx";
+import ForgotPasswordPage from "./pages/common/ForgotPassword.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -185,6 +186,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/active-account" element={<ActiveAccountPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           <Route path="/home/" element={<Home />} />
           <Route path="/" element={<Home />} />

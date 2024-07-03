@@ -28,8 +28,13 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<RegisterRequest>();
+  } = useForm<RegisterRequest>({
+    defaultValues: {
+      gender: true,
+    },
+  });
   const [registerUser, { isLoading, error }] = useRegisterMutation();
   const [isSuccess, setIsSuccess] = useState(false);
   const [countdown, setCountdown] = useState(10);
@@ -47,8 +52,13 @@ export function RegisterForm() {
   }, [isSuccess, countdown, navigate]);
 
   const onSubmit = async (data: RegisterRequest) => {
+    console.log(data);
     try {
-      const data_ = await registerUser(data).unwrap();
+      const dataToSubmit = {
+        ...data,
+        gender: Boolean(data.gender), // Đảm bảo gender là boolean
+      };
+      const data_ = await registerUser(dataToSubmit).unwrap();
       setIsSuccess(true);
       setNotify(data_.message);
     } catch (err) {
@@ -115,9 +125,10 @@ export function RegisterForm() {
           <div className="grid gap-2">
             <Label htmlFor="gender">Giới tính</Label>
             <Select
-              onValueChange={(value) =>
-                register("gender").onChange({ target: { value } })
-              }
+              onValueChange={(value) => {
+                setValue("gender", value === "true");
+              }}
+              defaultValue="true"
               disabled={isSuccess}
             >
               <SelectTrigger>

@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
-  useActiveAccountMutation,
-  useActiveAccountSendEmailQuery,
+  useForgotPasswordQuery,
+  useResetPasswordMutation,
 } from "@/redux/features/common/auth/authApiSlice";
 
-const ActiveAccountForm = () => {
+export const ForgotPasswordForm = () => {
   const [countdown, setCountdown] = useState(300); // 5 phút
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -30,22 +30,25 @@ const ActiveAccountForm = () => {
     handleSubmit,
     watch,
     formState: { errors },
+    getValues,
   } = useForm({
     defaultValues: {
       username: "",
       otp: "",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
 
   const username = watch("username");
 
-  const [activeAccount, { isLoading }] = useActiveAccountMutation();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
   const {
     data: sendEmailData,
     isFetching: isResending,
     isError: isSendEmailError,
     error: sendEmailError,
-  } = useActiveAccountSendEmailQuery(
+  } = useForgotPasswordQuery(
     { username },
     {
       skip: !shouldFetchOTP,
@@ -82,7 +85,7 @@ const ActiveAccountForm = () => {
   useEffect(() => {
     if (isSendEmailError) {
       toast.error(
-        (sendEmailError as any)?.data?.message || "Không thể gửi lại mã OTP"
+        (sendEmailError as any)?.data?.message || "Không thể gửi mã OTP"
       );
       setShouldFetchOTP(false);
     }
@@ -107,20 +110,23 @@ const ActiveAccountForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      const result = await activeAccount(data).unwrap();
+      const result = await resetPassword({
+        username: data.username,
+        otp: data.otp,
+        newPassword: data.newPassword,
+      }).unwrap();
       setSuccessMessage(result.message);
       setErrorMessage("");
     } catch (err) {
       setErrorMessage(
-        err.data?.message || "Đã xảy ra lỗi trong quá trình kích hoạt tài khoản"
+        err.data?.message || "Đã xảy ra lỗi trong quá trình đặt lại mật khẩu"
       );
     }
   };
 
-  const handleResendOTP = () => {
-    console.log("handleResendOTP");
+  const handleGetOTP = () => {
     if (!username) {
-      toast.error("Vui lòng nhập tên đăng nhập trước khi gửi lại mã OTP");
+      toast.error("Vui lòng nhập tên đăng nhập trước khi lấy mã OTP");
       return;
     }
     setShouldFetchOTP(true);
@@ -129,28 +135,38 @@ const ActiveAccountForm = () => {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Kích Hoạt Tài Khoản</h2>
+      <h2 className="text-2xl font-bold mb-6">Quên Mật Khẩu</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <label
-            htmlFor="username"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Tên đăng nhập
-          </label>
-          <Controller
-            name="username"
-            control={control}
-            rules={{ required: "Vui lòng nhập tên đăng nhập" }}
-            render={({ field }) => (
-              <Input {...field} id="username" className="mt-1" />
+        <div className="mb-4 flex items-center">
+          <div className="flex-grow mr-2">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Tên đăng nhập
+            </label>
+            <Controller
+              name="username"
+              control={control}
+              rules={{ required: "Vui lòng nhập tên đăng nhập" }}
+              render={({ field }) => (
+                <Input {...field} id="username" className="mt-1" />
+              )}
+            />
+            {errors.username && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.username.message}
+              </p>
             )}
-          />
-          {errors.username && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.username.message}
-            </p>
-          )}
+          </div>
+          <Button
+            type="button"
+            onClick={handleGetOTP}
+            disabled={isResending || countdown > 289 || successMessage !== ""}
+            className="mt-6"
+          >
+            {isResending ? "Đang gửi..." : "Lấy Mã OTP"}
+          </Button>
         </div>
         <div className="mb-4">
           <label
@@ -186,20 +202,76 @@ const ActiveAccountForm = () => {
             <p className="mt-1 text-sm text-red-600">{errors.otp.message}</p>
           )}
         </div>
+        <div className="mb-4">
+          <label
+            htmlFor="newPassword"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Mật khẩu mới
+          </label>
+          <Controller
+            name="newPassword"
+            control={control}
+            rules={{
+              required: "Vui lòng nhập mật khẩu mới",
+              minLength: {
+                value: 8,
+                message: "Mật khẩu phải có ít nhất 8 ký tự",
+              },
+            }}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                id="newPassword"
+                className="mt-1"
+              />
+            )}
+          />
+          {errors.newPassword && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.newPassword.message}
+            </p>
+          )}
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Xác nhận mật khẩu
+          </label>
+          <Controller
+            name="confirmPassword"
+            control={control}
+            rules={{
+              required: "Vui lòng xác nhận mật khẩu",
+              validate: (value) =>
+                value === getValues("newPassword") ||
+                "Mật khẩu xác nhận không khớp",
+            }}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                id="confirmPassword"
+                className="mt-1"
+              />
+            )}
+          />
+          {errors.confirmPassword && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.confirmPassword.message}
+            </p>
+          )}
+        </div>
 
         <div className="flex justify-between items-center mb-4">
           <Button
             type="submit"
             disabled={isLoading || countdown === 0 || successMessage !== ""}
           >
-            {isLoading ? "Đang xác thực..." : "Xác Thực Tài Khoản"}
-          </Button>
-          <Button
-            type="button"
-            onClick={handleResendOTP}
-            disabled={isResending || countdown > 289 || successMessage !== ""}
-          >
-            {isResending ? "Đang gửi..." : "Gửi Lại Mã OTP"}
+            {isLoading ? "Đang xử lý..." : "Đặt Lại Mật Khẩu"}
           </Button>
         </div>
         {countdown > 0 && (
@@ -236,5 +308,3 @@ const ActiveAccountForm = () => {
     </div>
   );
 };
-
-export default ActiveAccountForm;

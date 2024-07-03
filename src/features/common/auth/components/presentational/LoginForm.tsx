@@ -47,7 +47,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, errMsg }) => {
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Mật khẩu</Label>
-              <a href="#" className="ml-auto inline-block text-sm underline">
+              <a
+                href="/forgot-password"
+                className="ml-auto inline-block text-sm underline"
+              >
                 Quên mật khẩu?
               </a>
             </div>
