@@ -1,4 +1,8 @@
+import { RegisterResponse } from "@/utils/DTOs/common/Auth/Response/RegisterResponse";
 import { apiSlice } from "../../../api";
+import { RegisterRequest } from "@/utils/DTOs/common/Auth/Request/RegisterRequest";
+import { ActiveAccountRequest } from "@/utils/DTOs/common/Auth/Request/ActiveAccountRequest";
+import { SendEmailResponse } from "@/utils/DTOs/common/Auth/Response/SendEmailResponse";
 
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,12 +13,29 @@ export const authApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    register: builder.mutation({
+    register: builder.mutation<RegisterResponse, RegisterRequest>({
       query: (data) => ({
         url: `/auth/register`,
         method: "POST",
         body: data,
       }),
+    }),
+    activeAccount: builder.mutation<RegisterResponse, ActiveAccountRequest>({
+      query: (data) => ({
+        url: `/customer/active-account`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    activeAccountSendEmail: builder.query<
+      SendEmailResponse,
+      { username: string }
+    >({
+      query: ({ username }) => ({
+        url: `/customer/active-account/send-email`,
+        params: { username },
+      }),
+      keepUnusedDataFor: 5,
     }),
     getUser: builder.query({ query: () => "/customer/profile" }),
     login22: builder.mutation({
@@ -30,6 +51,8 @@ export const authApi = apiSlice.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useActiveAccountMutation,
+  useActiveAccountSendEmailQuery,
   useGetUserQuery,
   useLogin22Mutation,
 } = authApi;

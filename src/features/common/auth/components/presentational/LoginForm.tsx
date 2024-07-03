@@ -1,84 +1,76 @@
-import {
-  FieldConfig,
-  Form,
-  FormProps,
-} from "@/components/organisms/Common/Form";
-import { FC } from "react";
+import React, { useState } from "react";
 
-interface LoginFormProps extends Omit<FormProps, "fields" | "onSubmit"> {
-  onSubmit: (data: { [key: string]: any }) => void;
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+interface LoginFormProps {
+  onSubmit: (data: { username: string; password: string }) => void;
   errMsg?: string;
 }
 
-export const LoginForm: FC<LoginFormProps> = ({
-  onSubmit,
-  errMsg,
-  stackProps,
-  labelProps,
-  inputProps,
-  buttonProps,
-}) => {
-  const loginFields: FieldConfig[] = [
-    {
-      id: "username",
-      inputProps: {
-        name: "username",
-        type: "text",
-        placeholder: "Email/Số điện thoại/Tên đăng nhập",
-        defaultValue: "",
-      },
-      labelProps: { children: "Email/Số điện thoại/Tên đăng nhập" },
-      stackProps: {},
-    },
-    {
-      id: "password",
-      inputProps: {
-        name: "password",
-        type: "password",
-        placeholder: "Mật khẩu",
-        defaultValue: "",
-      },
-      labelProps: { children: "Mật khẩu" },
-      stackProps: { className: "w-full" },
-    },
-  ];
+export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, errMsg }) => {
+  const [username, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  labelProps = { ...labelProps, className: "block text-xl font-semibold mb-2" };
-  inputProps = {
-    ...inputProps,
-    className: "w-full p-2 border border-gray-300",
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ username, password });
   };
 
   return (
-    <Form
-      fields={loginFields}
-      onSubmit={onSubmit}
-      stackProps={stackProps}
-      labelProps={labelProps}
-      inputProps={inputProps}
-      buttonProps={buttonProps}
-    >
-      {errMsg && (
-        <div
-          className="
-      text-xl text-red-500
-      border border-red-500
-      mb-4
-      p-2
-      mt-4
-      "
-        >
-          {errMsg}
+    <Card className="mx-auto max-w-sm">
+      <CardHeader>
+        <CardTitle className="text-2xl">Đăng nhập vào VTV</CardTitle>
+        <CardDescription>Nhập tài khoản của bạn để đăng nhập</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="username">Tài khoản</Label>
+            <Input
+              id="username"
+              type="text"
+              placeholder=""
+              required
+              value={username}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="grid gap-2">
+            <div className="flex items-center">
+              <Label htmlFor="password">Mật khẩu</Label>
+              <a href="#" className="ml-auto inline-block text-sm underline">
+                Quên mật khẩu?
+              </a>
+            </div>
+            <Input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          {errMsg && <div className="text-red-500 text-sm">{errMsg}</div>}
+          <Button type="submit" className="w-full">
+            Đăng nhập
+          </Button>
+        </form>
+        <div className="mt-4 text-center text-sm">
+          Chưa có tài khoản?{" "}
+          <a href="/register" className="underline">
+            Đăng ký
+          </a>
         </div>
-      )}
-      <div className="flex items-center justify-between mb-4">
-        <button type="submit" className="bg-orange-400 text-white p-2 rounded">
-          Register
-        </button>
-        <a href="#" className="text-xs text-blue-600">
-          Quên mật khẩu?
-        </a>
-      </div>
-    </Form>
+      </CardContent>
+    </Card>
   );
 };

@@ -93,6 +93,9 @@ import { UpdateProductPage } from "./pages/vendor/UpdateProductPage.tsx";
 import { CategoriesPage } from "./pages/vendor/CategoriesPage.tsx";
 import { OrdersPage } from "./pages/vendor/OrdersPage.tsx";
 import { VouchersPage } from "./pages/vendor/VouchersPage.tsx";
+import { RegisterForm } from "./features/common/auth/components/presentational/RegisterForm.tsx";
+import RegisterPage from "./pages/common/Register.tsx";
+import ActiveAccountPage from "./pages/common/ActiveAccount.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -178,7 +181,11 @@ function App() {
         <Routes>
           {/* public routes */}
 
+          {/* authen */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/active-account" element={<ActiveAccountPage />} />
+
           <Route path="/home/" element={<Home />} />
           <Route path="/" element={<Home />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
