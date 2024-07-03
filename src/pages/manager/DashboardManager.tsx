@@ -28,19 +28,9 @@ export const DashboardManager = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isShow, setIsShow] = useState(true);
-    // const [profileCustomerResponse, setProfileCustomerResponse] = useState<ProfileCustomerResponse>();
     const [isRoleAdmin, setIsRoleAdmin] = useState<boolean>(false);
     const [getProfileCustomer] = useGetProfileCustomerMutation();
 
-    // useEffect(() => {
-    //     getProfileCustomer().unwrap().then((res) => {
-    //         for(let i = 0; i < res.roles.length; i++){
-    //             if(res.customerDTO.roles.get[1].value === "ADMIN"){
-    //                 setIsRoleAdmin(true);
-    //             }
-    //         }
-    //     });
-    // }, []);
 
     useEffect(() => {
         getProfileCustomer()
@@ -54,8 +44,6 @@ export const DashboardManager = () => {
                 console.error("Error fetching profile:", error); // Handle potential errors
             });
     }, []);
-
-
 
 
     useEffect(() => {
@@ -138,51 +126,59 @@ export const DashboardManager = () => {
                                 Trang Quản Trị
                             </Link>
                         </li>
+
+                        {isRoleAdmin &&
+                            <li>
+                                <Link
+                                    to="managers"
+                                    className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                        selectedTitle === "Manager"
+                                            ? "bg-gray-100 hover:bg-green-100"
+                                            : "hover:bg-green-100"
+                                    }`}
+                                    onClick={() => handleTitleClick("Manager")}
+                                >
+                                    <FontAwesomeIcon icon={faUserCog} size="sm" color="#666"/>
+                                    <div className="ml-2"/>
+                                    Quản lý quản trị viên
+                                </Link>
+                            </li>
+
+                        }
+
+
                         <li>
                             <Link
-                                to="customers"
+                                to="categories"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "ManagerCustomer"
+                                    selectedTitle === "ManagerCategory"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("ManagerCustomer")}
+                                onClick={() => handleTitleClick("ManagerCategory")}
                             >
-                                <FontAwesomeIcon icon={faUsers} size="sm" color="#666"/>
+                                <FontAwesomeIcon icon={faTag} size="sm" color="#666"/>
                                 <div className="ml-2"/>
-                                Quản lý khách hàng
+                                Quản lý danh mục
                             </Link>
                         </li>
 
 
-                        <Link
-                            to="shops"
-                            className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                selectedTitle === "ManagerShop"
-                                    ? "bg-gray-100 hover:bg-green-100"
-                                    : "hover:bg-green-100"
-                            }`}
-                            onClick={() => handleTitleClick("ManagerShop")}
-                        >
-                            <FontAwesomeIcon icon={faStore} size="sm" color="#666"/>
-                            <div className="ml-2"/>
-                            Quản lý cửa hàng
-                        </Link>
-
-
-                        <Link
-                            to="transport-providers"
-                            className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                selectedTitle === "ManagerTransportProvider"
-                                    ? "bg-gray-100 hover:bg-green-100"
-                                    : "hover:bg-green-100"
-                            }`}
-                            onClick={() => handleTitleClick("ManagerTransportProvider")}
-                        >
-                            <FontAwesomeIcon icon={faTruck} size="sm" color="#666"/>
-                            <div className="ml-2"/>
-                            Quản lý nhà cung cấp vận chuyển
-                        </Link>
+                        <li>
+                            <Link
+                                to="brands"
+                                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                    selectedTitle === "ManagerBrand"
+                                        ? "bg-gray-100 hover:bg-green-100"
+                                        : "hover:bg-green-100"
+                                }`}
+                                onClick={() => handleTitleClick("ManagerBrand")}
+                            >
+                                <FontAwesomeIcon icon={faBuildingUser} size="sm" color="#666"/>
+                                <div className="ml-2"/>
+                                Quản lý thương hiệu
+                            </Link>
+                        </li>
 
 
                         <li>
@@ -201,19 +197,20 @@ export const DashboardManager = () => {
                             </Link>
                         </li>
 
+
                         <li>
                             <Link
-                                to="products"
+                                to="customers"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "ManagerProduct"
+                                    selectedTitle === "ManagerCustomer"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("ManagerProduct")}
+                                onClick={() => handleTitleClick("ManagerCustomer")}
                             >
-                                <FontAwesomeIcon icon={faBox} size="sm" color="#666"/>
+                                <FontAwesomeIcon icon={faUsers} size="sm" color="#666"/>
                                 <div className="ml-2"/>
-                                Quản lý sản phẩm
+                                Quản lý khách hàng
                             </Link>
                         </li>
 
@@ -236,56 +233,52 @@ export const DashboardManager = () => {
 
                         <li>
                             <Link
-                                to="categories"
+                                to="shops"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "ManagerCategory"
+                                    selectedTitle === "ManagerShop"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("ManagerCategory")}
+                                onClick={() => handleTitleClick("ManagerShop")}
                             >
-                                <FontAwesomeIcon icon={faTag} size="sm" color="#666"/>
+                                <FontAwesomeIcon icon={faStore} size="sm" color="#666"/>
                                 <div className="ml-2"/>
-                                Quản lý danh mục
+                                Quản lý cửa hàng
+                            </Link>
+                        </li>
+
+
+                        <li>
+                            <Link
+                                to="products"
+                                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                                    selectedTitle === "ManagerProduct"
+                                        ? "bg-gray-100 hover:bg-green-100"
+                                        : "hover:bg-green-100"
+                                }`}
+                                onClick={() => handleTitleClick("ManagerProduct")}
+                            >
+                                <FontAwesomeIcon icon={faBox} size="sm" color="#666"/>
+                                <div className="ml-2"/>
+                                Quản lý sản phẩm
                             </Link>
                         </li>
 
                         <li>
                             <Link
-                                to="brands"
+                                to="transport-providers"
                                 className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                    selectedTitle === "ManagerBrand"
+                                    selectedTitle === "ManagerTransportProvider"
                                         ? "bg-gray-100 hover:bg-green-100"
                                         : "hover:bg-green-100"
                                 }`}
-                                onClick={() => handleTitleClick("ManagerBrand")}
+                                onClick={() => handleTitleClick("ManagerTransportProvider")}
                             >
-                                <FontAwesomeIcon icon={faBuildingUser} size="sm" color="#666"/>
+                                <FontAwesomeIcon icon={faTruck} size="sm" color="#666"/>
                                 <div className="ml-2"/>
-                                Quản lý thương hiệu
+                                Quản lý nhà cung cấp vận chuyển
                             </Link>
                         </li>
-
-
-                        {isRoleAdmin &&
-                            <li>
-                                <Link
-                                    to="managers"
-                                    className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
-                                        selectedTitle === "Manager"
-                                            ? "bg-gray-100 hover:bg-green-100"
-                                            : "hover:bg-green-100"
-                                    }`}
-                                    onClick={() => handleTitleClick("Manager")}
-                                >
-                                    <FontAwesomeIcon icon={faUserCog} size="sm" color="#666"/>
-                                    <div className="ml-2"/>
-                                    Quản lý quản trị viên
-                                </Link>
-                            </li>
-
-                        }
-
 
                     </ul>
 
