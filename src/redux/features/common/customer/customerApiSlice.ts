@@ -75,10 +75,10 @@ export const userApi = apiSlice.injectEndpoints({
         return status === "ALL" ? base : `${base}/status/${status}`;
       },
     }),
-    cancelOrder: builder.mutation({
+    cancelOrder: builder.mutation<OrderResponse, string>({
       query: (orderId: string) => ({
-        url: `/customer/order/cancel/${orderId}`,
-        method: "POST",
+        url: `/customer/order/cancel1/${orderId}`,
+        method: "PATCH",
       }),
     }),
     getOrderByOrderId: builder.query<OrderResponse, string>({
