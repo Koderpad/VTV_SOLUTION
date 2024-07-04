@@ -1,14 +1,14 @@
-import { transportStatusToString } from "@/utils/DTOs/extra/convertToString/transportStatusToString.ts";
-import { getTransportStatusColor } from "@/utils/DTOs/extra/color/getTransportStatusColor.ts";
+import {transportStatusToString} from "@/utils/DTOs/extra/convertToString/transportStatusToString.ts";
+import {getTransportStatusColor} from "@/utils/DTOs/extra/color/getTransportStatusColor.ts";
 import dayjs from "dayjs";
-import { TransportDTO } from "@/utils/DTOs/shipping/dto/TransportDTO.ts";
-import { FaUser } from "react-icons/fa"; // Import icons
+import {TransportDTO} from "@/utils/DTOs/shipping/dto/TransportDTO.ts";
+import {FaUser} from "react-icons/fa"; // Import icons
 
 interface TransportProps {
     transportDTO: TransportDTO;
 }
 
-const TransportDetailProps = ({ transportDTO }: TransportProps) => {
+const TransportDetailProps = ({transportDTO}: TransportProps) => {
 
     return (
         <div className="container mx-auto px-4 sm:px-8 py-8">
@@ -82,22 +82,23 @@ const TransportDetailProps = ({ transportDTO }: TransportProps) => {
                                         (transportHandle, index) => (
                                             <li key={index} className="list-disc list-inside">
                         <span className="font-bold">
-                          <FaUser className="mr-2" />
+                          <FaUser className="mr-2"/>
                             {transportHandle.username}
                         </span>{" "}
                                                 -{" "}
-                                                {transportStatusToString[
-                                                    transportHandle.transportStatus
-                                                    ]}
-                                                <br />
                                                 <span
                                                     className={`text-${getTransportStatusColor(
                                                         transportHandle.transportStatus
                                                     )}-500`}
                                                 >
-                          {transportHandle.messageStatus}
+                            {transportStatusToString[
+                                transportHandle.transportStatus
+                                ]}
                         </span>
-                                                <br />
+
+
+
+                                                <br/>
                                                 <span className="text-gray-500">
                           Ngày:{" "}
                                                     {dayjs(transportHandle.createAt).format(

@@ -159,9 +159,9 @@ const CanUpdateCashOrderWareHouse = () => {
                             STT
                         </th>
                         <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                            Mã đơn hàng
+                            Mã biên lai
                         </th>
-                        <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                        <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-right text-sm font-semibold text-gray-700">
                             Số tiền (VNĐ)
                         </th>
                         <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-700">
@@ -311,7 +311,7 @@ const CanUpdateCashOrderWareHouse = () => {
                         onClick={handleUpdateCashOrders}
                         disabled={isLoadingUpdate}
                     >
-                        {isLoadingUpdate ? "Đang xử lý..." : "Cập nhật đơn hàng"}
+                        {isLoadingUpdate ? "Đang xử lý..." : "Cập nhật biên lai"}
                     </button>
                 </div>
             </div>
