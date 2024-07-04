@@ -36,7 +36,7 @@ export const CartItem: React.FC<CartItemProps> = ({
     try {
       await updateCart({
         cartId: cart.cartId,
-        quantity: newQuantity,
+        quantity: change,
       });
     } catch (e) {
       console.log("error", e);
