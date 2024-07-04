@@ -13,6 +13,12 @@ import {
   useGetListCartByUsernameQuery,
 } from "../../../../redux/features/common/cart/cartApiSlice";
 import { InputQuantity } from "../../../molecules/Inputs/InputQuantity";
+import {
+  useAddFavoriteProductMutation,
+  useCheckFavoriteProductExistsQuery,
+  useDeleteFavoriteProductMutation,
+} from "@/redux/features/common/favorite_product/favoriteProductApiSlice";
+import { HeartIcon } from "lucide-react";
 
 interface ProductDetailProps {
   data: ProductResponse;
@@ -56,6 +62,49 @@ const getSelectedVariant = (
     )
   );
 };
+
+const FavoriteButton = ({ productId }: { productId: number }) => {
+  const navigate = useNavigate();
+  const isAuth = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const { data: favoriteProductData, refetch: refetchFavoProduct } =
+    useCheckFavoriteProductExistsQuery(productId, {
+      skip: !isAuth, // Skip the query if the user is not authenticated
+    });
+
+  const [addFavoriteProduct] = useAddFavoriteProductMutation();
+  const [deleteFavoriteProduct] = useDeleteFavoriteProductMutation();
+
+  const handleFavoriteClick = () => {
+    if (!isAuth) {
+      navigate("/login");
+      return;
+    }
+
+    if (favoriteProductData?.favoriteProductDTO) {
+      deleteFavoriteProduct(
+        favoriteProductData.favoriteProductDTO.favoriteProductId
+      ).then(() => refetchFavoProduct());
+    } else {
+      addFavoriteProduct(productId).then(() => refetchFavoProduct());
+    }
+  };
+
+  const isFavorite = isAuth && favoriteProductData?.favoriteProductDTO !== null;
+
+  return (
+    <button
+      className="flex items-center justify-center space-x-2 rounded-full border border-blue-600 px-4 py-2 text-blue-600 hover:bg-blue-100 transition duration-300"
+      onClick={handleFavoriteClick}
+    >
+      <HeartIcon
+        className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : "text-blue-600"}`}
+      />
+      <span>{isFavorite ? "Đã thích" : "Yêu thích"}</span>
+    </button>
+  );
+};
+
 export const ProductDetail = ({ data }: ProductDetailProps) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedAttributes, setSelectedAttributes] = useState<{
@@ -68,11 +117,13 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   const navigate = useNavigate();
   const [addNewCart] = useAddNewCartMutation();
 
-  const { refetch: refetch_ } = useGetListCartByUsernameQuery();
-
   const isAuth: boolean = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
+
+  const { refetch: refetch_ } = useGetListCartByUsernameQuery(undefined, {
+    skip: !isAuth,
+  });
 
   const dataImage = Array.from(
     new Set([
@@ -473,6 +524,9 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
               </div>
               Thêm vào giỏ hàng!
             </button>
+            <div className="mt-4 flex justify-center">
+              <FavoriteButton productId={data.productDTO.productId} />
+            </div>
           </div>
         </div>
       </div>

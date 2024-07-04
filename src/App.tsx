@@ -97,6 +97,7 @@ import { RegisterForm } from "./features/common/auth/components/presentational/R
 import RegisterPage from "./pages/common/Register.tsx";
 import ActiveAccountPage from "./pages/common/ActiveAccount.tsx";
 import ForgotPasswordPage from "./pages/common/ForgotPassword.tsx";
+import { FavoriteProducts } from "./components/organisms/Common/Account/FavoriteProducts/index.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 const Home = lazy(() => import("./pages/common/Home"));
@@ -522,7 +523,8 @@ function App() {
               <Route path="address" element={<Address />} />
               <Route path="history-purchase" element={<HistoryPurchase />} />
               <Route path="order/:id" element={<OrderDetail />} />
-              {/* <Route path="favorite-products" element={<FavoriteProducts />} />
+              <Route path="favorite-products" element={<FavoriteProducts />} />
+              {/* 
               <Route path="voucher-wallet" element={<VoucherList />} />
                */}
             </Route>
