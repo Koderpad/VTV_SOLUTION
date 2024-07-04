@@ -32,6 +32,12 @@ export const reviewApi = apiSlice.injectEndpoints({
         },
       },
     }),
+    deleteReview: builder.mutation<ReviewResponse, string>({
+      query: (reviewId) => ({
+        url: `/customer/review/delete/${reviewId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -40,4 +46,5 @@ export const {
   useIsReviewExistQuery,
   useGetReviewDetailByOrderItemIdQuery,
   useAddReviewMutation,
+  useDeleteReviewMutation,
 } = reviewApi;

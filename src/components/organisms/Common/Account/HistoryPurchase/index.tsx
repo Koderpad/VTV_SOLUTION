@@ -1,5 +1,10 @@
 import { cn } from "@/utils/cn";
-import { NavLink, Link, createSearchParams, useNavigate } from "react-router-dom";
+import {
+  NavLink,
+  Link,
+  createSearchParams,
+  useNavigate,
+} from "react-router-dom";
 import useQueryParams from "@/hooks/useQueryParams";
 import {
   useCancelOrderMutation,
@@ -12,7 +17,11 @@ import {
   OrderItemDTO,
 } from "@/utils/DTOs/common/Order/Response/ListOrderResponse";
 import { useEffect, useRef, useState } from "react";
-import { useAddReviewMutation, useGetReviewDetailByOrderItemIdQuery, useIsReviewExistQuery } from "@/redux/features/common/review/reviewApiSlice";
+import {
+  useAddReviewMutation,
+  useGetReviewDetailByOrderItemIdQuery,
+  useIsReviewExistQuery,
+} from "@/redux/features/common/review/reviewApiSlice";
 import { ReviewRequest } from "@/utils/DTOs/common/Review/Request/ReviewRequest";
 
 const purchasesStatus = {
@@ -60,8 +69,8 @@ const purchaseTabs = [
   { status: purchasesStatus.RETURNED, name: "Đã trả lại" },
   { status: purchasesStatus.CANCEL, name: "Đã hủy" },
   { status: purchasesStatus.REFUNDED, name: "Đã hoàn tiền" },
-  {status: purchasesStatus.PAID, name: "Đã thanh toán"},
-  {status: purchasesStatus.UNPAID, name: "Chưa thanh toán"},
+  { status: purchasesStatus.PAID, name: "Đã thanh toán" },
+  { status: purchasesStatus.UNPAID, name: "Chưa thanh toán" },
   { status: purchasesStatus.WAITING, name: "Đang thanh toán" },
 ];
 
@@ -138,7 +147,7 @@ export const HistoryPurchase = () => {
         {
           "border-orange-600 text-orange-600": status === tab.status,
           "border-b-black/10 text-gray-900": status !== tab.status,
-        }
+        },
       )}
     >
       {tab.name}
@@ -195,7 +204,6 @@ export const HistoryPurchase = () => {
                   {purchase.status === "COMPLETED" && (
                     <ReviewButton orderItemId={item.orderItemId} />
                   )}
-
                 </div>
               ))}
               <div className="flex justify-end">
@@ -233,7 +241,7 @@ export const HistoryPurchase = () => {
                   <span>Tổng khuyến mãi</span>
                   <span className="ml-4 text-xl text-orange">
                     {formatPrice(
-                      purchase.discountSystem + purchase.discountShop
+                      purchase.discountSystem + purchase.discountShop,
                     )}{" "}
                     VNĐ
                   </span>
@@ -273,8 +281,7 @@ export const HistoryPurchase = () => {
                                           ? "Đã thanh toán"
                                           : purchase?.status === "UNPAID"
                                             ? "Chưa thanh toán"
-                                        : "Không xác định"}
-
+                                            : "Không xác định"}
                   </span>
                 </div>
               </div>
@@ -334,19 +341,19 @@ const AddReviewForm = ({
   const [image, setImage] = useState<File | null>(null);
   const [hasImage, setHasImage] = useState(false);
   const [addReview] = useAddReviewMutation();
-  const {
-    refetch: refetchOther,
-  } = useGetOrdersByStatusVer2Query('ALL');
+  const { refetch: refetchOther } = useGetOrdersByStatusVer2Query("ALL");
 
-  const convertReviewRequestToFormData = (reviewRequest: ReviewRequest): FormData => {
+  const convertReviewRequestToFormData = (
+    reviewRequest: ReviewRequest,
+  ): FormData => {
     const formData = new FormData();
-    formData.append('content', reviewRequest.content);
-    formData.append('rating', String(reviewRequest.rating));
-    formData.append('orderItemId', reviewRequest.orderItemId);
-    formData.append('hasImage', String(reviewRequest.hasImage));
+    formData.append("content", reviewRequest.content);
+    formData.append("rating", String(reviewRequest.rating));
+    formData.append("orderItemId", reviewRequest.orderItemId);
+    formData.append("hasImage", String(reviewRequest.hasImage));
 
     if (reviewRequest.hasImage && reviewRequest.image instanceof File) {
-      formData.append('image', reviewRequest.image);
+      formData.append("image", reviewRequest.image);
     }
 
     return formData;
@@ -360,41 +367,39 @@ const AddReviewForm = ({
       // alert(res.message)
       // refetchOther();
 
-      handleApiCall<ReviewResponse, ServerError>(
-        {
-          callbackFn: async () => {
-            return await addReview(req);
-          },
-          successCallback: (data) => {
-            toast.success("Cập nhật thông tin thành công!");
-            refetchOther();
-          },
-          errorFromServerCallback: (error) => {
-            if (error.status === "NOT_FOUND") {
-              toast.error(error.message);
-            }
-            if (error.status === "BAD_REQUEST") {
-              toast.error(error.message);
-            }
-          },
-          errorSerializedCallback: (error) => {
-            if (error.message) {
-              toast.error(
-                "Đã xảy ra lỗi không xác định. Vui lòng thử lại sau. " +
-                error.message
-              );
-            } else {
-              toast.error("Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.");
-            }
-          },
-          errorCallback: (error) => {
+      handleApiCall<ReviewResponse, ServerError>({
+        callbackFn: async () => {
+          return await addReview(req);
+        },
+        successCallback: (data) => {
+          // toast.success("Cập nhật thông tin thành công!");
+          toast.success(data.message);
+          refetchOther();
+        },
+        errorFromServerCallback: (error) => {
+          if (error.status === "NOT_FOUND") {
+            toast.error(error.message);
+          }
+          if (error.status === "BAD_REQUEST") {
+            toast.error(error.message);
+          }
+        },
+        errorSerializedCallback: (error) => {
+          if (error.message) {
             toast.error(
-              "Đã xảy ra lỗi không xác định. Vui lòng thử lại sau. " + error
+              "Đã xảy ra lỗi không xác định. Vui lòng thử lại sau. " +
+                error.message,
             );
-          },
-
-        }
-      )
+          } else {
+            toast.error("Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.");
+          }
+        },
+        errorCallback: (error) => {
+          toast.error(
+            "Đã xảy ra lỗi không xác định. Vui lòng thử lại sau. " + error,
+          );
+        },
+      });
     } catch (error) {
       alert("Đánh giá thất bại");
     }
@@ -451,8 +456,7 @@ const AddReviewForm = ({
               setImage(file);
               setHasImage(true);
             }
-          }
-          }
+          }}
         />
       </div>
       <button type="submit">Đánh giá</button>
@@ -461,7 +465,8 @@ const AddReviewForm = ({
 };
 
 const ReviewDetail = ({ orderItemId }: { orderItemId: string }) => {
-  const { data: reviewData } = useGetReviewDetailByOrderItemIdQuery(orderItemId);
+  const { data: reviewData } =
+    useGetReviewDetailByOrderItemIdQuery(orderItemId);
   const review = reviewData?.reviewDTO;
 
   const navigate = useNavigate();
@@ -486,7 +491,7 @@ import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
 import { ReviewResponse } from "@/utils/DTOs/common/Review/Response/ReviewResponse";
 import { ServerError } from "@/utils/DTOs/common/ServerError";
 
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 interface ModalProps {
   isOpen: boolean;
@@ -499,7 +504,10 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         event.stopPropagation();
       }
     };
@@ -554,6 +562,6 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         <div className="p-6">{children}</div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
