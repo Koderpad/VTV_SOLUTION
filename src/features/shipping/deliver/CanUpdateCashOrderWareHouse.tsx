@@ -311,7 +311,7 @@ const CanUpdateCashOrderWareHouse = () => {
                         onClick={handleUpdateCashOrders}
                         disabled={isLoadingUpdate}
                     >
-                        {isLoadingUpdate ? "Đang xử lý..." : "Cập nhật đơn hàng"}
+                        {isLoadingUpdate ? "Đang xử lý..." : "Cập nhật biên lai"}
                     </button>
                 </div>
             </div>
