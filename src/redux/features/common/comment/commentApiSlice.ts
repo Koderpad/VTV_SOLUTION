@@ -15,7 +15,16 @@ export const commentApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    deleteCommentByCustomer: builder.mutation<CommentResponse, string>({
+      query: (commentId) => ({
+        url: `/customer/comment/delete/${commentId}`,
+        method: "PATCH",
+      }),
+    }),
   }),
 });
 
-export const { useAddNewCommentByCustomerMutation } = commentApi;
+export const {
+  useAddNewCommentByCustomerMutation,
+  useDeleteCommentByCustomerMutation,
+} = commentApi;
