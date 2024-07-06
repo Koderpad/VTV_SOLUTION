@@ -33,11 +33,15 @@ export const AccountTooltip: FC<AccountTooltipProps> = ({ username }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
+    // await persistor.purge();
+    persistor.pause();
+    persistor.flush().then(() => {
+      return persistor.purge();
+    });
     localStorage.removeItem("token");
-    window.location.reload();
     dispatch(logOut());
-    navigate("/login");
-    await persistor.purge();
+    navigate("/");
+    window.location.reload();
   };
   return (
     <>

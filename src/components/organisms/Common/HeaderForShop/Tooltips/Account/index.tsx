@@ -20,7 +20,7 @@ const content: ContentConfig[] = [
     link: "/user/account/history-purchase",
   },
   {
-    name: "Đăng xuất",
+    name: "Đăng xuất1",
     link: "/dang-xuat",
   },
 ];
