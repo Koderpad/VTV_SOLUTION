@@ -43,6 +43,7 @@ import {
   ReviewDTO,
 } from "@/utils/DTOs/common/Product/Response/ListReviewResponse";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
+import { OrderResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/OrderResponse";
 
 const purchasesStatus = {
   ALL: 0,
@@ -134,13 +135,24 @@ export const HistoryPurchase = () => {
   const orderDTOs: OrderDTO[] = data?.orderDTOs || [];
 
   const handleCancelOrder = async (orderId: string) => {
-    try {
-      await cancelOrder(orderId);
-      toast.success("Hủy đơn hàng thành công");
-      setIsUpdate(!isUpdate);
-    } catch (error) {
-      toast.error("Hủy đơn hàng thất bại");
-    }
+    handleApiCall<OrderResponse, ServerError>({
+      callbackFn: async () => await await cancelOrder(orderId),
+      successCallback(data) {
+        toast.success(data.message);
+        setIsUpdate(!isUpdate);
+      },
+      errorFromServerCallback(error) {
+        toast.error(error.message);
+      },
+      errorSerializedCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể thêm bình luận");
+      },
+      errorCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể thêm bình luận");
+      },
+    });
   };
 
   const handleCompleteOrder = async (orderId: string) => {

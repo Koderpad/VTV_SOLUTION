@@ -77,7 +77,7 @@ export const userApi = apiSlice.injectEndpoints({
     }),
     cancelOrder: builder.mutation<OrderResponse, string>({
       query: (orderId: string) => ({
-        url: `/customer/order/cancel1/${orderId}`,
+        url: `/customer/order/cancel/${orderId}`,
         method: "PATCH",
       }),
     }),

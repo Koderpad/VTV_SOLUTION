@@ -66,12 +66,12 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       },
     }),
 
-    cancelOrder: builder.mutation({
-      query: (orderId: number) => ({
-        url: `/customer/order/cancel/${orderId}`,
-        method: "POST",
-      }),
-    }),
+    // cancelOrder: builder.mutation({
+    //   query: (orderId: number) => ({
+    //     url: `/customer/order/cancel/${orderId}`,
+    //     method: "POST",
+    //   }),
+    // }),
     getOrdersByCus: builder.query({
       query: () => `/customer/order/list`,
     }),
@@ -107,7 +107,10 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         body,
       }),
     }),
-    addMutilOrder: builder.mutation<MultipleOrderResponse, MultipleOrderRequestWithCart>({
+    addMutilOrder: builder.mutation<
+      MultipleOrderResponse,
+      MultipleOrderRequestWithCart
+    >({
       query: (body) => ({
         url: `/customer/order/add/multiple/by-request`,
         method: "POST",
@@ -125,7 +128,7 @@ export const {
   useGetOrderByStatusQuery,
   useGetOrderByStatusMuMutation,
   useCreateUpdateOrderMutation,
-  useCancelOrderMutation,
+  // useCancelOrderMutation,
   useGetOrdersByCusQuery,
   useGetOrdersByStatusVer2Query,
   useGetOrderItemByOrderItemIdMutation,
