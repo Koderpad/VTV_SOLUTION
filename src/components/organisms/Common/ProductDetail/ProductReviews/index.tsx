@@ -1,36 +1,102 @@
+import React from "react";
 import { useGetReviewListByProductIdQuery } from "@/redux/features/common/review/reviewApiSlice";
-import { AdvancedRating } from "./AdvancedRating";
-import { CommentList } from "./CommentList";
 import { useParams } from "react-router-dom";
+import { AdvancedRating } from "./AdvancedRating";
+import { RatingComment } from "./CommentList/RatingComment";
 
-export const ProductReviews = () => {
+export const ProductReviews: React.FC = () => {
   const { productId } = useParams();
-  console.log("review of product id: ", productId);
+
   if (!productId) {
     return null;
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { data: reviews, isLoading } = useGetReviewListByProductIdQuery(
-    parseInt(productId),
-  );
-  console.log("reviews: ", reviews);
+  const {
+    data: reviews,
+    isLoading,
+    refetch: refetchReviews,
+  } = useGetReviewListByProductIdQuery(parseInt(productId));
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Đang tải...</div>;
   }
 
-  if (!reviews) {
-    return null;
+  if (!reviews || reviews.count === 0) {
+    return (
+      <div className="flex flex-col mt-4 rounded-lg border border-neutral-200 bg-white p-8 md:p-12 lg:gap-8 w-full">
+        <h1 className="text-2xl font-semibold">Đánh giá</h1>
+        <p className="text-gray-500 mt-4">
+          Chưa có đánh giá và bình luận nào cho sản phẩm này.
+        </p>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col mt-4 rounded-lg border border-neutral-200 bg-white p-8 md:p-12 lg:gap-8 w-full">
-      <h1 className="text-2xl font-semibold">Reviews</h1>
-      <div className="flex flex-row">
+      <h1 className="text-2xl font-semibold">Đánh giá</h1>
+      <div className="flex flex-col md:flex-row">
         <AdvancedRating reviews={reviews} />
-        <CommentList reviews={reviews.reviewDTOs} />
+        <div className="flex-1">
+          <div className="flex flex-col w-full space-y-4">
+            {reviews.reviewDTOs.map((review) => (
+              <RatingComment
+                key={review.reviewId}
+                review={review}
+                refetchReview={refetchReviews}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
+// import React from "react";
+// import { useGetReviewListByProductIdQuery } from "@/redux/features/common/review/reviewApiSlice";
+// import { useParams } from "react-router-dom";
+// import { AdvancedRating } from "./AdvancedRating";
+// import { RatingComment } from "./CommentList/RatingComment";
+
+// export const ProductReviews: React.FC = () => {
+//   const { productId } = useParams();
+
+//   if (!productId) {
+//     return null;
+//   }
+
+//   const {
+//     data: reviews,
+//     isLoading,
+//     refetch: refetchReviews,
+//   } = useGetReviewListByProductIdQuery(parseInt(productId));
+
+//   if (isLoading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (!reviews) {
+//     return null;
+//   }
+
+//   return (
+//     <div className="flex flex-col mt-4 rounded-lg border border-neutral-200 bg-white p-8 md:p-12 lg:gap-8 w-full">
+//       <h1 className="text-2xl font-semibold">Reviews</h1>
+//       <div className="flex flex-col md:flex-row">
+//         <AdvancedRating reviews={reviews} />
+//         <div className="flex-1">
+//           <div className="flex flex-col w-full space-y-4">
+//             {reviews.reviewDTOs.map((review) => (
+//               <RatingComment
+//                 key={review.reviewId}
+//                 review={review}
+//                 refetchReview={refetchReviews}
+//               />
+//             ))}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
