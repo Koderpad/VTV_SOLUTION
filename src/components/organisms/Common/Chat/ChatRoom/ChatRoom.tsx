@@ -9,10 +9,11 @@ import {
   removeFailedMessage,
 } from "@/redux/features/common/chat/chatSlice";
 import { useGetMessagesByRoomQuery } from "@/redux/features/common/chat/chatApiSlice";
-import { sendMessage } from "@/utils/stock";
-import ChatMessages from "../ChatMessages";
-import ChatInput from "../ChatInput";
+
+import ChatMessages from "../ChatMessages/ChatMessages";
+import ChatInput from "../ChatInput/ChatInput";
 import { MessageDTO } from "@/utils/DTOs/chat/Response/ListMessagesPageResponse";
+import { sendMessage } from "@/utils/stock/configSocket";
 
 interface ChatRoomProps {
   roomChatId: string;
