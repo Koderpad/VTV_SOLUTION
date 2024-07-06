@@ -508,12 +508,24 @@ const ReviewDetail = ({
   const navigate = useNavigate();
 
   const activeReview = review && review.status === "ACTIVE" ? review : null;
+  const deletedReview = review && review.status === "DELETED" ? review : null;
 
-  if (!activeReview) {
+  if (!activeReview && deletedReview) {
     return (
-      <p className="text-gray-600">Không có đánh giá nào được hiển thị.</p>
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+        <p className="text-red-600">Đánh giá đã bị xóa</p>
+        <RatingComment review={deletedReview} refetchReview={refetchReview} />
+        <button
+          onClick={() => navigate(`/product/${productId}`)}
+          className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200"
+        >
+          Xem sản phẩm
+        </button>
+      </div>
     );
   }
+
+  if (!activeReview) return <p className="text-gray-600">Chưa có đánh giá</p>;
 
   return (
     <div className="space-y-4 max-h-[70vh] overflow-y-auto">
@@ -577,13 +589,34 @@ const RatingComment = ({
   const handleCommentCancel = () => setShowCommentForm(false);
 
   const handleDeleteReview = async () => {
-    try {
-      const res = await deleteReview(review.reviewId).unwrap();
-      toast.success(res.message);
-      refetchReview();
-    } catch (error) {
-      toast.error(error);
-    }
+    // try {
+    //   const res = await deleteReview(review.reviewId).unwrap();
+    //   toast.success(res.message);
+    //   refetchReview();
+    // } catch (error) {
+    //   // Assuming `toast.error` expects a string message
+    //   const errorMessage =
+    //     error instanceof Error ? error.message : "An unknown error occurred";
+    //   toast.error(errorMessage);
+    // }
+    handleApiCall<ReviewResponse, ServerError>({
+      callbackFn: async () => await deleteReview(review.reviewId),
+      successCallback(data) {
+        toast.success(data.message);
+        refetchReview();
+      },
+      errorFromServerCallback(error) {
+        toast.error(error.message);
+      },
+      errorSerializedCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể thêm bình luận");
+      },
+      errorCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể thêm bình luận");
+      },
+    });
   };
 
   const displayText = showFullText
