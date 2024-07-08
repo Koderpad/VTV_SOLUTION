@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useCallback, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./libs/RequireAuth";
 // import { HistoryPurchase } from "./components/organisms/Account/HistoryPurchase";
@@ -16,7 +16,11 @@ import VoucherSystemManagerPage from "@/pages/manager/VoucherSystemManagerPage.t
 import VoucherSystemDetail from "@/features/manager/voucher/VoucherSystemDetail.tsx";
 import UpdateVoucherSystem from "@/features/manager/voucher/UpdateVoucherSystem.tsx";
 import AddNewVoucherSystem from "@/features/manager/voucher/AddNewVoucherSystem.tsx";
-import { onMessageListener, requestForToken } from "./config/fcm.ts";
+import {
+  onMessageListener,
+  requestForPermission,
+  requestForToken,
+} from "./config/fcm.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotifications } from "./redux/features/common/notifications/notificationSlice.ts";
 import { RootState } from "./redux/store.ts";
@@ -108,6 +112,7 @@ function App() {
   const isLoggedIn = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
+
   const {
     data: notifications,
     isLoading,
@@ -117,6 +122,45 @@ function App() {
     { page: 1, size: 100 },
     { skip: !isLoggedIn }
   );
+
+  //xử lý notification mới
+  const handleNewMessage = useCallback(
+    (payload: any) => {
+      console.log("Received foreground message:", payload);
+      refetch();
+    },
+    [refetch]
+  );
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const setupFCM = async () => {
+        const permissionGranted = await requestForPermission();
+        if (permissionGranted) {
+          const token = await requestForToken();
+          if (token) {
+            console.log("FCM Token:", token);
+          }
+        }
+      };
+
+      setupFCM();
+      const unsubscribe = onMessageListener(handleNewMessage);
+
+      return () => {
+        if (typeof unsubscribe === "function") {
+          unsubscribe();
+        }
+      };
+    }
+  }, [isLoggedIn, handleNewMessage]);
+
+  useEffect(() => {
+    if (isSuccess && notifications) {
+      dispatch(setNotifications(notifications.notificationDTOs));
+    }
+  }, [dispatch, isSuccess, notifications]);
+  ///////////////////////////kết thúc xử lý notification mới////////////////////////
 
   //cart
   const {
@@ -147,23 +191,23 @@ function App() {
     }
   }, [dispatch, isSuccess, notifications, isSuccess_, carts]);
 
-  useEffect(() => {
-    onMessageListener().then(async (data: any) => {
-      console.log("Receive foreground: ", data);
-      if (isLoggedIn) {
-        refetch();
-      }
-    });
+  // useEffect(() => {
+  //   onMessageListener().then(async (data: any) => {
+  //     console.log("Receive foreground: ", data);
+  //     if (isLoggedIn) {
+  //       refetch();
+  //     }
+  //   });
 
-    return () => {
-      onMessageListener().then(async (data: any) => {
-        console.log("Receive foreground: ", data);
-        if (isLoggedIn) {
-          refetch();
-        }
-      });
-    };
-  }, [isLoggedIn, refetch]);
+  //   return () => {
+  //     onMessageListener().then(async (data: any) => {
+  //       console.log("Receive foreground: ", data);
+  //       if (isLoggedIn) {
+  //         refetch();
+  //       }
+  //     });
+  //   };
+  // }, [isLoggedIn, refetch]);
 
   if (isLoading || isLoading_) {
     return <div>Loading...</div>;

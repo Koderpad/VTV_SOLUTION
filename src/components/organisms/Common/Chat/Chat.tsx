@@ -18,6 +18,7 @@ const Chat: React.FC = () => {
   const roomChats = useSelector(selectRoomChats);
   const requestedChatUsername = useSelector(selectRequestedChatUsername);
   const dispatch = useDispatch();
+  const username = useSelector((state: RootState) => state.auth.user?.username);
 
   useEffect(() => {
     console.log(
@@ -45,7 +46,12 @@ const Chat: React.FC = () => {
     };
   }, [requestedChatUsername, roomChats]);
 
-  const handleRoomClick = (roomChatId: string, receiverUsername: string) => {
+  const handleRoomClick = (
+    roomChatId: string,
+    username1: string,
+    username2: string
+  ) => {
+    const receiverUsername = username1 === username ? username2 : username1;
     setSelectedRoomChatId(roomChatId);
     setSelectedReceiverUsername(receiverUsername);
   };
@@ -62,7 +68,11 @@ const Chat: React.FC = () => {
                   room.roomChatId === selectedRoomChatId ? "bg-blue-100" : ""
                 }`}
                 onClick={() =>
-                  handleRoomClick(room.roomChatId, room.receiverUsername)
+                  handleRoomClick(
+                    room.roomChatId,
+                    room.receiverUsername,
+                    room.senderUsername
+                  )
                 }
               >
                 <div className="flex items-center">
