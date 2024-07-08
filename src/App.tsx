@@ -98,30 +98,10 @@ import RegisterPage from "./pages/common/Register.tsx";
 import ActiveAccountPage from "./pages/common/ActiveAccount.tsx";
 import ForgotPasswordPage from "./pages/common/ForgotPassword.tsx";
 import { FavoriteProducts } from "./components/organisms/Common/Account/FavoriteProducts/index.tsx";
+import Home from "./pages/common/Home.tsx";
+import ProductDetailPage from "./pages/common/ProductDetailPage.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
-const Home = lazy(() => import("./pages/common/Home"));
-const ProductDetailPage = lazy(
-  () => import("./pages/common/ProductDetailPage")
-);
-
-// ROLE: CUSTOMER
-// const CartPage = lazy(() => import("./pages/common/Cart"));
-// const Checkout = lazy(() => import("./pages/common/Checkout"));
-// const AccountPage = lazy(() => import("./pages/common/Account"));
-// const Profile = lazy(() => import("./components/organisms/Account/Profile"));
-// const PasswordChanges = lazy(
-//   () => import("./components/organisms/Account/PasswordChanges"),
-// );
-// const Address = lazy(() => import("./components/organisms/Account/Address"));
-// const OrderDetail = lazy(
-//   () => import("./components/organisms/Account/OrderDetail"),
-// );
-// const CategoryResultsPage = lazy(
-//   () => import("./pages/common/CategoryResultsPage"),
-// );
-
-//ROLE: MANAGER
 
 function App() {
   const dispatch = useDispatch();
@@ -133,7 +113,10 @@ function App() {
     isLoading,
     isSuccess,
     refetch,
-  } = useGetListNotificationQuery({ page: 1, size: 5 }, { skip: !isLoggedIn });
+  } = useGetListNotificationQuery(
+    { page: 1, size: 100 },
+    { skip: !isLoggedIn }
+  );
 
   //cart
   const {
@@ -171,6 +154,15 @@ function App() {
         refetch();
       }
     });
+
+    return () => {
+      onMessageListener().then(async (data: any) => {
+        console.log("Receive foreground: ", data);
+        if (isLoggedIn) {
+          refetch();
+        }
+      });
+    };
   }, [isLoggedIn, refetch]);
 
   if (isLoading || isLoading_) {

@@ -7,8 +7,6 @@ import {
   useReadNotificationMutation,
 } from "@/redux/features/common/notifications/notificationApiSlice";
 import { NotificationDTO } from "@/utils/DTOs/common/Notification/Response/NotificationResponse";
-
-import { AiOutlineExpand } from "react-icons/ai";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useState } from "react";
@@ -17,12 +15,7 @@ export const NotificationTooltip = () => {
   const notifications: NotificationDTO[] = useSelector(
     (state: RootState) => state.notification.notifications
   );
-  const {
-    data: notifications_,
-    isLoading,
-    isSuccess,
-    refetch,
-  } = useGetListNotificationQuery({ page: 1, size: 5 });
+  const { refetch } = useGetListNotificationQuery({ page: 1, size: 100 });
   const [readNotification] = useReadNotificationMutation();
   const [deleteNotification] = useDeleteNotificationMutation();
   const [expandedNotificationId, setExpandedNotificationId] = useState<
@@ -70,7 +63,7 @@ export const NotificationTooltip = () => {
               <div className="w-4 h-4 right-16 absolute mt-1 bg-white rotate-45"></div>
             </div>
             <div className="py-3 bg-white shadow-lg rounded-lg">
-              <div className="p-5 flex flex-col gap-4">
+              <div className="p-5 flex flex-col gap-4 overflow-y-auto max-h-[500px]">
                 {notifications?.map((notification) => (
                   <div
                     key={notification.notificationId}
@@ -105,9 +98,7 @@ export const NotificationTooltip = () => {
                             {expandedNotificationId ===
                             notification.notificationId
                               ? "Thu gọn"
-                              : "Xem thêm"
-                                // <AiOutlineExpand />
-                            }
+                              : "Xem thêm"}
                           </button>
                         )}
                       </div>
