@@ -104,6 +104,7 @@ import ForgotPasswordPage from "./pages/common/ForgotPassword.tsx";
 import { FavoriteProducts } from "./components/organisms/Common/Account/FavoriteProducts/index.tsx";
 import Home from "./pages/common/Home.tsx";
 import ProductDetailPage from "./pages/common/ProductDetailPage.tsx";
+import { setHasNewMessage } from "./redux/features/common/chat/chatSlice.ts";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 
@@ -128,6 +129,7 @@ function App() {
     (payload: any) => {
       console.log("Received foreground message:", payload);
       refetch();
+      dispatch(setHasNewMessage(true));
     },
     [refetch]
   );

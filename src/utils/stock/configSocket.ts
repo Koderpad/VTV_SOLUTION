@@ -208,3 +208,27 @@ export const sendMessage = async (msgRequest: any) => {
     store.dispatch(addFailedMessage(msgRequest));
   }
 };
+
+export const unsubscribeFromMultipleRooms = async (
+  roomChatIds: string[]
+): Promise<void> => {
+  if (!stompClient) {
+    throw new Error("STOMP client not initialized");
+  }
+
+  await connectPromise;
+
+  for (const roomChatId of roomChatIds) {
+    if (subscriptions[roomChatId]) {
+      try {
+        subscriptions[roomChatId].unsubscribe();
+        console.log("Unsubscribed from room:", roomChatId);
+        delete subscriptions[roomChatId];
+      } catch (error) {
+        console.error("Error unsubscribing from room:", roomChatId, error);
+      }
+    } else {
+      console.log("No subscription found for room:", roomChatId);
+    }
+  }
+};

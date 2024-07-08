@@ -8,6 +8,7 @@ interface ChatState {
   messages: { [roomChatId: string]: { [messengerId: string]: MessageDTO } };
   failedMessages: { [roomChatId: string]: MessageDTO[] };
   requestedChatUsername: string | null;
+  hasNewMessage: boolean;
 }
 
 const initialState: ChatState = {
@@ -15,6 +16,7 @@ const initialState: ChatState = {
   messages: {},
   failedMessages: {},
   requestedChatUsername: null,
+  hasNewMessage: false,
 };
 
 const chatSlice = createSlice({
@@ -87,6 +89,9 @@ const chatSlice = createSlice({
     requestOpenChat: (state, action: PayloadAction<string | null>) => {
       state.requestedChatUsername = action.payload;
     },
+    setHasNewMessage: (state, action: PayloadAction<boolean>) => {
+      state.hasNewMessage = action.payload;
+    },
   },
 });
 
@@ -100,6 +105,7 @@ export const {
   addFailedMessage,
   removeFailedMessage,
   requestOpenChat,
+  setHasNewMessage,
 } = chatSlice.actions;
 
 export const selectRoomChats = (state: RootState) => state.chat.roomChats;
@@ -111,7 +117,8 @@ export const selectFailedMessages = (state: RootState, roomChatId: string) =>
   state.chat.failedMessages[roomChatId] || [];
 export const selectRequestedChatUsername = (state: RootState) =>
   state.chat.requestedChatUsername;
-
+export const selectHasNewMessage = (state: RootState) =>
+  state.chat.hasNewMessage;
 export default chatSlice.reducer;
 
 // import { createSlice, PayloadAction } from "@reduxjs/toolkit";

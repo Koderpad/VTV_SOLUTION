@@ -76,7 +76,11 @@ const Chat: React.FC = () => {
                 }
               >
                 <div className="flex items-center">
-                  <span className="font-bold">{room.receiverUsername}</span>
+                  <span className="font-bold">
+                    {username === room.receiverUsername
+                      ? room.senderUsername
+                      : room.receiverUsername}
+                  </span>
                   <span className="ml-2 text-gray-500">{room.lastMessage}</span>
                 </div>
                 <span className="text-sm text-gray-400">{room.lastDate}</span>
