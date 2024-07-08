@@ -7,12 +7,14 @@ interface ChatState {
   roomChats: RoomChatDTO[];
   messages: { [roomChatId: string]: { [messengerId: string]: MessageDTO } };
   failedMessages: { [roomChatId: string]: MessageDTO[] };
+  requestedChatUsername: string | null;
 }
 
 const initialState: ChatState = {
   roomChats: [],
   messages: {},
   failedMessages: {},
+  requestedChatUsername: null,
 };
 
 const chatSlice = createSlice({
@@ -21,6 +23,9 @@ const chatSlice = createSlice({
   reducers: {
     setRoomChats: (state, action: PayloadAction<RoomChatDTO[]>) => {
       state.roomChats = action.payload;
+    },
+    addRoomChat: (state, action: PayloadAction<RoomChatDTO>) => {
+      state.roomChats.unshift(action.payload);
     },
     setMessages: (
       state,
@@ -79,17 +84,22 @@ const chatSlice = createSlice({
         ].filter((message) => message.messengerId !== messengerId);
       }
     },
+    requestOpenChat: (state, action: PayloadAction<string | null>) => {
+      state.requestedChatUsername = action.payload;
+    },
   },
 });
 
 export const {
   setRoomChats,
+  addRoomChat,
   setMessages,
   addMessages,
   addMessage,
   updateRoomChat,
   addFailedMessage,
   removeFailedMessage,
+  requestOpenChat,
 } = chatSlice.actions;
 
 export const selectRoomChats = (state: RootState) => state.chat.roomChats;
@@ -99,6 +109,8 @@ export const selectMessages = (state: RootState, roomChatId: string) =>
   );
 export const selectFailedMessages = (state: RootState, roomChatId: string) =>
   state.chat.failedMessages[roomChatId] || [];
+export const selectRequestedChatUsername = (state: RootState) =>
+  state.chat.requestedChatUsername;
 
 export default chatSlice.reducer;
 

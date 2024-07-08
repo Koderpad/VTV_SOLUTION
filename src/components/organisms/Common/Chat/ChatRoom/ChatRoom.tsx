@@ -15,6 +15,7 @@ import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
 import { MessageDTO } from "@/utils/DTOs/chat/Response/ListMessagesPageResponse";
 import { sendMessage } from "@/utils/stock/configSocket";
+import { getShopByUsername } from "@/services/common/ShopService";
 
 interface ChatRoomProps {
   roomChatId: string;
@@ -170,6 +171,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
 
   return (
     <div className="flex flex-col h-full">
+      <div className="bg-white border-b border-gray-200 p-4 flex items-center">
+        <h2 className="text-lg font-semibold">{receiverUsername}</h2>
+      </div>
       <div
         ref={messagesContainerRef}
         className="flex-grow overflow-y-auto"

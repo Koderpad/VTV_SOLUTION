@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import {
   useAddNewCartMutation,
@@ -19,6 +19,7 @@ import {
   useDeleteFavoriteProductMutation,
 } from "@/redux/features/common/favorite_product/favoriteProductApiSlice";
 import { HeartIcon } from "lucide-react";
+import { requestOpenChat } from "@/redux/features/common/chat/chatSlice";
 
 interface ProductDetailProps {
   data: ProductResponse;
@@ -106,6 +107,7 @@ const FavoriteButton = ({ productId }: { productId: number }) => {
 };
 
 export const ProductDetail = ({ data }: ProductDetailProps) => {
+  const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedAttributes, setSelectedAttributes] = useState<{
     [key: string]: string;
@@ -297,6 +299,10 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
         )}
       </>
     );
+  };
+
+  const handleChatNow = () => {
+    dispatch(requestOpenChat(data.usernameShop));
   };
   return (
     <>
@@ -547,7 +553,10 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
           </div>
         </div>
         <div className="order-last mt-4 flex space-x-4">
-          <button className="rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+          <button
+            className="rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            onClick={handleChatNow}
+          >
             Chat ngay
           </button>
           <button
