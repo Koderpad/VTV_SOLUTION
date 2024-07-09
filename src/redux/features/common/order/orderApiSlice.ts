@@ -3,6 +3,7 @@ import { MultipleOrderRequestWithCart } from "@/utils/DTOs/common/Order/Request/
 import { MultipleOrderResponse } from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
 import { OrderResponse } from "@/utils/DTOs/common/Order/Response/OrderResponse.ts";
 import { AdditionalProps } from "@/utils/DTOs/common/Order/AdditionalProps.ts";
+import { OrderRequestWithProductVariant } from "@/utils/DTOs/common/Order/Request/OrderRequestWithProductVariant.ts";
 
 export const orderApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -129,6 +130,26 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    updateOrderByProductVariant: builder.mutation<
+      OrderResponse,
+      OrderRequestWithProductVariant
+    >({
+      query: (body) => ({
+        url: `/customer/order/create-update/with-product-variant`,
+        method: "POST",
+        body,
+      }),
+    }),
+    addOrderByProductVariant: builder.mutation<
+      OrderResponse,
+      OrderRequestWithProductVariant
+    >({
+      query: (body) => ({
+        url: `/customer/order/add/with-product-variant`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -137,4 +158,6 @@ export const {
   useUpdateMultiOrderMutation,
   useAddMutilOrderMutation,
   useCreateOrderByProductVariantMutation,
+  useUpdateOrderByProductVariantMutation,
+  useAddOrderByProductVariantMutation,
 } = orderApiSlice;

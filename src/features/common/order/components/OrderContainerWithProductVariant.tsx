@@ -1,179 +1,142 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  useAddMutilOrderMutation,
-  useUpdateMultiOrderMutation,
+  useAddOrderByProductVariantMutation,
+  useUpdateOrderByProductVariantMutation,
 } from "../../../../redux/features/common/order/orderApiSlice";
-import { Order } from "@/components/organisms/Common/Order";
+
 import { AES, enc } from "crypto-js";
 import {
   AddressDTO,
-  MultipleOrderResponse,
-} from "@/utils/DTOs/common/Order/Response/MultipleOrderResponse";
-import {
-  MultipleOrderRequestWithCart,
-  OrderRequestWithCart,
-} from "@/utils/DTOs/common/Order/Request/MultipleOrderRequestWithCart";
+  OrderResponse,
+} from "@/utils/DTOs/common/Order/Response/OrderResponse";
+import { OrderRequestWithProductVariant } from "@/utils/DTOs/common/Order/Request/OrderRequestWithProductVariant";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getVoucherByVoucherId } from "@/services/common/VoucherService";
 import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
 import { ServerError } from "@/utils/DTOs/common/ServerError";
 import { useCreateVNPayPaymentMutation } from "@/redux/features/common/order/vnPayApiSlice";
+import { Order } from "@/components/organisms/Common/OrderWithProductVariant";
 
-export const OrderContainer = () => {
-  // const navigate = useNavigate();
-  // const [createOrder] = useCreateOrderMutation();
-  // const [createUpdateOrder] = useCreateUpdateOrderMutation();
-  const [addMultipleOrderRequestthCart] = useAddMutilOrderMutation();
+export const OrderContainerWithProductVariant = () => {
   const [createVNPayPayment] = useCreateVNPayPaymentMutation();
-
-  const [updateMultiOrder] = useUpdateMultiOrderMutation();
+  const [updateOrderByProductVariant] =
+    useUpdateOrderByProductVariantMutation();
+  const [addOrderByProductVariant] = useAddOrderByProductVariantMutation();
 
   const [isUpdating, setIsUpdating] = useState(false);
   const shouldUpdateFromURL = useRef(true);
-
   const [isLoading, setIsLoading] = useState(true);
 
-  // Lấy dữ liệu đơn hàng từ URL
-  const [multipleOrderResponse, setMultipleOrderResponse] =
-    useState<MultipleOrderResponse>();
+  const [orderResponseFromURL, setOrderResponseFromURL] =
+    useState<OrderResponse | null>(null);
 
-  // Khởi tạo state cho thông tin đơn hàng và thanh toán
-  const [orderRequestWithCarts, setOrderRequestWithCarts] =
-    useState<MultipleOrderRequestWithCart>();
-  const [address, setAddress] = useState<AddressDTO>();
+  const [orderRequest, setOrderRequest] =
+    useState<OrderRequestWithProductVariant | null>(null);
+
+  const [address, setAddress] = useState<AddressDTO | null>(null);
+
   const [systemVoucherNameAndId, setSystemVoucherNameAndId] = useState<{
     name: string;
     id: number;
-  }>();
-  const [paymentMethod, setPaymentMethod] = useState<string>();
+  } | null>(null);
+
+  const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+
   const [updatedOrderRequests, setUpdatedOrderRequests] =
-    useState<Partial<OrderRequestWithCart>[]>();
+    useState<Partial<OrderRequestWithProductVariant>>();
 
   // Hàm cập nhật thông tin đơn hàng khi người dùng thay đổi
   const updateOrderRequest = (
-    index: number,
-    updates: Partial<OrderRequestWithCart>
+    updates: Partial<OrderRequestWithProductVariant>
   ) => {
-    const updatedDate: Partial<OrderRequestWithCart>[] = [];
-    multipleOrderResponse!.orderResponses.forEach(() => {
-      updatedDate.push({});
-    });
-    if (index === -1) {
-      updatedDate.forEach((order) => {
-        Object.assign(order, updates);
-      });
-    } else {
-      Object.assign(updatedDate[index], updates);
-    }
-    setUpdatedOrderRequests(updatedDate);
+    setUpdatedOrderRequests(updates);
   };
 
-  // Cập nhật orderRequestWithCarts khi có thay đổi từ người dùng
+  //Cập nhật orderRequest khi có thay đổi từ người dùng
   useEffect(() => {
     console.log("Updated Order Requests: ", updatedOrderRequests);
-    if (!multipleOrderResponse || !updatedOrderRequests) {
-      return;
-    }
 
-    if (
-      updatedOrderRequests.length !==
-      multipleOrderResponse.orderResponses.length
-    ) {
-      return;
-    }
+    if (!updatedOrderRequests || !orderResponseFromURL) return;
 
-    const neccessaryOrderResponses = getNeccessaryOrderResponses(
-      multipleOrderResponse
-    );
-    const updatedOrderRequestWithCarts: Promise<OrderRequestWithCart[]> =
-      Promise.all(
-        neccessaryOrderResponses.map(async (orderResponse, index) => {
-          const { orderDTO } = orderResponse;
-          const updates = updatedOrderRequests[index];
-          const shopVoucherCode = await getShopVoucherCode(orderDTO);
-          const systemVoucherCode = await getSystemVoucherCode(orderDTO);
+    const updatedOrderRequestWithVariant = async () => {
+      try {
+        const { orderDTO } = orderResponseFromURL;
+        const updates = updatedOrderRequests;
+        console.log("note: ", updates.note);
+        const shopVoucherCode = await getShopVoucherCode(orderDTO);
+        const systemVoucherCode = await getSystemVoucherCode(orderDTO);
 
-          return {
-            addressId: updates.addressId || orderDTO.addressDTO.addressId,
-            systemVoucherCode:
-              updates.systemVoucherCode === "CANCEL"
-                ? undefined
-                : updates.systemVoucherCode || systemVoucherCode,
-            shopVoucherCode:
-              updates.shopVoucherCode === "CANCEL"
-                ? undefined
-                : updates.shopVoucherCode || shopVoucherCode,
-            paymentMethod: updates.paymentMethod || orderDTO.paymentMethod,
-            shippingMethod: updates.shippingMethod || orderDTO.shippingMethod,
-            note: updates.note || orderDTO.note || "",
-            useLoyaltyPoint:
-              updates.useLoyaltyPoint !== undefined
-                ? updates.useLoyaltyPoint
-                : !!orderDTO.loyaltyPointHistoryDTO,
+        const final: OrderRequestWithProductVariant = {
+          addressId: updates.addressId || orderDTO.addressDTO.addressId,
+          systemVoucherCode:
+            updates.systemVoucherCode === "CANCEL"
+              ? undefined
+              : updates.systemVoucherCode || systemVoucherCode,
+          shopVoucherCode:
+            updates.shopVoucherCode === "CANCEL"
+              ? undefined
+              : updates.shopVoucherCode || shopVoucherCode,
+          paymentMethod: updates.paymentMethod || orderDTO.paymentMethod,
+          shippingMethod: updates.shippingMethod || orderDTO.shippingMethod,
+          note: updates.note !== undefined ? updates.note : orderDTO.note || "",
+          useLoyaltyPoint:
+            updates.useLoyaltyPoint !== undefined
+              ? updates.useLoyaltyPoint
+              : !!orderDTO.loyaltyPointHistoryDTO,
 
-            cartIds: orderDTO.orderItemDTOs.map(({ cartId }) => cartId),
-          };
-        })
-      );
+          productVariantIdsAndQuantities: {
+            ...orderDTO.orderItemDTOs.reduce(
+              (acc, item) => {
+                acc[item.productVariantDTO.productVariantId] = item.quantity;
+                return acc;
+              },
+              {} as Record<string, number>
+            ),
+            ...updates.productVariantIdsAndQuantities,
+          },
+        };
 
-    // Sử dụng finalOrderRequestWithCarts
-    updatedOrderRequestWithCarts
-      .then((finalOrderRequestWithCarts) => {
-        // Sử dụng finalOrderRequestWithCarts
-        console.log(
-          "Updated Order Request With Carts: ",
-          finalOrderRequestWithCarts
-        );
+        return final;
+      } catch (error) {
+        console.error("Error when updating order request: ", error);
+      }
+    };
 
-        setOrderRequestWithCarts({
-          orderRequestWithCarts: finalOrderRequestWithCarts,
-        });
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        console.error("Lỗi khi cập nhật đơn hàng: ", error);
-      });
+    updatedOrderRequestWithVariant().then((x) => {
+      console.log("xxx: ", x);
+      if (x) setOrderRequest(x);
+    });
   }, [updatedOrderRequests]);
 
   // Cập nhật dữ liệu từ URL
   useEffect(() => {
-    const fetchData = () => {
+    const fetchData = async () => {
       if (shouldUpdateFromURL.current) {
-        const multipleOrderResponse: MultipleOrderResponse =
-          getMultipleOrderResponseFromURL();
+        const orderResponseFromURL = getOrderResponseFromURL();
 
-        setMultipleOrderResponse(multipleOrderResponse);
+        if (orderResponseFromURL) {
+          setOrderResponseFromURL(orderResponseFromURL);
 
-        const neccessaryOrderResponses = getNeccessaryOrderResponses(
-          multipleOrderResponse
-        );
-        setAddress(neccessaryOrderResponses[0]?.orderDTO.addressDTO);
-        setSystemVoucherNameAndId(() => {
-          console.log("System Voucher 0000: ", neccessaryOrderResponses[0]);
-          if (neccessaryOrderResponses[0]?.orderDTO.voucherOrderDTOs) {
+          setAddress(orderResponseFromURL.orderDTO.addressDTO);
+
+          setSystemVoucherNameAndId(() => {
+            if (!orderResponseFromURL.orderDTO.voucherOrderDTOs) return null;
             const systemVoucher =
-              neccessaryOrderResponses[0]?.orderDTO.voucherOrderDTOs.find(
+              orderResponseFromURL.orderDTO.voucherOrderDTOs.find(
                 (voucher) => !voucher.type
               );
-            console.log("System Voucher: ", systemVoucher);
-            if (systemVoucher) {
-              return {
-                name: systemVoucher.voucherName,
-                id: systemVoucher.voucherId,
-              };
-            }
-          }
-          console.log("System Voucher 1111: ", undefined);
-          return undefined;
-        });
+            return systemVoucher
+              ? { name: systemVoucher.voucherName, id: systemVoucher.voucherId }
+              : null;
+          });
 
-        setPaymentMethod(
-          neccessaryOrderResponses[0]?.orderDTO.paymentMethod || "COD"
-        );
-
+          setPaymentMethod(
+            orderResponseFromURL.orderDTO.paymentMethod || "COD"
+          );
+        }
         shouldUpdateFromURL.current = false;
-        setIsLoading(false); // Cập nhật isLoading thành false sau khi tải dữ liệu xong
+        setIsLoading(false);
       }
     };
 
@@ -181,101 +144,103 @@ export const OrderContainer = () => {
   }, [shouldUpdateFromURL.current]);
 
   useEffect(() => {
-    console.log("sys: ", systemVoucherNameAndId);
-  }, [systemVoucherNameAndId]);
-
-  // Xử lý đặt hàng khi orderRequestWithCarts thay đổi
-  const trustedOrderRequestWithCarts = (
-    orderRequestWithCarts: MultipleOrderRequestWithCart
-  ) => {
-    return {
-      orderRequestWithCarts: orderRequestWithCarts.orderRequestWithCarts.map(
-        (orderRequestWithCart) => {
-          const { systemVoucherCode, shopVoucherCode, ...rest } =
-            orderRequestWithCart;
-          console.log(rest);
-
-          let updatedOrderRequest = orderRequestWithCart;
-
-          // Loại bỏ thuộc tính systemVoucherCode nếu nó có giá trị rỗng
-
-          if (systemVoucherCode === "") {
-            updatedOrderRequest.systemVoucherCode = null;
-          } else {
-            updatedOrderRequest.systemVoucherCode = systemVoucherCode;
-          }
-
-          return updatedOrderRequest;
-        }
-      ),
-    };
-  };
-
-  // Xử lý đặt hàng khi orderRequestWithCarts thay đổi và không đang cập nhật
-  useEffect(() => {
-    console.log("Order Request With Carts: ", orderRequestWithCarts);
-    if (!orderRequestWithCarts || isUpdating) {
-      return;
+    console.log("Order Request: ", orderRequest);
+    if (orderRequest && !isUpdating) {
+      handleUpdateOrder(orderRequest);
     }
-    const handleUpdateOrder = async () => {
-      if (!isUpdating) {
-        setIsUpdating(true);
-        try {
-          const edittedOrderRequestWithCarts = trustedOrderRequestWithCarts(
-            orderRequestWithCarts
-          );
-          const updateOrderResponse = await updateMultiOrder(
-            edittedOrderRequestWithCarts
-          ).unwrap();
+  }, [orderRequest]);
 
-          if (updateOrderResponse) {
-            toast("Cập nhật đơn hàng thành công", {
-              position: "top-right",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: false,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
-            });
-            updateURL(updateOrderResponse);
-            shouldUpdateFromURL.current = true;
-          } else {
-            toast.error("Đã xảy ra lỗi khi đặt hàng, vui lòng thử lại sau");
-          }
-        } catch (error) {
-          console.error("Lỗi khi đặt hàng:", error);
+  const handleUpdateOrder = async (
+    updatedOrderRequest: OrderRequestWithProductVariant
+  ) => {
+    if (!isUpdating) {
+      setIsUpdating(true);
+      try {
+        const updateOrderResponse =
+          await updateOrderByProductVariant(updatedOrderRequest).unwrap();
+
+        if (updateOrderResponse) {
+          toast("Cập nhật đơn hàng thành công", {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+          updateURL(updateOrderResponse);
+          shouldUpdateFromURL.current = true;
+        } else {
           toast.error("Đã xảy ra lỗi khi đặt hàng, vui lòng thử lại sau");
         }
-        setIsUpdating(false);
+      } catch (error) {
+        console.error("Lỗi khi đặt hàng:", error);
+        toast.error("Đã xảy ra lỗi khi đặt hàng, vui lòng thử lại sau");
       }
-    };
+      setIsUpdating(false);
+    }
+  };
 
-    handleUpdateOrder();
-  }, [orderRequestWithCarts]);
-  // Hiển thị thông tin đơn hàng và xử lý thanh toán
+  const handlePlaceOrder = async () => {
+    if (!orderRequest) {
+      toast.error("Không có thông tin đơn hàng để xử lý");
+      return;
+    }
+
+    handleApiCall<OrderResponse, ServerError>({
+      callbackFn: async () => {
+        return await addOrderByProductVariant(orderRequest);
+      },
+      successCallback: async (data) => {
+        if (data.orderDTO.paymentMethod === "VNPay") {
+          try {
+            sessionStorage.setItem("checkoutState", JSON.stringify(data));
+            const response = await createVNPayPayment([
+              data.orderDTO.orderId,
+            ]).unwrap();
+            if (response.code === 200) {
+              const vnpUrl = new URL(response.url);
+              window.location.href = vnpUrl.toString();
+            } else {
+              alert("Tạo thanh toán VNPay thất bại");
+              window.history.back();
+            }
+          } catch (error) {
+            alert("Lỗi khi tạo thanh toán VNPay: " + error);
+            window.history.back();
+          }
+        } else {
+          alert("Đặt hàng thành công");
+          window.location.href = "/user/account/history-purchase";
+        }
+      },
+      errorFromServerCallback: (error) => {
+        alert("Đặt hàng thất bại: " + error.message);
+      },
+      errorSerializedCallback: (error) => {
+        alert("Lỗi đặt hàng: " + error.message);
+      },
+      errorCallback: (error) => {
+        alert("Lỗi đặt hàng: " + error);
+      },
+    });
+  };
+
   return (
     <>
-      {isLoading || !address || !paymentMethod || !multipleOrderResponse ? (
-        <div>
-          Loading...{isLoading ? "true" : "false"} {paymentMethod}
-        </div>
+      {isLoading || !address || !paymentMethod || !orderResponseFromURL ? (
+        <div>Loading...</div>
       ) : (
         <Order
-          priceDataFromMultipleOrderResponse={multipleOrderResponse}
+          priceDataFromOrderResponse={orderResponseFromURL}
           address={address}
           systemVoucherNameAndId={systemVoucherNameAndId}
           paymentMethod={paymentMethod}
           updateOrderRequest={updateOrderRequest}
-          handlePlaceOrder={() => {
-            handlePlaceOrder(
-              multipleOrderResponse,
-              addMultipleOrderRequestthCart,
-              createVNPayPayment
-            );
-          }}
+          handlePlaceOrder={handlePlaceOrder}
         />
       )}
       <ToastContainer />
@@ -283,48 +248,26 @@ export const OrderContainer = () => {
   );
 };
 
-// DATA OF RESPONSE
-// Hàm lấy dữ liệu đơn hàng từ URL
-const getMultipleOrderResponseFromURL = () => {
+const getOrderResponseFromURL = (): OrderResponse | null => {
   const urlParams = new URLSearchParams(window.location.search);
   const params = urlParams.get("state");
   if (!params) {
-    return alert("Invalid state");
+    alert("Invalid state");
+    return null;
   }
-  const encryptedState = decodeURIComponent(params);
-  const decryptedState = AES.decrypt(
-    encryptedState,
-    "vtv-secret-key-2024"
-  ).toString(enc.Utf8);
-  // console.log("Decrypted State: ", decryptedState);
-  return JSON.parse(decryptedState);
+  try {
+    const encryptedState = decodeURIComponent(params);
+    const decryptedState = AES.decrypt(
+      encryptedState,
+      "vtv-secret-key-2024"
+    ).toString(enc.Utf8);
+    return JSON.parse(decryptedState);
+  } catch (error) {
+    console.error("Error parsing URL state:", error);
+    return null;
+  }
 };
 
-// Hàm lấy thông tin cần thiết từ đơn hàng
-const getNeccessaryOrderResponses = (
-  multipleOrderResponse: MultipleOrderResponse
-) => {
-  return multipleOrderResponse.orderResponses.map(
-    ({ code, balance, totalPoint, orderDTO }) => ({
-      code,
-      balance,
-      totalPoint,
-      orderDTO,
-    })
-  );
-};
-
-// Hàm lấy tên và ID voucher hệ thống
-// const getSystemVoucherNameAndId = (orderDTO) => {
-//   const systemVoucher = orderDTO?.voucherOrderDTOs?.find(
-//     (voucher) => voucher.type
-//   );
-//   return systemVoucher
-//     ? { name: systemVoucher.voucherName, id: systemVoucher.voucherId }
-//     : undefined;
-// };
-
-// Hàm lấy mã voucher hệ thống
 const getSystemVoucherCode = async (orderDTO: any) => {
   const systemVoucher = orderDTO.voucherOrderDTOs?.find(
     (voucher: any) => voucher.type === false
@@ -335,9 +278,8 @@ const getSystemVoucherCode = async (orderDTO: any) => {
       const data = await getVoucherByVoucherId(id);
       return data.voucherDTO.code;
     } catch (error) {
-      alert("Failed to fetch vouchers");
+      console.error("Failed to fetch system voucher:", error);
     }
-    //get code by call api
   }
   return undefined;
 };
@@ -352,15 +294,14 @@ const getShopVoucherCode = async (orderDTO: any) => {
       const data = await getVoucherByVoucherId(id);
       return data.voucherDTO.code;
     } catch (error) {
-      alert("Failed to fetch vouchers");
+      console.error("Failed to fetch shop voucher:", error);
     }
-    //get code by call api
   }
   return undefined;
 };
 
-const updateURL = (orderResponsesWithCart: MultipleOrderResponse) => {
-  const updatedStateString = JSON.stringify(orderResponsesWithCart);
+const updateURL = (orderResponse: OrderResponse) => {
+  const updatedStateString = JSON.stringify(orderResponse);
   const encryptedUpdatedState = AES.encrypt(
     updatedStateString,
     "vtv-secret-key-2024"
@@ -370,98 +311,4 @@ const updateURL = (orderResponsesWithCart: MultipleOrderResponse) => {
   );
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?state=${urlSafeEncryptedUpdatedState}`;
   window.history.replaceState({}, "", newUrl);
-};
-
-const getMultipleOrderRequestWithCartFromMultipleOrderResponse = async (
-  multipleOrderResponse: MultipleOrderResponse
-) => {
-  const orderRequestWithCarts = [];
-
-  for (const orderResponse of multipleOrderResponse.orderResponses) {
-    const { orderDTO } = orderResponse;
-    const shopVoucherCode = await getShopVoucherCode(orderDTO);
-    const systemVoucherCode = await getSystemVoucherCode(orderDTO);
-
-    orderRequestWithCarts.push({
-      addressId: orderDTO.addressDTO.addressId,
-      systemVoucherCode: systemVoucherCode,
-      shopVoucherCode: shopVoucherCode,
-      paymentMethod: orderDTO.paymentMethod,
-      shippingMethod: orderDTO.shippingMethod,
-      note: orderDTO.note || "",
-      useLoyaltyPoint: !!orderDTO.loyaltyPointHistoryDTO,
-      cartIds: orderDTO.orderItemDTOs.map(({ cartId }) => cartId),
-    });
-  }
-
-  return { orderRequestWithCarts };
-};
-
-//handle place order
-const handlePlaceOrder = async (
-  multipleOrderResponse: MultipleOrderResponse,
-  addMultipleOrderRequestWithCart: any,
-  createVNPayPayment: any
-) => {
-  handleApiCall<MultipleOrderResponse, ServerError>({
-    callbackFn: async () => {
-      const orderRequestWithCarts =
-        await getMultipleOrderRequestWithCartFromMultipleOrderResponse(
-          multipleOrderResponse
-        );
-      return await addMultipleOrderRequestWithCart(orderRequestWithCarts);
-    },
-    successCallback: async (data) => {
-      // Kiểm tra payment method
-      if (data.orderResponses[0].orderDTO.paymentMethod === "VNPay") {
-        try {
-          // Lưu trữ thông tin state vào session storage
-          sessionStorage.setItem("checkoutState", JSON.stringify(data));
-
-          // Gọi API tạo thanh toán VNPay
-          // const response = await createVNPayPayment([
-          //   data.orderResponses[0].orderDTO.orderId,
-          // ]).unwrap();
-
-          const response = await createVNPayPayment(
-            data.orderResponses.map(
-              (orderResponse) => orderResponse.orderDTO.orderId
-            )
-          ).unwrap();
-
-          if (response.code === 200) {
-            // Chuyển hướng đến URL thanh toán VNPay
-            // window.fmlocation.href = `${response.url}&vnp_ReturnUrl=http://localhost:5173/vnpay/return`;
-            const vnpUrl = new URL(response.url);
-            // console.log("VNPay URL: ", vnpUrl.toString());
-            // vnpUrl.searchParams.set("vnp_ReturnUrl", "http://localhost:5173/vnpay/return");
-            console.log("VNPay URL: ", vnpUrl.toString());
-            window.location.href = vnpUrl.toString();
-          } else {
-            alert("Tạo thanh toán VNPay thất bại");
-            // Chuyển về trang trước khi click đặt hàng
-            window.history.back();
-          }
-        } catch (error) {
-          alert("Lỗi khi tạo thanh toán VNPay: " + error);
-          // Chuyển về trang trước khi click đặt hàng
-          window.history.back();
-        }
-      } else {
-        alert("Đặt hàng thành công");
-        console.log("Đặt hàng thành công: ", data);
-        // Chuyển hướng đến trang đơn mua
-        window.location.href = "/user/account/history-purchase";
-      }
-    },
-    errorFromServerCallback: (error) => {
-      alert("Đặt hàng thất bại: " + error.message);
-    },
-    errorSerializedCallback: (error) => {
-      alert("Lỗi đặt hàng: " + error.message);
-    },
-    errorCallback: (error) => {
-      alert("Lỗi đặt hàng: " + error);
-    },
-  });
 };

@@ -1,3 +1,3 @@
 export interface AdditionalProps {
-  [key: string]: number;
+  [productVariantId: string]: number;
 }
