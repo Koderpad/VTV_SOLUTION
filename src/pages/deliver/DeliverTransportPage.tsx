@@ -69,12 +69,15 @@ const DeliverTransportPage = () => {
     };
 
     const handleToggleProvinceDistrict = () => {
+        setSelectedWardCode("");
+
         setShowProvinceDistrict(!showProvinceDistrict);
-        if (!showProvinceDistrict) {
+        // if (!showProvinceDistrict) {
             setSelectedProvinceCode("");
             setSelectedDistrictCode("");
             setDistricts([]);
-        }
+        // }
+
     };
 
     useEffect(() => {
