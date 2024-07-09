@@ -44,6 +44,8 @@ import {
 } from "@/utils/DTOs/common/Product/Response/ListReviewResponse";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { OrderResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/OrderResponse";
+import { useCreateVNPayPaymentMutation } from "@/redux/features/common/order/vnPayApiSlice";
+import { AdditionalProps } from "@/utils/DTOs/common/Order/AdditionalProps.ts";
 
 const purchasesStatus = {
   ALL: 0,
@@ -111,6 +113,9 @@ export const HistoryPurchase = () => {
 
   const [cancelOrder] = useCancelOrderMutation();
 
+  //xu ly vnpay trong Unpaid
+  const [createVNPayPayment] = useCreateVNPayPaymentMutation();
+
   const refetchData = async () => {
     await refetchOther();
   };
@@ -175,6 +180,42 @@ export const HistoryPurchase = () => {
     // }
   };
 
+  const handleRepayment = async (orderId: string) => {
+    try {
+      const response = await createVNPayPayment([orderId]).unwrap();
+
+      if (response.code === 200) {
+        // Chuyển hướng đến URL thanh toán VNPay
+        // window.fmlocation.href = `${response.url}&vnp_ReturnUrl=http://localhost:5173/vnpay/return`;
+        const vnpUrl = new URL(response.url);
+        // console.log("VNPay URL: ", vnpUrl.toString());
+        // vnpUrl.searchParams.set("vnp_ReturnUrl", "http://localhost:5173/vnpay/return");
+        console.log("VNPay URL: ", vnpUrl.toString());
+        window.location.href = vnpUrl.toString();
+      } else {
+        alert("Tạo thanh toán VNPay thất bại");
+        // Chuyển về trang trước khi click đặt hàng
+        window.history.back();
+      }
+    } catch (error) {
+      alert("Lỗi khi tạo thanh toán VNPay: " + error);
+      // Chuyển về trang trước khi click đặt hàng
+      window.history.back();
+    }
+  };
+
+  const handleRepurchase = async (orderItemDTOs: OrderItemDTO[]) => {
+    const additionalProps: AdditionalProps = orderItemDTOs.reduce(
+      (acc, item) => {
+        const key = item.productVariantDTO.productVariantId.toString();
+        acc[key] = item.quantity;
+        return acc;
+      },
+      {} as AdditionalProps,
+    );
+    console.log(additionalProps);
+  };
+
   const formatPrice = (price: number) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
@@ -202,7 +243,7 @@ export const HistoryPurchase = () => {
                 {
                   "bg-blue-500 text-white": status === tab.status,
                   "hover:bg-gray-100": status !== tab.status,
-                }
+                },
               )}
             >
               {tab.name}
@@ -284,7 +325,7 @@ export const HistoryPurchase = () => {
                   </span>
                   <span className="ml-2 font-medium text-green-600">
                     {formatPrice(
-                      purchase.discountSystem + purchase.discountShop
+                      purchase.discountSystem + purchase.discountShop,
                     )}{" "}
                     VNĐ
                   </span>
@@ -328,6 +369,22 @@ export const HistoryPurchase = () => {
                         Trả lại
                       </button>
                     </>
+                  )}
+                  {purchase.status === "UNPAID" && (
+                    <button
+                      onClick={() => handleRepayment(purchase.orderId)}
+                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200"
+                    >
+                      Thanh toán lại
+                    </button>
+                  )}
+                  {purchase.status === "COMPLETED" && (
+                    <button
+                      onClick={() => handleRepurchase(purchase.orderItemDTOs)}
+                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200"
+                    >
+                      Mua lại
+                    </button>
                   )}
                 </div>
               </div>
@@ -950,7 +1007,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         <div className="p-6">{children}</div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 
