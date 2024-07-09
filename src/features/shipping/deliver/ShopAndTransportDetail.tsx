@@ -31,9 +31,19 @@ const ShopAndTransportDetail = () => {
     const [getDeliverInfo] = useGetDeliverInfoMutation();
 
     useEffect(() => {
-        const response = await getDeliverInfo();
-        setDeliver(response.data.deliverDTO);
-    }, [];
+        const fetchData = async () => {
+            try {
+                const response = await getDeliverInfo();
+                setDeliver(response.data.deliverDTO);
+            } catch (e) {
+                console.error("Error fetching data:", e);
+            }
+        }
+
+            fetchData();
+
+
+    }, []);
 
 
 
