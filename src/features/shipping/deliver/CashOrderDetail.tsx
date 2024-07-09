@@ -107,13 +107,13 @@ const CashOrderDetail = () => {
                                 </div>
                                 <div>
                                     <dt className="text-neutral-800 text-xl font-bold">
-                                        Người giao hàng:
+                                        Tài khoản giao hàng:
                                     </dt>
                                     <dd className="mt-1 text-black">{cashOrderDetail.cashOrderDTO.shipperUsername}</dd>
                                 </div>
                                 <div>
                                     <dt className="text-neutral-800 text-xl font-bold">
-                                        Kho hàng:
+                                        Tài khoản kho cầm tiền:
                                     </dt>
                                     <dd className="mt-1 text-black">
                                         {cashOrderDetail.cashOrderDTO.waveHouseUsername ?
@@ -123,7 +123,7 @@ const CashOrderDetail = () => {
 
                                 <div>
                                     <dt className="text-neutral-800 text-xl font-bold">
-                                        Nhân viên giao hàng cẩm tiền:
+                                        Nhân viên giao hàng cầm tiền:
                                     </dt>
                                     <dd className="mt-1 text-black">
                                         {cashOrderDetail.cashOrderDTO.shipperHold ? 'Có' : 'Không'}
@@ -132,7 +132,7 @@ const CashOrderDetail = () => {
 
                                 <div>
                                     <dt className="text-neutral-800 text-xl font-bold">
-                                        Nhân viên kho cẩm tiền:
+                                        Nhân viên kho cầm tiền:
                                     </dt>
                                     <dd className="mt-1 text-black">
                                         {cashOrderDetail.cashOrderDTO.waveHouseHold ? 'Có' : 'Không'}
@@ -149,15 +149,15 @@ const CashOrderDetail = () => {
                                     </dd>
                                 </div>
 
-                                <div>
-                                    <dt className="text-neutral-800 text-xl font-bold">
-                                        Hệ thống cầm tiền:
-                                    </dt>
-                                    <dd className="mt-1 text-black">
-                                        {!cashOrderDetail.cashOrderDTO.shipperHold && !cashOrderDetail.cashOrderDTO.waveHouseHold
-                                        && cashOrderDetail.cashOrderDTO.status === Status.INACTIVE ? 'Có' : 'Không'}
-                                    </dd>
-                                </div>
+                                {/*<div>*/}
+                                {/*    <dt className="text-neutral-800 text-xl font-bold">*/}
+                                {/*        Kho cầm tiền:*/}
+                                {/*    </dt>*/}
+                                {/*    <dd className="mt-1 text-black">*/}
+                                {/*        {!cashOrderDetail.cashOrderDTO.shipperHold && !cashOrderDetail.cashOrderDTO.waveHouseHold*/}
+                                {/*        && cashOrderDetail.cashOrderDTO.status === Status.INACTIVE ? 'Có' : 'Không'}*/}
+                                {/*    </dd>*/}
+                                {/*</div>*/}
 
 
                                 <div>

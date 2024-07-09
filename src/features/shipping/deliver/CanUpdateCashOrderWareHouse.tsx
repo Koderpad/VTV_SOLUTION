@@ -39,8 +39,8 @@ const CanUpdateCashOrderWareHouse = () => {
         }
     }, [isLoadingCashOrders, errorCashOrders, cashOrdersData]);
 
-    const handleViewOrder = (cashOrderId: string) => {
-        navigate(`/warehouse/cash-order/detail/${cashOrderId}`);
+    const handleViewCashOrder = (cashOrderId: string) => {
+        navigate(`/deliver/cash-order/detail/${cashOrderId}`);
     };
 
     const handleCashOrderCheckboxChange = (cashOrderId: string, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -228,7 +228,7 @@ const CanUpdateCashOrderWareHouse = () => {
                             <td className="py-2 px-4 border-b border-gray-200 text-center">
                                 <button
                                     className="text-blue-500 hover:text-blue-600"
-                                    onClick={() => handleViewOrder(cashOrder.cashOrderId)}
+                                    onClick={() => handleViewCashOrder(cashOrder.cashOrderId)}
                                 >
                                     <FaEye />
                                 </button>
