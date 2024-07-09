@@ -84,6 +84,18 @@ export const userApi = apiSlice.injectEndpoints({
     getOrderByOrderId: builder.query<OrderResponse, string>({
       query: (orderId) => `/customer/order/detail/${orderId}`,
     }),
+    returnOrder: builder.mutation<OrderResponse, string>({
+      query: (orderId) => ({
+        url: `/customer/order/return/${orderId}`,
+        method: "PATCH",
+      }),
+    }),
+    completeOrder: builder.mutation<OrderResponse, string>({
+      query: (orderId) => ({
+        url: `/customer/order/complete/${orderId}`,
+        method: "PATCH",
+      }),
+    }),
   }),
 });
 
@@ -101,4 +113,6 @@ export const {
   useGetOrdersByStatusVer2Query,
   useCancelOrderMutation,
   useGetOrderByOrderIdQuery,
+  useReturnOrderMutation,
+  useCompleteOrderMutation,
 } = userApi;

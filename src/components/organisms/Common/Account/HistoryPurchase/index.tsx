@@ -11,7 +11,9 @@ import {
 import useQueryParams from "@/hooks/useQueryParams";
 import {
   useCancelOrderMutation,
+  useCompleteOrderMutation,
   useGetOrdersByStatusVer2Query,
+  useReturnOrderMutation,
 } from "@/redux/features/common/customer/customerApiSlice";
 import {
   OrderDTO,
@@ -96,7 +98,7 @@ const purchaseTabs = [
   { status: purchasesStatus.REFUNDED, name: "Đã hoàn tiền" },
   { status: purchasesStatus.PAID, name: "Đã thanh toán" },
   { status: purchasesStatus.UNPAID, name: "Chưa thanh toán" },
-  { status: purchasesStatus.WAITING, name: "Đang thanh toán" },
+  { status: purchasesStatus.WAITING, name: "Đang chờ" },
 ];
 
 export const HistoryPurchase = () => {
@@ -117,6 +119,8 @@ export const HistoryPurchase = () => {
   } = useGetOrdersByStatusVer2Query(statusString);
 
   const [cancelOrder] = useCancelOrderMutation();
+  const [returnOrder] = useReturnOrderMutation();
+  const [completeOrder] = useCompleteOrderMutation();
 
   //xu ly vnpay trong Unpaid
   const [createVNPayPayment] = useCreateVNPayPaymentMutation();
@@ -156,33 +160,55 @@ export const HistoryPurchase = () => {
       },
       errorSerializedCallback(error) {
         console.error("Failed to add comment:", error);
-        toast.error("Không thể thêm bình luận");
+        toast.error("Không thể hủy đơn hàng");
       },
       errorCallback(error) {
         console.error("Failed to add comment:", error);
-        toast.error("Không thể thêm bình luận");
+        toast.error("Không thể hủy đơn hàng");
       },
     });
   };
 
   const handleCompleteOrder = async (orderId: string) => {
-    // try {
-    //   await completeOrder(orderId).unwrap();
-    //   toast.success("Đơn hàng đã được hoàn thành");
-    //   setIsUpdate(!isUpdate);
-    // } catch (error) {
-    //   toast.error("Không thể hoàn thành đơn hàng");
-    // }
+    handleApiCall<OrderResponse, ServerError>({
+      callbackFn: async () => await await completeOrder(orderId),
+      successCallback(data) {
+        toast.success(data.message);
+        setIsUpdate(!isUpdate);
+      },
+      errorFromServerCallback(error) {
+        toast.error(error.message);
+      },
+      errorSerializedCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể hoàn thành đơn hàng");
+      },
+      errorCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể hoàn thành đơn hàng");
+      },
+    });
   };
 
   const handleReturnOrder = async (orderId: string) => {
-    // try {
-    //   await returnOrder(orderId).unwrap();
-    //   toast.success("Yêu cầu trả hàng đã được gửi");
-    //   setIsUpdate(!isUpdate);
-    // } catch (error) {
-    //   toast.error("Không thể gửi yêu cầu trả hàng");
-    // }
+    handleApiCall<OrderResponse, ServerError>({
+      callbackFn: async () => await await returnOrder(orderId),
+      successCallback(data) {
+        toast.success(data.message);
+        setIsUpdate(!isUpdate);
+      },
+      errorFromServerCallback(error) {
+        toast.error(error.message);
+      },
+      errorSerializedCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể trả lại đơn hàng");
+      },
+      errorCallback(error) {
+        console.error("Failed to add comment:", error);
+        toast.error("Không thể trả lại đơn hàng");
+      },
+    });
   };
 
   const handleRepayment = async (orderId: string) => {
@@ -216,7 +242,7 @@ export const HistoryPurchase = () => {
         acc[key] = item.quantity;
         return acc;
       },
-      {} as AdditionalProps,
+      {} as AdditionalProps
     );
     await handleCreateOrder(additionalProps);
     console.log(additionalProps);
@@ -226,7 +252,7 @@ export const HistoryPurchase = () => {
   }) => {
     try {
       const orderCreationResult = await createOrderByProductVariant(
-        productVariantIdsAndQuantities,
+        productVariantIdsAndQuantities
       );
       if ("data" in orderCreationResult) {
         // Handle successful order creation
@@ -236,7 +262,7 @@ export const HistoryPurchase = () => {
         const stateString = JSON.stringify(result);
         const encryptedState = AES.encrypt(
           stateString,
-          "vtv-secret-key-2024",
+          "vtv-secret-key-2024"
         ).toString();
         const urlSafeEncryptedState = encodeURIComponent(encryptedState);
         console.log("urlSafeEncryptedState: ", urlSafeEncryptedState);
@@ -296,7 +322,7 @@ export const HistoryPurchase = () => {
                 {
                   "bg-blue-500 text-white": status === tab.status,
                   "hover:bg-gray-100": status !== tab.status,
-                },
+                }
               )}
             >
               {tab.name}
@@ -326,7 +352,7 @@ export const HistoryPurchase = () => {
                               : purchase.status === "RETURNED"
                                 ? "Đã trả lại"
                                 : purchase.status === "WAITING"
-                                  ? "Đang thanh toán"
+                                  ? "Đang chờ"
                                   : purchase.status === "REFUNDED"
                                     ? "Đã hoàn tiền"
                                     : purchase.status === "CANCEL"
@@ -378,7 +404,7 @@ export const HistoryPurchase = () => {
                   </span>
                   <span className="ml-2 font-medium text-green-600">
                     {formatPrice(
-                      purchase.discountSystem + purchase.discountShop,
+                      purchase.discountSystem + purchase.discountShop
                     )}{" "}
                     VNĐ
                   </span>
@@ -399,6 +425,7 @@ export const HistoryPurchase = () => {
                     Xem chi tiết
                   </button>
                   {(purchase.status === "PENDING" ||
+                    purchase.status === "PROCESSING" ||
                     purchase.status === "UNPAID") && (
                     <button
                       onClick={() => handleCancelOrder(purchase.orderId)}
@@ -1060,7 +1087,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         <div className="p-6">{children}</div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 };
 

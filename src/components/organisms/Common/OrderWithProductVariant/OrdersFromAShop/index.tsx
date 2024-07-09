@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import VoucherDetails from "../Voucher/VoucherDetails";
 import Vouchers from "../Voucher/vouchers";
 import { OrderResponse } from "@/utils/DTOs/common/Order/Response/OrderResponse";
@@ -7,6 +7,11 @@ import { OrderRequestWithProductVariant } from "@/utils/DTOs/common/Order/Reques
 import { useShopVoucher } from "@/hooks/useShopVoucher";
 import { Input } from "@/components/atoms/Input";
 import { debounce } from "lodash";
+import {
+  ListShippingResponse,
+  ShippingDTO,
+} from "@/utils/DTOs/common/Shipping/ListShippingResponse";
+import { getShippingProvidersByWard } from "@/services/common/ShippingService";
 
 interface OrderDetailsProps {
   order: OrderResponse;
@@ -26,6 +31,11 @@ export const OrderFromShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
     number[]
   >([]);
 
+  const [shippingProviders, setShippingProviders] = useState<ShippingDTO[]>([]);
+
+  const [selectedShippingProvider, setSelectedShippingProvider] =
+    useState<ShippingDTO | null>(null);
+
   const [shippingMethod, setShippingMethod] = useState<string>(
     order.orderDTO.shippingMethod
   );
@@ -34,6 +44,89 @@ export const OrderFromShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
   const [voucherCode, setVoucherCode] = useState<string>("");
 
   const [note, setNote] = useState<string>("");
+
+  // const fetchShippingProviders = useCallback(async () => {
+  //   const wardCodeCustomer = order.orderDTO.addressDTO.wardCode;
+  //   const wardCodeShop = order.orderDTO.shopDTO.wardCode;
+  //   try {
+  //     const response: ListShippingResponse = await getShippingProvidersByWard(
+  //       wardCodeCustomer,
+  //       wardCodeShop
+  //     );
+  //     setShippingProviders(response.shippingDTOs);
+  //   } catch (error) {
+  //     console.error("Error fetching shipping providers:", error);
+  //   }
+  // }, [order]);
+
+  const fetchShippingProviders = useCallback(async () => {
+    const wardCodeCustomer = order.orderDTO.addressDTO.wardCode;
+    const wardCodeShop = order.orderDTO.shopDTO.wardCode;
+    try {
+      const response: ListShippingResponse = await getShippingProvidersByWard(
+        wardCodeCustomer,
+        wardCodeShop
+      );
+      setShippingProviders(response.shippingDTOs);
+      // Tìm và set selectedShippingProvider dựa trên shippingMethod hiện tại
+      const currentProvider = response.shippingDTOs.find(
+        (provider) =>
+          provider.transportProviderShortName === order.orderDTO.shippingMethod
+      );
+      if (currentProvider) {
+        setSelectedShippingProvider(currentProvider);
+      } else {
+        setSelectedShippingProvider(null);
+      }
+    } catch (error) {
+      console.error("Error fetching shipping providers:", error);
+      setShippingProviders([]);
+      setSelectedShippingProvider(null);
+    }
+  }, [
+    order.orderDTO.addressDTO.wardCode,
+    order.orderDTO.shopDTO.wardCode,
+    order.orderDTO.shippingMethod,
+  ]);
+
+  useEffect(() => {
+    fetchShippingProviders();
+  }, [fetchShippingProviders]);
+
+  // useEffect(() => {
+  //   const currentShippingMethod = order.orderDTO.shippingMethod;
+  //   setShippingMethod(currentShippingMethod);
+
+  //   const currentProvider = shippingProviders.find(
+  //     (provider) =>
+  //       provider.transportProviderShortName === currentShippingMethod
+  //   );
+  //   if (currentProvider) {
+  //     setSelectedShippingProvider(currentProvider);
+  //   }
+  // }, [order.orderDTO.shippingMethod, shippingProviders]);
+
+  const previousWardCodeRef = useRef<string>(
+    order.orderDTO.addressDTO.wardCode
+  );
+
+  useEffect(() => {
+    const currentWardCode = order.orderDTO.addressDTO.wardCode;
+    if (currentWardCode !== previousWardCodeRef.current) {
+      console.log("Ward code changed. Fetching shipping providers...");
+      // Reset shippingMethod và selectedShippingProvider
+      setShippingMethod(order.orderDTO.shippingMethod);
+      setSelectedShippingProvider(null);
+      // Cập nhật previousWardCode
+      previousWardCodeRef.current = currentWardCode;
+      // Gọi lại API để lấy danh sách shipping providers mới
+      fetchShippingProviders();
+    }
+  }, [
+    order.orderDTO.addressDTO.wardCode,
+    order.orderDTO.shippingMethod,
+    fetchShippingProviders,
+  ]);
 
   // Debounce function for updating note
   const debouncedUpdateNote = useCallback(
@@ -60,6 +153,12 @@ export const OrderFromShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
       setSelectedVouchersOfShop([voucherId]);
       updateOrderRequest({ shopVoucherCode: voucherCode });
     }
+  };
+
+  const handleSelectShippingMethod = (provider: ShippingDTO) => {
+    setShippingMethod(provider.transportProviderShortName);
+    setSelectedShippingProvider(provider);
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -194,19 +293,46 @@ export const OrderFromShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
         </div>
         <div className="border-r border-black-200 h-20 w-0.5 my-2 mx-4 bg-black-200"></div>
         <div className="flex w-2/3">
-          <div className="bg-white flex justify-between mb-4 w-full">
-            <span className="text-gray-700 text-2xl font-medium">
+          <div className="bg-white flex  justify-between mb-4 w-full">
+            <span className="text-gray-700 text-2xl font-medium mb-2">
               Phương thức vận chuyển
             </span>
-            <span className="text-gray-700 text-1xl font-medium flex justify-start">
+            <div className="flex items-center">
               <button
                 onClick={() => setIsOpen(true)}
-                className="flex flex-col justify-start mr-2"
+                className="flex items-center mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
-                <FaTruck size={20} />
+                <FaTruck size={20} className="mr-2" />
+                {selectedShippingProvider
+                  ? "Thay đổi"
+                  : "Chọn phương thức vận chuyển"}
               </button>
-              {shippingMethod || "Chưa chọn"}
-            </span>
+              {selectedShippingProvider ? (
+                <div className="flex flex-col">
+                  <span className="font-medium">
+                    {selectedShippingProvider.transportProviderFullName}
+                  </span>
+                  <span className="text-sm">
+                    Phí vận chuyển:{" "}
+                    {formatPrice(selectedShippingProvider.shippingCost)} VNĐ
+                  </span>
+                  <span className="text-sm">
+                    Thời gian dự kiến:{" "}
+                    {selectedShippingProvider.estimatedDeliveryTime}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    Cập nhật:{" "}
+                    {new Date(
+                      selectedShippingProvider.timestamp
+                    ).toLocaleString()}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-gray-500">
+                  Chưa chọn phương thức vận chuyển
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -231,33 +357,29 @@ export const OrderFromShop: React.FC<OrderDetailsProps> = ({ ...props }) => {
               Chọn phương thức vận chuyển
             </h2>
             <div className="flex flex-col space-y-2">
-              <button
-                onClick={() => {
-                  setShippingMethod("GHN");
-                  setIsOpen(false);
-                }}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Giao hàng nhanh
-              </button>
-              <button
-                onClick={() => {
-                  setShippingMethod("GHTK");
-                  setIsOpen(false);
-                }}
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Giao hàng tiết kiệm
-              </button>
-              <button
-                onClick={() => {
-                  setShippingMethod("VTV Express");
-                  setIsOpen(false);
-                }}
-                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Giao hàng siêu tốc độ VTV Express
-              </button>
+              {shippingProviders.map((provider) => (
+                <button
+                  key={provider.transportProviderId}
+                  onClick={() => handleSelectShippingMethod(provider)}
+                  className={`${
+                    selectedShippingProvider?.transportProviderId ===
+                    provider.transportProviderId
+                      ? "bg-green-500 hover:bg-green-700"
+                      : "bg-blue-500 hover:bg-blue-700"
+                  } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
+                >
+                  <div>{provider.transportProviderFullName}</div>
+                  <div className="text-sm">
+                    Phí vận chuyển: {formatPrice(provider.shippingCost)} VNĐ
+                  </div>
+                  <div className="text-sm">
+                    Thời gian dự kiến: {provider.estimatedDeliveryTime}
+                  </div>
+                  <div className="text-xs text-gray-300">
+                    Cập nhật: {new Date(provider.timestamp).toLocaleString()}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
           <button

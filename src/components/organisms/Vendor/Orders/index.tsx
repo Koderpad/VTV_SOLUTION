@@ -58,7 +58,7 @@ const purchaseTabs = [
   { status: purchasesStatus.REFUNDED, name: "Đã hoàn tiền" },
   { status: purchasesStatus.PAID, name: "Đã thanh toán" },
   { status: purchasesStatus.UNPAID, name: "Chưa thanh toán" },
-  { status: purchasesStatus.WAITING, name: "Đang thanh toán" },
+  { status: purchasesStatus.WAITING, name: "Đang chờ" },
 ];
 
 export const Orders: React.FC = () => {
@@ -135,7 +135,7 @@ export const Orders: React.FC = () => {
       DELIVERED: "Đã giao hàng",
       COMPLETED: "Hoàn thành",
       RETURNED: "Đã trả lại",
-      WAITING: "Đang thanh toán",
+      WAITING: "Đang chờ",
       CANCEL: "Đã hủy",
       REFUNDED: "Đã hoàn tiền",
       PAID: "Đã thanh toán",
@@ -273,7 +273,7 @@ export const Orders: React.FC = () => {
                 className="flex items-center space-x-4 mb-2 pb-2 border-b"
               >
                 <img
-                  src={item.productVariantDTO.image}
+                  src={item.productVariantDTO.productImage}
                   alt={item.productVariantDTO.productName}
                   className="w-16 h-16 object-cover rounded"
                 />
@@ -325,6 +325,24 @@ export const Orders: React.FC = () => {
                     variant="outline"
                   >
                     Chờ lấy hàng
+                  </Button>
+                )}
+                {order.status === "WAITING" && (
+                  <Button
+                    onClick={() => handleStatusUpdate(order.orderId, "CANCEL")}
+                    variant="outline"
+                  >
+                    Chấp nhận hủy đơn
+                  </Button>
+                )}
+                {order.status === "WAITING" && (
+                  <Button
+                    onClick={() =>
+                      handleStatusUpdate(order.orderId, "PICKUP_PENDING")
+                    }
+                    variant="outline"
+                  >
+                    Từ chối hủy đơn
                   </Button>
                 )}
                 <Dialog>
