@@ -43,6 +43,7 @@ const UpdateCategory = () => {
     const [categories, setCategories] = useState<CategoryDTO[]>([]);
     const [searchText, setSearchText] = useState('');
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [isChangeImage, setIsChangeImage] = useState<boolean>(false);
     const [categoryRequest, setCategoryRequest] = useState<CategoryRequest>({
         name: '',
         description: '',
@@ -85,6 +86,7 @@ const UpdateCategory = () => {
                 changeImage: true,
             }));
             setPreviewImage(URL.createObjectURL(file));
+            setIsChangeImage(true);
         }
     };
 
@@ -95,6 +97,7 @@ const UpdateCategory = () => {
             changeImage: false,
         }));
         setPreviewImage(null);
+        setIsChangeImage(false);
     };
 
    const handleUpdateCategoryApiCall = async (categoryId: string, formData: FormData) => {
@@ -275,17 +278,21 @@ const UpdateCategory = () => {
                         />
                         {(previewImage || (categoryDTO && categoryDTO.image)) && (
                             <div className="relative mt-2">
-                                <img src={previewImage || categoryDTO.image} alt="Preview" className="w-32 h-32 object-cover rounded-md"/>
-                                <button
+                                <img src={previewImage || categoryDTO.image} alt="Preview"
+                                     className="w-32 h-32 object-cover rounded-md"/>
+                                {isChangeImage && (
+                                    <button
                                     type="button"
                                     onClick={handleRemoveImage}
                                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                                 >
                                     <FontAwesomeIcon icon={faTrash}/>
-                                </button>
+                                </button>)}
+
                             </div>
                         )}
                     </div>
+
                     <div>
                         <label htmlFor="child" className="block text-sm font-medium text-gray-700">Chọn danh mục
                             cha:</label>
@@ -295,15 +302,30 @@ const UpdateCategory = () => {
                             name="child"
                             checked={categoryRequest.child}
                             onChange={(e) => {
-                                if (e.target.checked && categoryRequest.parentId === 0) {
-                                    alert('Vui lòng chọn danh mục cha!');
-                                    return;
-                                }
                                 setCategoryRequest((prevData) => ({...prevData, child: e.target.checked}))
                             }}
                             className="mt-1 h-5 w-5 text-green-500 border-gray-300 rounded focus:ring-green-500"
                         />
                     </div>
+
+                    {/*<div>*/}
+                    {/*    <label htmlFor="child" className="block text-sm font-medium text-gray-700">Chọn danh mục*/}
+                    {/*        cha:</label>*/}
+                    {/*    <input*/}
+                    {/*        type="checkbox"*/}
+                    {/*        id="child"*/}
+                    {/*        name="child"*/}
+                    {/*        checked={categoryRequest.child}*/}
+                    {/*        onChange={(e) => {*/}
+                    {/*            if (e.target.checked && categoryRequest.parentId === 0) {*/}
+                    {/*                alert('Vui lòng chọn danh mục cha!');*/}
+                    {/*                return;*/}
+                    {/*            }*/}
+                    {/*            setCategoryRequest((prevData) => ({...prevData, child: e.target.checked}))*/}
+                    {/*        }}*/}
+                    {/*        className="mt-1 h-5 w-5 text-green-500 border-gray-300 rounded focus:ring-green-500"*/}
+                    {/*    />*/}
+                    {/*</div>*/}
                     {categoryRequest.child && (
                         <div className="mb-4">
 
