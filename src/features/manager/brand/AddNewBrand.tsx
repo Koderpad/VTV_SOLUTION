@@ -8,7 +8,6 @@ import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import {convertBrandRequestToFormData} from "@/utils/DTOs/manager/convert/ConvertBrandRequestToFormData";
-import {BrandDTO} from "@/utils/DTOs/manager/dto/BrandDTO";
 import {CategoryDTO} from "@/utils/DTOs/manager/dto/CategoryDTO";
 
 const AddNewBrand = () => {

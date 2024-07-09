@@ -47,6 +47,7 @@ export const UpdateBrand = () => {
     });
     const [categories, setCategories] = useState<CategoryDTO[]>([]);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [isChangeImage, setIsChangeImage] = useState<boolean>(false);
     const navigate = useNavigate();
 
 
@@ -121,8 +122,10 @@ export const UpdateBrand = () => {
                 changeImage: true,
             }));
             setPreviewImage(URL.createObjectURL(file));
+            setIsChangeImage(true)
         } else {
             handleRemoveImage();
+            setIsChangeImage(false)
         }
     };
 
@@ -133,6 +136,7 @@ export const UpdateBrand = () => {
             changeImage: false,
         }));
         setPreviewImage(null);
+        setIsChangeImage(false)
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -201,8 +205,9 @@ export const UpdateBrand = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="allCategories" className="block text-sm font-medium text-gray-700">All
-                            Categories:</label>
+                        <label htmlFor="allCategories" className="block text-sm font-medium text-gray-700">
+                            Tất cả danh mục:
+                        </label>
                         <input
                             type="checkbox"
                             id="allCategories"
@@ -214,7 +219,9 @@ export const UpdateBrand = () => {
                     </div>
                     <div>
                         <label htmlFor="categoryIds"
-                               className="block text-sm font-medium text-gray-700">Categories:</label>
+                               className="block text-sm font-medium text-gray-700">
+                            Chọn danh mục:
+                        </label>
                         <div style={{maxHeight: '200px', overflow: 'auto'}}>
                             {categories && categories.map((category) => (
                                 <div key={category.categoryId}>
@@ -246,13 +253,16 @@ export const UpdateBrand = () => {
                         {(previewImage || (brandDTO && brandDTO.image)) && (
                             <div className="relative mt-2">
                                 <img src={previewImage || brandDTO.image} alt="Preview" className="w-32 h-32 object-cover rounded-md"/>
-                                <button
-                                    type="button"
-                                    onClick={handleRemoveImage}
-                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                >
-                                    <FontAwesomeIcon icon={faTrash}/>
-                                </button>
+                                {isChangeImage && (
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveImage}
+                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                    >
+                                        <FontAwesomeIcon icon={faTrash}/>
+                                    </button>
+                                )}
+
                             </div>
                         )}
                     </div>
