@@ -105,6 +105,7 @@ import { FavoriteProducts } from "./components/organisms/Common/Account/Favorite
 import Home from "./pages/common/Home.tsx";
 import ProductDetailPage from "./pages/common/ProductDetailPage.tsx";
 import { setHasNewMessage } from "./redux/features/common/chat/chatSlice.ts";
+import CheckoutWithProductVariant from "./pages/common/CheckoutWithProductVariant.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 
@@ -555,6 +556,11 @@ function App() {
 
             {/* order */}
             <Route path="/checkout" element={<Checkout />} />
+            <Route
+              path="/checkout-variant"
+              element={<CheckoutWithProductVariant />}
+            />
+
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/vnpay/return" element={<VNPayReturn />} />
             <Route path="user/account" element={<AccountPage />}>

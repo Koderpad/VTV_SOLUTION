@@ -46,6 +46,8 @@ import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { OrderResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/OrderResponse";
 import { useCreateVNPayPaymentMutation } from "@/redux/features/common/order/vnPayApiSlice";
 import { AdditionalProps } from "@/utils/DTOs/common/Order/AdditionalProps.ts";
+import { AES } from "crypto-js";
+import { useCreateOrderByProductVariantMutation } from "@/redux/features/common/order/orderApiSlice.ts";
 
 const purchasesStatus = {
   ALL: 0,
@@ -103,6 +105,9 @@ export const HistoryPurchase = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const statusString = purchaseStatusString[status];
   const navigate = useNavigate();
+
+  const [createOrderByProductVariant] =
+    useCreateOrderByProductVariantMutation();
 
   const {
     data: otherData,
@@ -213,7 +218,55 @@ export const HistoryPurchase = () => {
       },
       {} as AdditionalProps,
     );
+    await handleCreateOrder(additionalProps);
     console.log(additionalProps);
+  };
+  const handleCreateOrder = async (productVariantIdsAndQuantities: {
+    [productVariantId: string]: number;
+  }) => {
+    try {
+      const orderCreationResult = await createOrderByProductVariant(
+        productVariantIdsAndQuantities,
+      );
+      if ("data" in orderCreationResult) {
+        // Handle successful order creation
+        const result = orderCreationResult.data;
+
+        // Encrypt state
+        const stateString = JSON.stringify(result);
+        const encryptedState = AES.encrypt(
+          stateString,
+          "vtv-secret-key-2024",
+        ).toString();
+        const urlSafeEncryptedState = encodeURIComponent(encryptedState);
+        console.log("urlSafeEncryptedState: ", urlSafeEncryptedState);
+
+        // Navigate to checkout page with encrypted state
+        navigate(`/checkout-variant?state=${urlSafeEncryptedState}`);
+      } else {
+        const error = orderCreationResult.error;
+        if ("status" in error) {
+          // Server error (FetchBaseQueryError)
+          const serverError = error.data as ServerError;
+          if (
+            serverError.status === "NOT_FOUND" &&
+            serverError.message === "Thông báo: Khách hàng chưa có địa chỉ nào."
+          ) {
+            alert(serverError.message);
+            // You might want to navigate to the address page here
+            // navigate("/user/account/address");
+          } else {
+            alert(`Lỗi từ server: ${serverError.message}`);
+          }
+        } else {
+          // Unidentified error (SerializedError)
+          alert("Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.");
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo đơn hàng:", error);
+      alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại sau.");
+    }
   };
 
   const formatPrice = (price: number) => {
