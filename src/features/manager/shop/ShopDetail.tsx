@@ -124,7 +124,7 @@ const ShopDetail = () => {
                 </button>
                 <button
                     className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                    onClick={() => navigate(`/${shop?.shopUsername}`)}
+                    onClick={() => navigate(`/${shop?.shopUsername}.shop`)}
                 >
                     Xem Shop Tại Sàn
                 </button>
