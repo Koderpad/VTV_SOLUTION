@@ -1,17 +1,18 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {
     useGetShopAndTransportsDTOByShopIdQuery,
     useUpdateStatusTransportByDeliverMutation
 } from '@/redux/features/shipping/TransportApiSlice';
-import { ShopAndTransportsDTO } from "@/utils/DTOs/shipping/dto/ShopAndTransportsDTO";
-import { statusToString } from "@/utils/DTOs/extra/convertToString/statusToString.ts";
-import React, { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import { transportStatusToString } from "@/utils/DTOs/extra/convertToString/transportStatusToString";
-import { TransportStatus } from "@/utils/DTOs/extra/TransportStatus.ts";
-import { CheckCircleIcon, XCircleIcon } from "lucide-react";
-import {ProvinceDTO} from "@/utils/DTOs/location/dto/ProvinceDTO.ts";
-import {DistrictDTO} from "@/utils/DTOs/location/dto/DistrictDTO.ts";
+import {ShopAndTransportsDTO} from "@/utils/DTOs/shipping/dto/ShopAndTransportsDTO";
+import {statusToString} from "@/utils/DTOs/extra/convertToString/statusToString.ts";
+import React, {useEffect, useState} from "react";
+import {toast, ToastContainer} from "react-toastify";
+import {transportStatusToString} from "@/utils/DTOs/extra/convertToString/transportStatusToString";
+import {TransportStatus} from "@/utils/DTOs/extra/TransportStatus.ts";
+import {CheckCircleIcon, XCircleIcon} from "lucide-react";
+import {DeliverDTO} from "@/utils/DTOs/shipping/dto/DeliverDTO.ts";
+import {useGetDeliverInfoMutation} from "@/redux/features/shipping/DeliverApiSlice.ts";
+import {TypeWork} from "@/utils/DTOs/extra/TypeWork.ts";
 
 const ShopAndTransportDetail = () => {
     const { shopId } = useParams<{ shopId: string }>();
@@ -26,6 +27,13 @@ const ShopAndTransportDetail = () => {
     const [transportIds, setTransportIds] = useState<string[]>([]);
     const [selectedStatus, setSelectedStatus] = useState<TransportStatus>(TransportStatus.PICKED_UP);
     const { refetch: refetchShopData } = useGetShopAndTransportsDTOByShopIdQuery(Number(shopId));
+    const [deliver, setDeliver] = useState<DeliverDTO>();
+    const [getDeliverInfo] = useGetDeliverInfoMutation();
+
+    useEffect(() => {
+        const response = await getDeliverInfo();
+        setDeliver(response.data.deliverDTO);
+    }, [];
 
 
 
@@ -183,9 +191,9 @@ const ShopAndTransportDetail = () => {
                                     value={selectedStatus}
                                 >
                                     <option value={TransportStatus.PICKED_UP}>Đã lấy hàng</option>
-                                    <option value={TransportStatus.IN_TRANSIT}>Đang trung chuyển</option>
-                                    <option value={TransportStatus.WAREHOUSE}>Đang ở kho</option>
-                                    <option value={TransportStatus.CANCEL}>Đã hủy</option>
+                                    {deliver?.typeWork === TypeWork.WAREHOUSE && (
+                                        <option value={TransportStatus.WAREHOUSE}>Đang ở kho</option>
+                                    )}
                                 </select>
 
                                 <div className="flex space-x-2">
