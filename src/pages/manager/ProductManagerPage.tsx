@@ -4,25 +4,36 @@ import {faEye} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
 import {getFilterProductPage, getProductPageBySearchAndSort} from "@/services/common/ProductService.ts";
+import { ProductPageResponse } from '@/utils/DTOs/manager/response/ProductPageResponse';
+import {
+    useGetFilterProductPageMutation,
+    useGetProductPageBySearchAndSortMutation
+} from "@/redux/features/manager/ProductManagerApiSlice.ts";
 
 const ProductManagerPage = () => {
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [sort, setSort] = useState('price-asc');
-    const [filter, setFilter] = useState('price-asc');
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<ProductPageResponse>();
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+
     const fetchData = async () => {
         try {
-            let response;
+
             if (searchTerm) {
-                response = await getProductPageBySearchAndSort(page, 10, searchTerm, sort);
+                // const  response1 = await getProductPageBySearchAndSortMutation({ search: searchTerm, sort: sort, page: page, size: 50}).unwrap();
+                const  response1 = await getProductPageBySearchAndSort(page, 50, searchTerm, sort)
+                console.log("response1: ", response1);
+                setData(response1);
             } else {
-                response = await getFilterProductPage(page, 10, sort);
+                // const  response2 = await getFilterProductPage({ filter: sort, page, size: 50 }).unwrap();
+                const response2 = await getFilterProductPage(page, 50, sort);
+                console.log("response2: ", response2);
+                setData(response2);
             }
-            setData(response);
+
         } catch (err) {
             setError(err);
         }
@@ -30,7 +41,7 @@ const ProductManagerPage = () => {
 
     useEffect(() => {
         fetchData();
-    }, [page, searchTerm, sort, filter]);
+    }, [page, searchTerm, sort]);
 
 
 
@@ -131,8 +142,8 @@ const ProductManagerPage = () => {
                                 </thead>
                                 <tbody>
                                 {data.productDTOs.map((product, index) => (
-                                    <tr key={product.productId}>
-                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1 + (page - 1) * 5}</td>
+                                    <tr key={`${product.productId}-${index}`}>
+                                        <td className="text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">{index + 1}</td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{product.name}</td>
 
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">

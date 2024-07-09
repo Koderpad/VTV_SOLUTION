@@ -39,11 +39,11 @@ export const ProductManagerApiSlice = apiSlice.injectEndpoints({
                     }) => `/manager/product/page/search/${productName}?page=${page}&size=${size}`,
         }),
 
-        getFilterProductPage: builder.query<ProductPageResponse, { filter: string, page: number, size: number }>({
+        getFilterProductPage: builder.mutation<ProductPageResponse, { filter: string, page: number, size: number }>({
             query: ({ filter, page, size }) => `/product-filter/${filter}?page=${page}&size=${size}`,
         }),
 
-        getProductPageBySearchAndSort: builder.query<ProductPageResponse, { search: string, sort: string, page: number, size: number }>({
+        getProductPageBySearchAndSort: builder.mutation<ProductPageResponse, { search: string, sort: string, page: number, size: number }>({
             query: ({ search, sort, page, size }) => `/search/product/sort?page=${page}&size=${size}&search=${search}&sort=${sort}`,
         }),
 
@@ -56,6 +56,6 @@ export const {
     useUnLockProductByProductIdMutation,
     useGetManagerProductPageQuery,
     useGetManagerProductPageByProductNameQuery,
-    useGetFilterProductPageQuery,
-    useGetProductPageBySearchAndSortQuery,
+    useGetFilterProductPageMutation,
+    useGetProductPageBySearchAndSortMutation,
 } = ProductManagerApiSlice;
