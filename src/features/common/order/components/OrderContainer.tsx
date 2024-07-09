@@ -419,9 +419,15 @@ const handlePlaceOrder = async (
           sessionStorage.setItem("checkoutState", JSON.stringify(data));
 
           // Gọi API tạo thanh toán VNPay
-          const response = await createVNPayPayment([
-            data.orderResponses[0].orderDTO.orderId,
-          ]).unwrap();
+          // const response = await createVNPayPayment([
+          //   data.orderResponses[0].orderDTO.orderId,
+          // ]).unwrap();
+
+          const response = await createVNPayPayment(
+            data.orderResponses.map(
+              (orderResponse) => orderResponse.orderDTO.orderId
+            )
+          ).unwrap();
 
           if (response.code === 200) {
             // Chuyển hướng đến URL thanh toán VNPay

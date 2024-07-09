@@ -128,8 +128,10 @@ function App() {
   const handleNewMessage = useCallback(
     (payload: any) => {
       console.log("Received foreground message:", payload);
+      if (payload.data.type === "NEW_MESSAGE") {
+        dispatch(setHasNewMessage(true));
+      }
       refetch();
-      dispatch(setHasNewMessage(true));
     },
     [refetch]
   );
@@ -184,14 +186,14 @@ function App() {
   }, [isLoggedIn, refetch, refetch_]);
 
   useEffect(() => {
-    if (isSuccess && notifications) {
-      dispatch(setNotifications(notifications.notificationDTOs));
-    }
+    // if (isSuccess && notifications) {
+    //   dispatch(setNotifications(notifications.notificationDTOs));
+    // }
     if (isSuccess_ && carts) {
       dispatch(setCarts(carts.listCartByShopDTOs));
       console.log(carts);
     }
-  }, [dispatch, isSuccess, notifications, isSuccess_, carts]);
+  }, [dispatch, isSuccess_, carts]);
 
   // useEffect(() => {
   //   onMessageListener().then(async (data: any) => {
