@@ -9,7 +9,7 @@ const CategoryList: React.FC = () => {
   const maxColumns = 4; // Số cột tối đa hiển thị
   const visibleCategories = categories.slice(
     startIndex,
-    startIndex + maxColumns * 2,
+    startIndex + maxColumns * 2
   );
   const navigate = useNavigate();
   const handlePrevClick = () => {
@@ -18,7 +18,7 @@ const CategoryList: React.FC = () => {
 
   const handleNextClick = () => {
     setStartIndex(
-      Math.min(startIndex + maxColumns, categories.length - maxColumns * 2),
+      Math.min(startIndex + maxColumns, categories.length - maxColumns * 2)
     );
   };
 
@@ -31,9 +31,9 @@ const CategoryList: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-[#FFFFFF] my-4 flex flex-col max-h-screen">
-      <div className="h-16 flex items-center  text-[#878787]">
-        <h1 className="pl-2 py-auto w-auto font-bold size-7">Danh muc</h1>
+    <div className="bg-[#FFFFFF] my-4 flex flex-col max-h-screen rounded-sm">
+      <div className="h-16 flex items-center  ">
+        <h1 className="pl-2 py-auto w-auto text-2xl font-bold">Danh mục</h1>
       </div>
       <div className="relative">
         {startIndex > 0 && (

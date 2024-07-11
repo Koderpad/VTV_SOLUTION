@@ -8,7 +8,7 @@ export const HeaderWithSearchWrapper = () => {
       {/* Logo */}
       <div className="flex pl-4 w-1/6 items-start justify-normal relative">
         <Logo />
-        <h1 className="absolute right-2 bottom-0 text-4xl text-white">VTV</h1>
+        {/* <h1 className="absolute right-2 bottom-0 text-4xl text-white">VTV</h1> */}
       </div>
 
       {/* Search Bar */}
