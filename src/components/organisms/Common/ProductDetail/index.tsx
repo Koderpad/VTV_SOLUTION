@@ -20,6 +20,9 @@ import {
 } from "@/redux/features/common/favorite_product/favoriteProductApiSlice";
 import { HeartIcon } from "lucide-react";
 import { requestOpenChat } from "@/redux/features/common/chat/chatSlice";
+import { useCreateOrderByProductVariantMutation } from "@/redux/features/common/order/orderApiSlice";
+import { AdditionalProps } from "@/utils/DTOs/common/Order/AdditionalProps";
+import { AES } from "crypto-js";
 
 interface ProductDetailProps {
   data: ProductResponse;
@@ -118,6 +121,9 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
   const navigate = useNavigate();
   const [addNewCart] = useAddNewCartMutation();
+
+  const [createOrderByProductVariant] =
+    useCreateOrderByProductVariantMutation();
 
   const isAuth: boolean = useSelector(
     (state: RootState) => state.auth.isAuthenticated
@@ -234,20 +240,17 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
         const responseData = response.data;
 
         if (responseData.status === "Success") {
-          toast.success(
-            `🦄 ${responseData.message} || "Thêm vào giỏ hàng thành công!"`,
-            {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Slide,
-            }
-          );
+          toast.success(`🦄 ${responseData.message}`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Slide,
+          });
         } else {
           toast.error(
             responseData.message ||
@@ -264,6 +267,77 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
       refetch_();
     }
   };
+
+  const handleRepurchase = async () => {
+    const availableVariants = getAvailableVariants(
+      selectedAttributes,
+      data.productDTO.productVariantDTOs
+    );
+    const selectedVariant = availableVariants.find((variant) =>
+      variant.attributeDTOs.every(
+        (attribute) => selectedAttributes[attribute.name] === attribute.value
+      )
+    );
+
+    if (!selectedVariant) {
+      toast.error("Vui lòng chọn đầy đủ thuộc tính của sản phẩm");
+      return;
+    }
+    const additionalProps: AdditionalProps = {
+      [selectedVariant?.productVariantId.toString() || ""]:
+        selectedQuantity_ForAddToCart,
+    };
+    await handleCreateOrder(additionalProps);
+    console.log(additionalProps);
+  };
+  const handleCreateOrder = async (productVariantIdsAndQuantities: {
+    [productVariantId: string]: number;
+  }) => {
+    try {
+      const orderCreationResult = await createOrderByProductVariant(
+        productVariantIdsAndQuantities
+      );
+      if ("data" in orderCreationResult) {
+        // Handle successful order creation
+        const result = orderCreationResult.data;
+
+        // Encrypt state
+        const stateString = JSON.stringify(result);
+        const encryptedState = AES.encrypt(
+          stateString,
+          "vtv-secret-key-2024"
+        ).toString();
+        const urlSafeEncryptedState = encodeURIComponent(encryptedState);
+        console.log("urlSafeEncryptedState: ", urlSafeEncryptedState);
+
+        // Navigate to checkout page with encrypted state
+        navigate(`/checkout-variant?state=${urlSafeEncryptedState}`);
+      } else {
+        const error = orderCreationResult.error;
+        if ("status" in error) {
+          // Server error (FetchBaseQueryError)
+          const serverError = error.data as ServerError;
+          if (
+            serverError.status === "NOT_FOUND" &&
+            serverError.message === "Thông báo: Khách hàng chưa có địa chỉ nào."
+          ) {
+            alert(serverError.message);
+            // You might want to navigate to the address page here
+            // navigate("/user/account/address");
+          } else {
+            alert(`Lỗi từ server: ${serverError.message}`);
+          }
+        } else {
+          // Unidentified error (SerializedError)
+          alert("Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.");
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo đơn hàng:", error);
+      alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại sau.");
+    }
+  };
+
   // show info and des product
   const [showFullInfo, setShowFullInfo] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -528,7 +602,33 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
                   ></path>
                 </svg>
               </div>
-              Thêm vào giỏ hàng!
+              Thêm vào giỏ hàng
+            </button>
+            <button
+              aria-label="Add to cart"
+              aria-disabled="false"
+              className="relative flex w-full items-center justify-center rounded-full bg-red-600 p-4 tracking-wide text-white hover:opacity-90"
+              onClick={handleRepurchase}
+            >
+              <div className="absolute left-0 ml-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                  className="h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  ></path>
+                </svg>
+              </div>
+              Mua ngay
             </button>
             <div className="mt-4 flex justify-center">
               <FavoriteButton productId={data.productDTO.productId} />

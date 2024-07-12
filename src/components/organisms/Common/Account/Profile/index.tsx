@@ -173,7 +173,9 @@ const Profile = () => {
     <>
       <div className="bg-green-600 w-full h-full">
         <div className="h-full w-full p-10 bg-white">
-          <h1 className="text-red-600 text-4xl pb-6">Edit Your Profile</h1>
+          <h1 className="text-red-600 text-4xl pb-6">
+            Cập nhât thông tin cá nhân
+          </h1>
           <div>
             <form className="w-full" action="#">
               <div className="flex justify-between w-full gap-5">

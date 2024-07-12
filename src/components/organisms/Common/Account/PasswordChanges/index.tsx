@@ -3,7 +3,10 @@ import { useChangePasswordMutation } from "@/redux/features/common/customer/cust
 import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
 import { ProfileCustomerResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ProfileCustomerResponse";
 import { ServerError } from "@/utils/DTOs/common/ServerError";
-import { useAppSelector } from "@/redux/store";
+import { persistor, useAppSelector } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logOut } from "@/redux/features/common/auth/authSlice";
 
 const PasswordChanges = () => {
   const [oldpw, setOldpw] = useState("");
@@ -15,6 +18,20 @@ const PasswordChanges = () => {
     (state) => (state.auth.user as unknown as { username: string })?.username
   );
   //get username from store
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    // await persistor.purge();
+    persistor.pause();
+    persistor.flush().then(() => {
+      return persistor.purge();
+    });
+    localStorage.removeItem("token");
+    dispatch(logOut());
+    navigate("/login");
+    window.location.reload();
+  };
 
   useEffect(() => {
     if (showModal) {
@@ -62,6 +79,7 @@ const PasswordChanges = () => {
       successCallback: (data) => {
         console.log(data);
         setShowModal(true);
+        handleLogout();
       },
       errorFromServerCallback: (error) => {
         setErrorMessage(error.message);

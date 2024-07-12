@@ -132,14 +132,14 @@ export const Categories: React.FC = () => {
 
   return (
     <div>
-      <Button onClick={handleAddCategory}>Add Category Shop</Button>
+      <Button onClick={handleAddCategory}>Thêm danh mục cửa hàng</Button>
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Image</th>
-            <th>Product Count</th>
-            <th>Actions</th>
+            <th>Tên</th>
+            <th>Hình ảnh</th>
+            <th>Số sản phẩm</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -156,18 +156,18 @@ export const Categories: React.FC = () => {
               <td>{category.countProduct}</td>
               <td>
                 <Button onClick={() => handleUpdateCategory(category)}>
-                  Update
+                  Cập nhật
                 </Button>
                 <Button
                   onClick={() => handleDeleteCategory(category.categoryShopId)}
                 >
-                  Delete
+                  Xóa
                 </Button>
                 <Button onClick={() => handleAddProducts(category)}>
-                  Add Products
+                  Thêm sản phẩm
                 </Button>
                 <Button onClick={() => handleDeleteProducts(category)}>
-                  Delete Products
+                  Xóa sản phẩm
                 </Button>
               </td>
             </tr>
@@ -278,13 +278,13 @@ const UpdateCategoryDialog: React.FC<UpdateCategoryDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Category</DialogTitle>
+          <DialogTitle>Cập nhật danh mục</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                Tên
               </Label>
               <Input
                 id="name"
@@ -295,7 +295,7 @@ const UpdateCategoryDialog: React.FC<UpdateCategoryDialogProps> = ({
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">
-                Image
+                Hình ảnh
               </Label>
               <Input
                 id="image"
@@ -317,7 +317,7 @@ const UpdateCategoryDialog: React.FC<UpdateCategoryDialogProps> = ({
             )}
           </div>
           <DialogFooter>
-            <Button type="submit">Update Category</Button>
+            <Button type="submit">Cập nhật</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -411,17 +411,17 @@ const AddProductsDialog: React.FC<AddProductsDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Products to {category.name}</DialogTitle>
+          <DialogTitle>Thêm sản phẩm vào {category.name}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
             <Button type="button" onClick={handleSelectAll}>
               {selectedProductIds.length === filteredProducts.length
-                ? "Deselect All"
-                : "Select All"}
+                ? "Bỏ chọn tất cả"
+                : "Chọn tất cả"}
             </Button>
             {filteredProducts.length === 0 ? (
-              <p>No products available to add.</p>
+              <p>Không có sản phẩm nào đã thêm.</p>
             ) : (
               filteredProducts.map((product) => (
                 <div
@@ -454,7 +454,7 @@ const AddProductsDialog: React.FC<AddProductsDialogProps> = ({
           </div>
           <DialogFooter>
             <Button type="submit" disabled={selectedProductIds.length === 0}>
-              Add Selected Products
+              Thêm sản phẩm đã chọn
             </Button>
           </DialogFooter>
         </form>
@@ -538,17 +538,17 @@ const DeleteProductsDialog: React.FC<DeleteProductsDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Remove Products from {category.name}</DialogTitle>
+          <DialogTitle>Xóa sản phẩm từ {category.name}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
             <Button type="button" onClick={handleSelectAll}>
               {selectedProductIds.length === categoryProducts.length
-                ? "Deselect All"
-                : "Select All"}
+                ? "Bỏ chọn tất cả"
+                : "Chọn tất cả"}
             </Button>
             {categoryProducts.length === 0 ? (
-              <p>No products to remove.</p>
+              <p>Không có sản phẩm nào để xóa</p>
             ) : (
               categoryProducts.map((product) => (
                 <div
@@ -581,7 +581,7 @@ const DeleteProductsDialog: React.FC<DeleteProductsDialogProps> = ({
           </div>
           <DialogFooter>
             <Button type="submit" disabled={selectedProductIds.length === 0}>
-              Remove Selected Products
+              Xóa sản phẩm đã chọn
             </Button>
           </DialogFooter>
         </form>
@@ -644,13 +644,13 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Category</DialogTitle>
+          <DialogTitle>Thêm danh mục mới</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                Tên
               </Label>
               <Input
                 id="name"
@@ -661,7 +661,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="image" className="text-right">
-                Image
+                Hình ảnh
               </Label>
               <Input
                 id="image"
@@ -672,7 +672,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Add Category</Button>
+            <Button type="submit">Thêm danh mục</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -681,489 +681,3 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
 };
 
 export default Categories;
-
-// import React, { useState, useEffect } from "react";
-// import {
-//   useGetAllCategoryShopQuery,
-//   useUpdateCategoryShopMutation,
-//   useDeleteCategoryShopMutation,
-//   useAddCategoryShopMutation,
-//   useAddProductsToCategoryMutation,
-//   useDeleteProductsFromCategoryMutation,
-// } from "@/redux/features/vendor/categories/categoriesApiSlice";
-// import { useGetPageProductByStatusQuery } from "@/redux/features/vendor/product/productShopApiSlice";
-// import { Button } from "@/components/ui/button";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogFooter,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogTrigger,
-// } from "@/components/ui/dialog";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import {
-//   CategoryShopDTO,
-//   ProductDTO,
-// } from "@/utils/DTOs/vendor/categories/Response/ListCategoryShopResponse";
-
-// export const Categories: React.FC = () => {
-//   const {
-//     data: categoriesData,
-//     isLoading,
-//     isError,
-//   } = useGetAllCategoryShopQuery();
-//   const [updateCategoryShop] = useUpdateCategoryShopMutation();
-//   const [deleteCategoryShop] = useDeleteCategoryShopMutation();
-//   const [addCategoryShop] = useAddCategoryShopMutation();
-//   const [addProductsToCategory] = useAddProductsToCategoryMutation();
-//   const [deleteProductsFromCategory] = useDeleteProductsFromCategoryMutation();
-
-//   const [selectedCategory, setSelectedCategory] =
-//     useState<CategoryShopDTO | null>(null);
-//   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-//   const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState(false);
-//   const [isDeleteProductDialogOpen, setIsDeleteProductDialogOpen] =
-//     useState(false);
-//   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
-//   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-
-//   const { data: activeProducts } = useGetPageProductByStatusQuery({
-//     page: 1,
-//     size: 100,
-//     status: "ACTIVE",
-//   });
-
-//   const handleUpdateCategory = (category: CategoryShopDTO) => {
-//     setSelectedCategory(category);
-//     setIsUpdateDialogOpen(true);
-//   };
-
-//   const handleDeleteCategory = async (categoryShopId: number) => {
-//     if (window.confirm("Are you sure you want to delete this category?")) {
-//       await deleteCategoryShop(categoryShopId);
-//     }
-//   };
-
-//   const handleAddProducts = (category: CategoryShopDTO) => {
-//     if (category) {
-//       setSelectedCategory(category);
-//       setIsAddProductDialogOpen(true);
-//     } else {
-//       console.error("Category is undefined in handleAddProducts");
-//     }
-//   };
-
-//   const handleDeleteProducts = (category: CategoryShopDTO) => {
-//     if (category) {
-//       setSelectedCategory(category);
-//       setIsDeleteProductDialogOpen(true);
-//     } else {
-//       console.error("Category is undefined in handleDeleteProducts");
-//     }
-//   };
-
-//   const handleAddCategory = () => {
-//     setIsAddCategoryDialogOpen(true);
-//   };
-
-//   if (isLoading) return <div>Loading...</div>;
-//   if (isError) return <div>Error loading categories</div>;
-
-//   return (
-//     <div>
-//       <Button onClick={handleAddCategory}>Add Category Shop</Button>
-//       <table>
-//         <thead>
-//           <tr>
-//             <th>Name</th>
-//             <th>Image</th>
-//             <th>Product Count</th>
-//             <th>Actions</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {categoriesData?.categoryShopDTOs.map((category) => (
-//             <tr key={category.categoryShopId}>
-//               <td>{category.name}</td>
-//               <td>
-//                 <img
-//                   src={category.image}
-//                   alt={category.name}
-//                   style={{ width: "50px", height: "50px" }}
-//                 />
-//               </td>
-//               <td>{category.countProduct}</td>
-//               <td>
-//                 <Button onClick={() => handleUpdateCategory(category)}>
-//                   Update
-//                 </Button>
-//                 <Button
-//                   onClick={() => handleDeleteCategory(category.categoryShopId)}
-//                 >
-//                   Delete
-//                 </Button>
-//                 <Button onClick={() => handleAddProducts(category)}>
-//                   Add Products
-//                 </Button>
-//                 <Button onClick={() => handleDeleteProducts(category)}>
-//                   Delete Products
-//                 </Button>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-
-//       <UpdateCategoryDialog
-//         isOpen={isUpdateDialogOpen}
-//         onClose={() => setIsUpdateDialogOpen(false)}
-//         category={selectedCategory}
-//         onUpdate={updateCategoryShop}
-//       />
-
-//       <AddProductsDialog
-//         isOpen={isAddProductDialogOpen}
-//         onClose={() => setIsAddProductDialogOpen(false)}
-//         category={selectedCategory}
-//         products={activeProducts?.productDTOs || []}
-//         onAddProducts={addProductsToCategory}
-//       />
-
-//       <DeleteProductsDialog
-//         isOpen={isDeleteProductDialogOpen}
-//         onClose={() => setIsDeleteProductDialogOpen(false)}
-//         category={selectedCategory}
-//         onDeleteProducts={deleteProductsFromCategory}
-//       />
-
-//       <AddCategoryDialog
-//         isOpen={isAddCategoryDialogOpen}
-//         onClose={() => setIsAddCategoryDialogOpen(false)}
-//         onAddCategory={addCategoryShop}
-//       />
-//     </div>
-//   );
-// };
-
-// interface UpdateCategoryDialogProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-//   category: CategoryShopDTO | null;
-//   onUpdate: (data: { categoryShopId: number; data: FormData }) => void;
-// }
-
-// const UpdateCategoryDialog: React.FC<UpdateCategoryDialogProps> = ({
-//   isOpen,
-//   onClose,
-//   category,
-//   onUpdate,
-// }) => {
-//   const [name, setName] = useState(category?.name || "");
-//   const [image, setImage] = useState<File | null>(null);
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (category) {
-//       const formData = new FormData();
-//       formData.append("name", name);
-//       if (image) formData.append("image", image);
-//       onUpdate({ categoryShopId: category.categoryShopId, data: formData });
-//       onClose();
-//     }
-//   };
-
-//   return (
-//     <Dialog open={isOpen} onOpenChange={onClose}>
-//       <DialogContent>
-//         <DialogHeader>
-//           <DialogTitle>Update Category</DialogTitle>
-//         </DialogHeader>
-//         <form onSubmit={handleSubmit}>
-//           <div className="grid gap-4 py-4">
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="name" className="text-right">
-//                 Name
-//               </Label>
-//               <Input
-//                 id="name"
-//                 value={name}
-//                 onChange={(e) => setName(e.target.value)}
-//                 className="col-span-3"
-//               />
-//             </div>
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="image" className="text-right">
-//                 Image
-//               </Label>
-//               <Input
-//                 id="image"
-//                 type="file"
-//                 onChange={(e) => setImage(e.target.files?.[0] || null)}
-//                 className="col-span-3"
-//               />
-//             </div>
-//           </div>
-//           <DialogFooter>
-//             <Button type="submit">Update Category</Button>
-//           </DialogFooter>
-//         </form>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
-
-// interface AddProductsDialogProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-//   category: CategoryShopDTO | null;
-//   products: ProductDTO[];
-//   onAddProducts: (data: {
-//     categoryShopId: number;
-//     productIds: number[];
-//   }) => void;
-// }
-
-// const AddProductsDialog: React.FC<AddProductsDialogProps> = ({
-//   isOpen,
-//   onClose,
-//   category,
-//   products,
-//   onAddProducts,
-// }) => {
-//   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (category) {
-//       onAddProducts({
-//         categoryShopId: category.categoryShopId,
-//         productIds: selectedProductIds,
-//       });
-//       onClose();
-//     }
-//   };
-
-//   const handleSelectAll = () => {
-//     if (products.length === selectedProductIds.length) {
-//       setSelectedProductIds([]);
-//     } else {
-//       setSelectedProductIds(products.map((p) => p.productId));
-//     }
-//   };
-
-//   if (!isOpen || !products.length) {
-//     return null;
-//   }
-
-//   return (
-//     <Dialog open={isOpen} onOpenChange={onClose}>
-//       <DialogContent>
-//         <DialogHeader>
-//           <DialogTitle>Add Products to Category</DialogTitle>
-//         </DialogHeader>
-//         <form onSubmit={handleSubmit}>
-//           <div className="grid gap-4 py-4">
-//             <Button type="button" onClick={handleSelectAll}>
-//               {selectedProductIds.length === products.length
-//                 ? "Deselect All"
-//                 : "Select All"}
-//             </Button>
-//             {products.map((product) => (
-//               <div key={product.productId} className="flex items-center gap-2">
-//                 <input
-//                   type="checkbox"
-//                   id={`product-${product.productId}`}
-//                   checked={selectedProductIds.includes(product.productId)}
-//                   onChange={() => {
-//                     if (selectedProductIds.includes(product.productId)) {
-//                       setSelectedProductIds(
-//                         selectedProductIds.filter(
-//                           (id) => id !== product.productId
-//                         )
-//                       );
-//                     } else {
-//                       setSelectedProductIds([
-//                         ...selectedProductIds,
-//                         product.productId,
-//                       ]);
-//                     }
-//                   }}
-//                 />
-//                 <Label htmlFor={`product-${product.productId}`}>
-//                   {product.name}
-//                 </Label>
-//               </div>
-//             ))}
-//           </div>
-//           <DialogFooter>
-//             <Button type="submit">Add Selected Products</Button>
-//           </DialogFooter>
-//         </form>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
-
-// interface DeleteProductsDialogProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-//   category: CategoryShopDTO | null;
-//   onDeleteProducts: (data: {
-//     categoryShopId: number;
-//     productIds: number[];
-//   }) => void;
-// }
-
-// const DeleteProductsDialog: React.FC<DeleteProductsDialogProps> = ({
-//   isOpen,
-//   onClose,
-//   category,
-//   onDeleteProducts,
-// }) => {
-//   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
-
-//   useEffect(() => {
-//     if (category && category.productDTOs) {
-//       setSelectedProductIds([]);
-//     }
-//   }, [category]);
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (category) {
-//       onDeleteProducts({
-//         categoryShopId: category.categoryShopId,
-//         productIds: selectedProductIds,
-//       });
-//       onClose();
-//     }
-//   };
-
-//   const handleSelectAll = () => {
-//     if (category && category.productDTOs) {
-//       if (selectedProductIds.length === category.productDTOs.length) {
-//         setSelectedProductIds([]);
-//       } else {
-//         setSelectedProductIds(category.productDTOs.map((p) => p.productId));
-//       }
-//     }
-//   };
-
-//   if (!isOpen || !category || !category.productDTOs) {
-//     return null;
-//   }
-
-//   return (
-//     <Dialog open={isOpen} onOpenChange={onClose}>
-//       <DialogContent>
-//         <DialogHeader>
-//           <DialogTitle>Delete Products from Category</DialogTitle>
-//         </DialogHeader>
-//         <form onSubmit={handleSubmit}>
-//           <div className="grid gap-4 py-4">
-//             <Button type="button" onClick={handleSelectAll}>
-//               {selectedProductIds.length === category.productDTOs.length
-//                 ? "Deselect All"
-//                 : "Select All"}
-//             </Button>
-//             {category.productDTOs.map((product) => (
-//               <div key={product.productId} className="flex items-center gap-2">
-//                 <input
-//                   type="checkbox"
-//                   id={`product-${product.productId}`}
-//                   checked={selectedProductIds.includes(product.productId)}
-//                   onChange={() => {
-//                     if (selectedProductIds.includes(product.productId)) {
-//                       setSelectedProductIds(
-//                         selectedProductIds.filter(
-//                           (id) => id !== product.productId
-//                         )
-//                       );
-//                     } else {
-//                       setSelectedProductIds([
-//                         ...selectedProductIds,
-//                         product.productId,
-//                       ]);
-//                     }
-//                   }}
-//                 />
-//                 <Label htmlFor={`product-${product.productId}`}>
-//                   {product.name}
-//                 </Label>
-//               </div>
-//             ))}
-//           </div>
-//           <DialogFooter>
-//             <Button type="submit">Delete Selected Products</Button>
-//           </DialogFooter>
-//         </form>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
-
-// interface AddCategoryDialogProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-//   onAddCategory: (data: FormData) => void;
-// }
-
-// const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
-//   isOpen,
-//   onClose,
-//   onAddCategory,
-// }) => {
-//   const [name, setName] = useState("");
-//   const [image, setImage] = useState<File | null>(null);
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     const formData = new FormData();
-//     formData.append("name", name);
-//     if (image) formData.append("image", image);
-//     onAddCategory(formData);
-//     onClose();
-//   };
-
-//   return (
-//     <Dialog open={isOpen} onOpenChange={onClose}>
-//       <DialogContent>
-//         <DialogHeader>
-//           <DialogTitle>Add New Category</DialogTitle>
-//         </DialogHeader>
-//         <form onSubmit={handleSubmit}>
-//           <div className="grid gap-4 py-4">
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="name" className="text-right">
-//                 Name
-//               </Label>
-//               <Input
-//                 id="name"
-//                 value={name}
-//                 onChange={(e) => setName(e.target.value)}
-//                 className="col-span-3"
-//               />
-//             </div>
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="image" className="text-right">
-//                 Image
-//               </Label>
-//               <Input
-//                 id="image"
-//                 type="file"
-//                 onChange={(e) => setImage(e.target.files?.[0] || null)}
-//                 className="col-span-3"
-//               />
-//             </div>
-//           </div>
-//           <DialogFooter>
-//             <Button type="submit">Add Category</Button>
-//           </DialogFooter>
-//         </form>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };

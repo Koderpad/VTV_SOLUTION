@@ -102,8 +102,7 @@ export const AddProduct = () => {
       },
       successCallback: (response) => {
         toast.success("Thêm sản phẩm thành công");
-        console.log("sản phẩm sau khi them thành công: ", response);
-        // navigate("/vendor/shop/products");
+        navigate("/vendor/products");
       },
       errorFromServerCallback: (error) => {
         if (error.status === "BAD_REQUEST") {

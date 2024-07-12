@@ -1,5 +1,5 @@
 //update address form
-import React, {  useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UpdateAddressSelect from "./AddressSelect";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -59,6 +59,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ address, onClose }) => {
       }
 
       const updatedAddress: AddressRequest = {
+        addressId: address.addressId, // Thêm addressId vào request
         provinceName: province,
         districtName: district,
         wardName: ward,
@@ -149,7 +150,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ address, onClose }) => {
             placeholder="Nhập địa chỉ cụ thể của bạn"
           ></textarea>
         </div>
-        <div className="flex items-center mb-4">
+        {/* <div className="flex items-center mb-4">
           <div className="flex items-center">
             <input
               type="radio"
@@ -181,7 +182,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ address, onClose }) => {
               Văn phòng
             </label>
           </div>
-        </div>
+        </div> */}
         <div className="flex justify-between">
           <button
             type="button"
