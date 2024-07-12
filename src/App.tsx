@@ -106,6 +106,7 @@ import Home from "./pages/common/Home.tsx";
 import ProductDetailPage from "./pages/common/ProductDetailPage.tsx";
 import { setHasNewMessage } from "./redux/features/common/chat/chatSlice.ts";
 import CheckoutWithProductVariant from "./pages/common/CheckoutWithProductVariant.tsx";
+import VendorRegister from "./components/organisms/Common/VendorRegister/index.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 
@@ -242,6 +243,9 @@ function App() {
 
           {/* shop detail */}
           <Route path="/:username.shop" element={<ShopDetailPage />} />
+
+          {/* vendor register */}
+          <Route path="vendor/reg" element={<VendorRegister />} />
 
           <Route element={<RequireAuth allowedRoles={["MANAGER"]} />}>
             <Route path="/manager" element={<DashboardManager />}>

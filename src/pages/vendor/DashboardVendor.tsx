@@ -170,6 +170,17 @@ export const DashboardVendor = () => {
                 Quản lý đơn hàng
               </Link>
             </li>
+            <li>
+              <Link
+                to="/"
+                className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg hover:bg-green-100`}
+                onClick={() => {}}
+              >
+                <FontAwesomeIcon icon={faHome} size="sm" color="#666" />
+                <div className="ml-2" />
+                Về trang chủ VTV
+              </Link>
+            </li>
           </ul>
 
           <a

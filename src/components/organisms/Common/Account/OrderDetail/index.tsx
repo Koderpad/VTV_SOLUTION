@@ -16,7 +16,7 @@ const OrderDetail = () => {
   console.log(transportDTO, shippingDTO);
 
   const handleReview = (orderItemId: string) => {
-    navigate(`/user/account/checkout/add/review/order-item/${orderItemId}`);
+    // navigate(`/user/account/checkout/add/review/order-item/${orderItemId}`);
   };
 
   const handleCancel = () => {
@@ -225,13 +225,13 @@ const OrderDetail = () => {
 
         {/* Action Buttons */}
         <div className="mt-4">
-          <button
+          {/* <button
             className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
-            onClick={() => navigate(`/shop/${orderDTO.shopDTO.shopId}`)}
+            onClick={() => navigate(`/shop/${orderDTO.shopDTO.name}`)}
           >
             Xem Shop
-          </button>
-          {orderDTO.status === "COMPLETED" && (
+          </button> */}
+          {/* {orderDTO.status === "COMPLETED" && (
             <button
               className="bg-green-500 text-white px-4 py-2 rounded mr-4"
               onClick={() =>
@@ -264,7 +264,7 @@ const OrderDetail = () => {
                 Trả hàng
               </button>
             </>
-          )}
+          )} */}
         </div>
       </div>
     </div>

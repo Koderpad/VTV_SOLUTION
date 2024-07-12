@@ -3,12 +3,18 @@ import { ShopResponse } from "@/utils/DTOs/vendor/shop/Response/ShopResponse";
 
 export const shopApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    registerShop: builder.mutation({
+    registerShop: builder.mutation<ShopResponse, FormData>({
       query: (data) => ({
         url: `/vendor/register`,
         method: "POST",
         body: data,
       }),
+      extraOptions: {
+        prepareHeaders: (headers: Headers) => {
+          headers.set("Content-Type", "multipart/form-data");
+          return headers;
+        },
+      },
     }),
 
     getProfileShop: builder.query<ShopResponse, void>({
