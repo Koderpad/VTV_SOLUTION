@@ -89,7 +89,7 @@ export const Revenue: React.FC = () => {
           );
         },
         errorCallback: (error) => {
-          toast.error(`Đã xảy ra lỗi: ${error}`);
+          // toast.error(`Đã xảy ra lỗi: ${error}`);
         },
       });
 
@@ -112,7 +112,7 @@ export const Revenue: React.FC = () => {
           );
         },
         errorCallback: (error) => {
-          toast.error(`Đã xảy ra lỗi: ${error}`);
+          // toast.error(`Đã xảy ra lỗi1: ${error}`);
         },
       });
     };
