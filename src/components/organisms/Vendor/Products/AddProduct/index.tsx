@@ -10,6 +10,7 @@ import { useAddProductMutation } from "@/redux/features/vendor/product/productSh
 import { ServerError } from "@/utils/DTOs/common/ServerError";
 import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
 import { ProductResponse } from "@/utils/DTOs/vendor/product/Response/ProductResponse";
+import { Button } from "@/components/ui/button";
 
 export const AddProduct = () => {
   const navigate = useNavigate();
@@ -146,13 +147,15 @@ export const AddProduct = () => {
                   id="container-right btn-group"
                   className="flex justify-end p-4 w-full gap-10"
                 >
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={() => navigate("/vendor/products")}
                   >
                     Hủy
-                  </button>
-                  <button type="submit">Lưu</button>
+                  </Button>
+                  {/* <button>Lưu</button> */}
+                  <Button type="submit">Lưu</Button>
                 </div>
               </div>
             </div>
