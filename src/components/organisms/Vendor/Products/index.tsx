@@ -352,13 +352,19 @@ const Products = () => {
               <td className="border px-4 py-2">{product.status}</td>
               <td className="border px-4 py-2">
                 <button
-                  onClick={() =>
-                    setSelectedProductId(
-                      selectedProductId === product.productId
-                        ? null
-                        : product.productId
-                    )
-                  }
+                  onClick={() => {
+                    if (product.status !== "LOCKED") {
+                      setSelectedProductId(
+                        selectedProductId === product.productId
+                          ? null
+                          : product.productId
+                      );
+                    } else {
+                      toast.error(
+                        "Sản phẩm đã bị khóa, không thể xem chi tiết"
+                      );
+                    }
+                  }}
                   className="py-2 px-3 text-sm font-semibold rounded-full border border-transparent bg-blue-600 text-white hover:bg-blue-700"
                 >
                   {selectedProductId === product.productId
@@ -367,7 +373,11 @@ const Products = () => {
                 </button>
                 <button
                   onClick={() => {
-                    navigate(`/vendor/product/edit/${product.productId}`);
+                    if (product.status !== "LOCKED") {
+                      navigate(`/vendor/product/edit/${product.productId}`);
+                    } else {
+                      toast.error("Sản phẩm đã bị khóa, không thể chỉnh sửa");
+                    }
                   }}
                   type="button"
                   className="ml-2 py-2 px-3 text-sm font-semibold rounded-full border border-transparent bg-blue-600 text-white hover:bg-blue-700"
