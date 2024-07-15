@@ -96,8 +96,7 @@ const VendorRegister: React.FC = () => {
     <>
       {shopResponse?.code === 200 ? (
         <div className="text-center text-red-500 font-bold">
-          Cửa hàng của bạn đã bị khóa. Vui lòng liên hệ với quản trị viên để
-          biết thêm chi tiết.
+          Bạn đã đăng ký cửa hàng rồi.
           <button
             className="text-blue-400"
             onClick={() => {
