@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
 import { Star } from "@/components/atoms/Icon/Star";
+import { CardItem } from "@/components/molecules/CardItem";
 
 const CarouselItemProductList = ({ products }: { products: ProductDTO[] }) => {
   return (
@@ -15,7 +16,7 @@ const CarouselItemProductList = ({ products }: { products: ProductDTO[] }) => {
       <CarouselContent>
         {products.map((product) => (
           <CarouselItem key={product.productId} className="basis-1/5">
-            <div className="group rounded-2xl bg-white p-2">
+            {/* <div className="group rounded-2xl bg-white p-2">
               <div className="relative h-[400px] overflow-hidden rounded-2xl transition sm:h-[330px]">
                 <a
                   href={`/product/${product.productId}`}
@@ -49,7 +50,8 @@ const CarouselItemProductList = ({ products }: { products: ProductDTO[] }) => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
+            <CardItem key={product.productId} product={product} />
           </CarouselItem>
         ))}
       </CarouselContent>

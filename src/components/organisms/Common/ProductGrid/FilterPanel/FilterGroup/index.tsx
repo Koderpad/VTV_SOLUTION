@@ -7,35 +7,41 @@ interface FilterGroupProps {
 }
 
 export const FilterGroup: FC<FilterGroupProps> = ({ name, children }) => {
-  const { filters } = useContext(FilterContext);
+  // const { filters } = useContext(FilterContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const shouldOpen = () => {
-      switch (name) {
-        case "PRICE":
-          return filters.fromPrice !== null || filters.toPrice !== null;
-        case "PRODUCT RATE":
-          return filters.rating.length > 0;
-        case "SORT BY":
-          return filters.sortBy !== null;
-        default:
-          return false;
-      }
-    };
+  // useEffect(() => {
+  //   const shouldOpen = () => {
+  //     switch (name) {
+  //       case "PRICE":
+  //         return filters.fromPrice !== null || filters.toPrice !== null;
+  //       case "PRODUCT RATE":
+  //         return filters.rating.length > 0;
+  //       case "SORT BY":
+  //         return filters.sortBy !== null;
+  //       default:
+  //         return false;
+  //     }
+  //   };
 
-    setIsOpen(shouldOpen());
-  }, [filters, name]);
+  //   setIsOpen(shouldOpen());
+  // }, [filters, name]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   return (
-    <div className="rounded-lg bg-neutral-100">
+    <div className="rounded-lg bg-neutral-100 ">
       <button
         className="flex w-full items-center justify-between px-2.5 py-2.5 gap-4 text-sm font-semibold text-neutral-600"
         onClick={toggleDropdown}
       >
-        <span className="flex w-auto whitespace-nowrap">{name}</span>
+        <span className="flex w-auto whitespace-nowrap">
+          {name === "PRICE"
+            ? "Khoảng giá"
+            : name === "SORT BY"
+              ? "Loại sắp xếp"
+              : ""}
+        </span>
 
         <svg
           stroke="currentColor"

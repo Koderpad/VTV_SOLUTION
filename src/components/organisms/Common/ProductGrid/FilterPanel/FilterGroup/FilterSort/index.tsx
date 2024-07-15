@@ -13,12 +13,20 @@ export const FilterSort = () => {
     return filters.sortBy === sortBy;
   };
 
+  // const sortOptions: { value: SortBy; label: string }[] = [
+  //   { value: "newest", label: "Newest" },
+  //   { value: "best-selling", label: "Best Selling" },
+  //   { value: "price-asc", label: "Price: Low to High" },
+  //   { value: "price-desc", label: "Price: High to Low" },
+  //   { value: "random", label: "Random" },
+  // ];
+
   const sortOptions: { value: SortBy; label: string }[] = [
-    { value: "newest", label: "Newest" },
-    { value: "best-selling", label: "Best Selling" },
-    { value: "price-asc", label: "Price: Low to High" },
-    { value: "price-desc", label: "Price: High to Low" },
-    { value: "random", label: "Random" },
+    { value: "newest", label: "Mới nhất" },
+    { value: "best-selling", label: "Bán chạy nhất" },
+    { value: "price-asc", label: "Giá: Thấp đến Cao" },
+    { value: "price-desc", label: "Giá: Cao đến Thấp" },
+    { value: "random", label: "Ngẫu nhiên" },
   ];
 
   return (

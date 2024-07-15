@@ -48,7 +48,7 @@ export const Cart = ({ handleCreateOrder }: CartProps) => {
   if (!data || data.listCartByShopDTOs.length === 0) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-2xl text-gray-400">Cart is empty</p>
+        <p className="text-2xl text-gray-400">Giỏ hàng trống</p>
       </div>
     );
   }

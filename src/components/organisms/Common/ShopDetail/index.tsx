@@ -21,6 +21,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { AiOutlineDown, AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { CardItem } from "@/components/molecules/CardItem";
 
 const ShopDetail = () => {
   const { username } = useParams();
@@ -31,18 +32,18 @@ const ShopDetail = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [currentProducts, setCurrentProducts] = useState<ProductDTO[]>([]);
   const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1,
+    Number(searchParams.get("page")) || 1
   );
   const [productsPerPage] = useState(8);
   const [allProducts, setAllProducts] = useState<ProductDTO[] | null>(null);
   const categories: CategoryShopDTO[] = useMemo(
     () => categoryData,
-    [categoryData],
+    [categoryData]
   );
   const [ortherDataShop, setOrtherDataShop] =
     useState<ShopDetailResponse | null>(null);
   const [sortBy, setSortBy] = useState<string>(
-    searchParams.get("sortBy") || "popular",
+    searchParams.get("sortBy") || "popular"
   );
 
   const callApisSequentially = async () => {
@@ -58,7 +59,7 @@ const ShopDetail = () => {
 
       //call api to get category data by shopId
       const categoryResponse = await getCategoryListByShopId(
-        shopResponse.shopDTO.shopId,
+        shopResponse.shopDTO.shopId
       );
       setCategoryData(categoryResponse.categoryShopDTOs);
 
@@ -74,7 +75,7 @@ const ShopDetail = () => {
       const products = await getProductPageShopByShopId(
         1,
         200,
-        shopResponse.shopDTO.shopId,
+        shopResponse.shopDTO.shopId
       );
       setAllProducts(products.productDTOs);
 
@@ -98,7 +99,7 @@ const ShopDetail = () => {
         const selectedCategoryProducts =
           await getListProductByCategoryShopId(selectedCategory);
         setCurrentProducts(
-          selectedCategoryProducts.categoryShopDTO.productDTOs || [],
+          selectedCategoryProducts.categoryShopDTO.productDTOs || []
         );
       }
       setCurrentPage(1); // Reset to first page
@@ -110,7 +111,7 @@ const ShopDetail = () => {
   const checkValidPage = (page: number) => {
     console.log(
       "max page: ",
-      Math.ceil(currentProducts.length / productsPerPage),
+      Math.ceil(currentProducts.length / productsPerPage)
     );
     return (
       page > 0 && page <= Math.ceil(currentProducts.length / productsPerPage)
@@ -144,7 +145,7 @@ const ShopDetail = () => {
     }
     if (sortBy === "newest") {
       const sortedProducts = allProducts?.sort(
-        (a, b) => b.productId - a.productId,
+        (a, b) => b.productId - a.productId
       );
       setCurrentProducts(sortedProducts ?? []);
       setSearchParams({ sortBy: "newest" });
@@ -156,14 +157,14 @@ const ShopDetail = () => {
     }
     if (sortBy === "priceAsc") {
       const sortedProducts = allProducts?.sort(
-        (a, b) => a.minPrice - b.minPrice,
+        (a, b) => a.minPrice - b.minPrice
       );
       setCurrentProducts(sortedProducts ?? []);
       setSearchParams({ sortBy: "priceAsc" });
     }
     if (sortBy === "priceDesc") {
       const sortedProducts = allProducts?.sort(
-        (a, b) => b.minPrice - a.minPrice,
+        (a, b) => b.minPrice - a.minPrice
       );
       setCurrentProducts(sortedProducts ?? []);
       setSearchParams({ sortBy: "priceDesc" });
@@ -178,7 +179,7 @@ const ShopDetail = () => {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProductsPage = currentProducts.slice(
     indexOfFirstProduct,
-    indexOfLastProduct,
+    indexOfLastProduct
   );
   const handleNextPage = () => {
     if (currentPage < Math.ceil(currentProducts.length / productsPerPage)) {
@@ -376,35 +377,36 @@ const ShopDetail = () => {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {currentProductsPage.map((product) => (
-                  <div
-                    key={product.productId}
-                    className="bg-white shadow-md rounded-lg overflow-hidden"
-                  >
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold mb-2">
-                        {product.name}
-                      </h3>
-                      <div className="flex justify-between items-baseline mb-2">
-                        <span className="text-xl font-bold text-red-500">
-                          {product.minPrice.toLocaleString()} ₫ -{" "}
-                          {product.maxPrice.toLocaleString()} ₫
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-500">
-                          Đã bán: {product.sold}
-                        </span>
-                        <span className="text-sm text-yellow-500">
-                          {product.rating}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  // <div
+                  //   key={product.productId}
+                  //   className="bg-white shadow-md rounded-lg overflow-hidden"
+                  // >
+                  //   <img
+                  //     src={product.image}
+                  //     alt={product.name}
+                  //     className="w-full h-48 object-cover"
+                  //   />
+                  //   <div className="p-4">
+                  //     <h3 className="text-lg font-semibold mb-2">
+                  //       {product.name}
+                  //     </h3>
+                  //     <div className="flex justify-between items-baseline mb-2">
+                  //       <span className="text-xl font-bold text-red-500">
+                  //         {product.minPrice.toLocaleString()} ₫ -{" "}
+                  //         {product.maxPrice.toLocaleString()} ₫
+                  //       </span>
+                  //     </div>
+                  //     <div className="flex justify-between items-center">
+                  //       <span className="text-sm text-gray-500">
+                  //         Đã bán: {product.sold}
+                  //       </span>
+                  //       <span className="text-sm text-yellow-500">
+                  //         {product.rating}
+                  //       </span>
+                  //     </div>
+                  //   </div>
+                  // </div>
+                  <CardItem key={product.productId} product={product} />
                 ))}
               </div>
             </>
@@ -433,7 +435,7 @@ const ShopDetail = () => {
                       {index + 1}
                     </PaginationLink>
                   </PaginationItem>
-                ),
+                )
               )}
               <PaginationItem>
                 <PaginationNext
