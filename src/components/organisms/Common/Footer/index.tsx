@@ -5,12 +5,12 @@ export const Footer = () => {
         <div className="max-w-3xl mx-auto space-y-6">
           <nav className="grid grid-cols-2 gap-4 p-6 justify-items-center text-sm font-medium rounded-lg sm:grid-cols-4 lg:grid-cols-4">
             {/* <a href="">Blog</a> */}
-            <a href="" className="hover:opacity-75">
+            {/* <a href="" className="hover:opacity-75">
               Github Repo
             </a>
             <a href="" className="hover:opacity-75">
               Resources
-            </a>
+            </a> */}
             {/* <a href="" className="hover:opacity-75">
               Resources
             </a> */}

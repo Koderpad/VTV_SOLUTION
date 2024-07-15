@@ -22,7 +22,7 @@ export const CategoryResultsContainer = () => {
 
         while (currentPage <= totalPages) {
           const response = await fetch(
-            `http://localhost:8585/api/product/by-category/${categoryId}?page=${currentPage}&size=1`
+            `http://localhost:8585/api/product/by-category/${categoryId}?page=${currentPage}&size=200`,
           );
           const data = await response.json();
 
@@ -51,13 +51,13 @@ export const CategoryResultsContainer = () => {
     if (fromPrice !== null && toPrice !== null) {
       filtered = filtered.filter(
         (product) =>
-          product.minPrice >= fromPrice && product.maxPrice <= toPrice
+          product.minPrice >= fromPrice && product.maxPrice <= toPrice,
       );
     }
 
     if (rating.length > 0) {
       filtered = filtered.filter((product) =>
-        rating.some((r) => Number(product.rating) >= r)
+        rating.some((r) => Number(product.rating) >= r),
       );
     }
 

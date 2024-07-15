@@ -20,7 +20,7 @@ export const SearchItemResultItems = ({
   const { filters, updateFilters } = useContext(FilterContext);
   const { page } = filters;
   const [currentPage, setCurrentPage] = useState(page);
-  const itemsPerPage = 4; // Số lượng sản phẩm trên mỗi trang
+  const itemsPerPage = 20; // Số lượng sản phẩm trên mỗi trang
 
   // Tính toán các sản phẩm cần hiển thị
   const indexOfLastItem = currentPage * itemsPerPage;

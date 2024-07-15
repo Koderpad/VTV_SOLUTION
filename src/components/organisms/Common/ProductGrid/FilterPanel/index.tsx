@@ -9,8 +9,6 @@ export const FilterPanel = () => {
         <FilterRating />
         <FilterPrice />
         <FilterSort />
-
-        {/* price, location,... */}
       </div>
     </div>
   );
