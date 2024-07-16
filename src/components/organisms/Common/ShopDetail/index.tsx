@@ -34,7 +34,7 @@ const ShopDetail = () => {
   const [currentPage, setCurrentPage] = useState(
     Number(searchParams.get("page")) || 1
   );
-  const [productsPerPage] = useState(8);
+  const [productsPerPage] = useState(40);
   const [allProducts, setAllProducts] = useState<ProductDTO[] | null>(null);
   const categories: CategoryShopDTO[] = useMemo(
     () => categoryData,
@@ -316,7 +316,7 @@ const ShopDetail = () => {
                           <AiOutlineDown />
                         </div>
                       </button>
-                      <div className="relative">
+                      <div className="relative z-40">
                         <div className="absolute -top-5 py-8 hidden group-hover:block w-full">
                           <div className="flex gap-2 bg-white shadow-lg w-auto -ml-2 pl-5">
                             <div className="flex flex-col w-full gap-2 py-3">

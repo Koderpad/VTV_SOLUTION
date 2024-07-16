@@ -25,7 +25,7 @@ export const ImageUploadPreview = ({
             className="flex justify-center gap-3 absolute bottom-0 right-0 left-0 h-[24px] w-[80px] 
                     bg-[#D6D3D1] bg-opacity-100"
           >
-            <span
+            {/* <span
               id="shopee-image-manager__icon shopee-image-manager__icon--crop"
               className=" w-[24px] h-[24px] 
                        flex items-center justify-center cursor-pointer
@@ -63,7 +63,7 @@ export const ImageUploadPreview = ({
             <span
               id="decollator"
               className="border-l h-auto w-[1px] border-gray-400"
-            ></span>
+            ></span> */}
             <span
               id="shopee-image-manager__icon shopee-image-manager__icon--delete"
               className=" w-[24px] h-[24px] 

@@ -257,7 +257,7 @@ export const ProductBasicInfo = () => {
                   </div>
                   <div id="edit-main vtc-image-manager">
                     <div id="container" className="flex flex-wrap h-[96px]">
-                      {imageData && (
+                      {imageData ? (
                         <div
                           id="can-drag vtc-image-manager__itembox"
                           className="w-[96px] mb-[16px] mr-[16px] max-w-[80px] max-h-[80px]"
@@ -276,17 +276,16 @@ export const ProductBasicInfo = () => {
                                 id="shopee-image-manager__tools"
                                 className="flex justify-center gap-3 absolute bottom-0 right-0 left-0 h-[24px] w-[80px] bg-[#D6D3D1] bg-opacity-100"
                               >
-                                <span
+                                {/* <span
                                   id="shopee-image-manager__icon shopee-image-manager__icon--crop"
                                   className="w-[24px] h-[24px] flex items-center justify-center cursor-pointer"
                                   onClick={handleCropClick}
                                 >
-                                  {/* Crop icon SVG */}
-                                </span>
-                                <span
+                                </span> */}
+                                {/* <span
                                   id="decollator"
                                   className="border-l h-auto w-[1px] border-gray-400"
-                                ></span>
+                                ></span> */}
                                 <span
                                   id="shopee-image-manager__icon shopee-image-manager__icon--delete"
                                   className="w-[24px] h-[24px] flex items-center justify-center cursor-pointer"
@@ -314,54 +313,61 @@ export const ProductBasicInfo = () => {
                             </div>
                           </div>
                         </div>
-                      )}
-                      <div
-                        id="vtc-image-manager__itembox"
-                        className="w-[96px] mb-[16px] mr-[16px] max-w-[80px] max-h-[80px]"
-                      >
+                      ) : (
                         <div
-                          id="vtc-image-manager__content"
-                          className="relative pt-[80x] h-0"
+                          id="vtc-image-manager__itembox"
+                          className="w-[96px] mb-[16px] mr-[16px] max-w-[80px] max-h-[80px]"
                         >
                           <div
-                            id="vtc-image-manager__upload"
-                            className="flex flex-col h-[80px] border-[0.8px] hover:bg-gray-200"
+                            id="vtc-image-manager__content"
+                            className="relative pt-[80x] h-0"
                           >
                             <div
-                              id="vtc-file-upload"
-                              className="border-[0.8px] h-full"
+                              id="vtc-image-manager__upload"
+                              className="flex flex-col h-[80px] border-[0.8px] hover:bg-gray-200"
                             >
-                              <div id="vtc-upload" className="relative h-full">
+                              <div
+                                id="vtc-file-upload"
+                                className="border-[0.8px] h-full"
+                              >
                                 <div
-                                  id="vtc-upload-wrapper vtc-upload-dragger"
-                                  className="flex items-center justify-center h-full"
+                                  id="vtc-upload"
+                                  className="relative h-full"
                                 >
-                                  <input
-                                    ref={fileInputRef}
-                                    id="vtc-upload__input"
-                                    type="file"
-                                    accept="image/*"
-                                    className="h-full w-full absolute cursor-pointer"
-                                    style={{ opacity: "0", aspectRatio: "1/1" }}
-                                    onChange={handleFileChange}
-                                  />
                                   <div
-                                    id="vtc-image-manager__upload__content"
-                                    className="flex flex-col items-center px-[2px]"
-                                    style={{ color: "#ee4d2d" }}
+                                    id="vtc-upload-wrapper vtc-upload-dragger"
+                                    className="flex items-center justify-center h-full"
                                   >
-                                    <div id="vtc-image-manager__upload__content__icon">
-                                      {/* Upload icon SVG */}
-                                    </div>
-                                    <div
-                                      id="vtc-image-manager__upload__content__text"
+                                    <input
+                                      ref={fileInputRef}
+                                      id="vtc-upload__input"
+                                      type="file"
+                                      accept="image/*"
+                                      className="h-full w-full absolute cursor-pointer"
                                       style={{
-                                        fontSize: "12px",
-                                        lineHeight: "14px",
-                                        textAlign: "center",
+                                        opacity: "0",
+                                        aspectRatio: "1/1",
                                       }}
+                                      onChange={handleFileChange}
+                                    />
+                                    <div
+                                      id="vtc-image-manager__upload__content"
+                                      className="flex flex-col items-center px-[2px]"
+                                      style={{ color: "#ee4d2d" }}
                                     >
-                                      Thêm hình ảnh (1/9)
+                                      <div id="vtc-image-manager__upload__content__icon">
+                                        {/* Upload icon SVG */}
+                                      </div>
+                                      <div
+                                        id="vtc-image-manager__upload__content__text"
+                                        style={{
+                                          fontSize: "12px",
+                                          lineHeight: "14px",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                        Thêm hình ảnh
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -369,7 +375,7 @@ export const ProductBasicInfo = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -583,7 +589,7 @@ export const ProductBasicInfo = () => {
       </div>
 
       {/* Image Editor Modal */}
-      <ReactModal
+      {/* <ReactModal
         isOpen={isModalOpen}
         onRequestClose={handleCloseModal}
         style={{
@@ -631,7 +637,7 @@ export const ProductBasicInfo = () => {
           <button onClick={handleSave}>Save</button>
         </div>
         <button onClick={handleCloseModal}>Close Modal</button>
-      </ReactModal>
+      </ReactModal> */}
 
       {/* Category Selection Modal */}
       {isCategoryModalVisible && (

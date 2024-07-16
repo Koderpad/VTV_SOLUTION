@@ -497,6 +497,152 @@ const AttributeGroupInput = ({
   );
 };
 
+// const VariantTable = ({
+//   attributeGroups,
+//   matrixData,
+//   updateCell,
+//   onOpenModal,
+//   onImageChange,
+//   onDeleteImage,
+//   register,
+//   errors,
+// }: {
+//   attributeGroups: AttributeGroup[];
+//   matrixData: MatrixData;
+//   updateCell: (
+//     rowIndex: number,
+//     colIndex: number,
+//     newValue: CellData["value"]
+//   ) => void;
+//   onOpenModal: (index: number) => void;
+//   onImageChange: (index: number, imageData: string | File) => void;
+//   onDeleteImage: (index: number) => void;
+//   register: any;
+//   errors: any;
+// }) => {
+//   const handleFileChange = (
+//     rowIndex: number,
+//     event: React.ChangeEvent<HTMLInputElement>
+//   ) => {
+//     if (event.target.files && event.target.files.length > 0) {
+//       const file = event.target.files[0];
+//       onImageChange(rowIndex, file);
+//     }
+//   };
+
+//   return (
+//     <div className="overflow-x-auto mt-8">
+//       <table className="min-w-full bg-white border border-gray-300">
+//         <thead>
+//           <tr className="bg-gray-100">
+//             {attributeGroups.map((group, index) => (
+//               <th
+//                 key={index}
+//                 className="px-4 py-2 text-left text-gray-600 font-semibold"
+//               >
+//                 {group.name || `Nhóm phân loại ${index + 1}`}
+//               </th>
+//             ))}
+//             <th className="px-4 py-2 text-left text-gray-600 font-semibold">
+//               Giá gốc
+//             </th>
+//             <th className="px-4 py-2 text-left text-gray-600 font-semibold">
+//               Giá bán
+//             </th>
+//             <th className="px-4 py-2 text-left text-gray-600 font-semibold">
+//               Kho hàng
+//             </th>
+//             <th className="px-4 py-2 text-left text-gray-600 font-semibold">
+//               SKU
+//             </th>
+//             <th className="px-4 py-2 text-left text-gray-600 font-semibold">
+//               Hình ảnh
+//             </th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {matrixData.map((row, rowIndex) => (
+//             <tr key={rowIndex} className="border-t border-gray-200">
+//               {row.map((cell, cellIndex) => {
+//                 if (cell.type === "attribute") {
+//                   return (
+//                     <td key={cellIndex} className="px-4 py-2">
+//                       {cell.value as string}
+//                     </td>
+//                   );
+//                 } else if (cell.type === "image") {
+//                   const imageValue = cell.value as string | File;
+//                   const imagePreview =
+//                     imageValue instanceof File
+//                       ? URL.createObjectURL(imageValue)
+//                       : imageValue;
+//                   return (
+//                     <td key={cellIndex} className="px-4 py-2">
+//                       <div className="w-[96px] h-[96px]">
+//                         {imagePreview ? (
+//                           <ImageUploadPreview
+//                             src={imagePreview}
+//                             handleCropClick={() => onOpenModal(rowIndex)}
+//                             handleDeleteClick={() => onDeleteImage(rowIndex)}
+//                           />
+//                         ) : (
+//                           <ImageUpload
+//                             fileInputRef={null}
+//                             handleFileChange={(e) =>
+//                               handleFileChange(rowIndex, e)
+//                             }
+//                             handleButtonClick={() => {}}
+//                           />
+//                         )}
+//                       </div>
+//                     </td>
+//                   );
+//                 } else {
+//                   return (
+//                     <td key={cellIndex} className="px-4 py-2">
+//                       <input
+//                         type={cell.type === "sku" ? "text" : "number"}
+//                         {...register(
+//                           `productVariantRequests.${rowIndex}.${cell.type}`,
+//                           {
+//                             required: `${cell.type} is required`,
+//                             min:
+//                               cell.type !== "sku"
+//                                 ? {
+//                                     value: 0,
+//                                     message: `${cell.type} must be greater than or equal to 0`,
+//                                   }
+//                                 : undefined,
+//                           }
+//                         )}
+//                         defaultValue={cell.value as string | number}
+//                         onChange={(e) =>
+//                           updateCell(rowIndex, cellIndex, e.target.value)
+//                         }
+//                         className="w-full p-1 border border-gray-300 rounded"
+//                       />
+//                       {errors.productVariantRequests?.[rowIndex]?.[
+//                         cell.type
+//                       ] && (
+//                         <span className="text-red-500 text-sm">
+//                           {
+//                             errors.productVariantRequests[rowIndex][cell.type]
+//                               .message
+//                           }
+//                         </span>
+//                       )}
+//                     </td>
+//                   );
+//                 }
+//               })}
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// };
+
 const VariantTable = ({
   attributeGroups,
   matrixData,
@@ -605,16 +751,20 @@ const VariantTable = ({
                         {...register(
                           `productVariantRequests.${rowIndex}.${cell.type}`,
                           {
-                            required: `${cell.type} is required`,
-                            min:
-                              cell.type !== "sku"
-                                ? {
-                                    value: 0,
-                                    message: `${cell.type} must be greater than or equal to 0`,
-                                  }
-                                : undefined,
+                            required: `${cell.type} là bắt buộc`,
+                            valueAsNumber: cell.type !== "sku",
+                            validate: (value) => {
+                              if (cell.type !== "sku") {
+                                if (!Number.isInteger(value) || value < 0) {
+                                  return `${cell.type} phải là số nguyên dương`;
+                                }
+                              }
+                              return true;
+                            },
                           }
                         )}
+                        step="1"
+                        min="0"
                         defaultValue={cell.value as string | number}
                         onChange={(e) =>
                           updateCell(rowIndex, cellIndex, e.target.value)

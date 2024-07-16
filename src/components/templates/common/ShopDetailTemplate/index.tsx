@@ -6,6 +6,9 @@ export const ShopDetailTemplate = () => {
   return (
     <TemplateV1>
       <ShopDetail />
+      <div className="mb-4">
+        <span className="text-4xl">Có thể bạn nên biết</span>
+      </div>
       <CarouselItemProductListContainer />
     </TemplateV1>
   );

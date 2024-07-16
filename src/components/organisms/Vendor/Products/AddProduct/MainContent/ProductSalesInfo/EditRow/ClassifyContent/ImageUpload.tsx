@@ -67,7 +67,7 @@ export const ImageUpload = ({
                       textAlign: "center",
                     }}
                   >
-                    Thêm hình ảnh (1/9)
+                    {/* Thêm hình ảnh (1/9) */}
                   </div>
                 </div>
               </div>
