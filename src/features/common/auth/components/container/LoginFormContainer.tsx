@@ -51,6 +51,15 @@ export const LoginFormContainer = () => {
     if (roles.includes("MANAGER")) {
       navigate("/manager", { replace: true });
     }
+    if (roles.includes("PROVIDER")) {
+      navigate("/provider", { replace: true });
+    }
+    if (roles.includes("DELIVER_MANAGER")) {
+      navigate("/deliver_manager", { replace: true });
+    }
+    if (roles.includes("DELIVER")) {
+      navigate("/deliver", { replace: true });
+    }
     if (roles.includes("VENDOR")) {
       navigate("/vendor", { replace: true });
       return;
