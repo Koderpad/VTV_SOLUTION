@@ -77,7 +77,7 @@ export const Categories: React.FC = () => {
       handleApiCall<ResponseClass, ServerError>({
         callbackFn: async () => await deleteCategoryShop(categoryShopId),
         successCallback: () => {
-          toast.success("Category deleted successfully");
+          toast.success("Danh mục đã được xóa thành công");
           refetchCategories();
         },
         errorFromServerCallback: (error) => {
@@ -253,7 +253,7 @@ const UpdateCategoryDialog: React.FC<UpdateCategoryDialogProps> = ({
             data: formData,
           }),
         successCallback: () => {
-          toast.success("Category updated successfully");
+          toast.success("Danh mục đã được cập nhật thành công");
           refetchCategories();
           onClose();
         },
@@ -372,7 +372,7 @@ const AddProductsDialog: React.FC<AddProductsDialogProps> = ({
             productIds: selectedProductIds,
           }),
         successCallback: () => {
-          toast.success("Products added successfully");
+          toast.success("Sản phẩm đã được thêm vào danh mục thành công");
           refetchCategories();
           onClose();
         },
@@ -499,7 +499,7 @@ const DeleteProductsDialog: React.FC<DeleteProductsDialogProps> = ({
             productIds: selectedProductIds,
           }),
         successCallback: () => {
-          toast.success("Products removed successfully");
+          toast.success("Sản phẩm đã được xóa thành công");
           refetchCategories();
           onClose();
         },
@@ -618,7 +618,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
     handleApiCall<CategoryShopResponse, ServerError>({
       callbackFn: async () => await onAddCategory(formData),
       successCallback: () => {
-        toast.success("Category added successfully");
+        toast.success("Danh mục đã được thêm thành công");
         refetchCategories();
         onClose();
         setName("");
