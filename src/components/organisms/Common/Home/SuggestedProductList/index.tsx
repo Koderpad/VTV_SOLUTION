@@ -15,7 +15,9 @@ const SuggestedProductList = () => {
     setIsLoading(true);
     try {
       const response = await getFilterProductPage(page, 10, "random");
-      const newProducts = response.productDTOs;
+      const newProducts = response.productDTOs.filter(
+        (product) => product.status === "ACTIVE"
+      );
       setProducts((prevProducts) => {
         const uniqueNewProducts = newProducts.filter(
           (newProduct) =>
@@ -24,6 +26,7 @@ const SuggestedProductList = () => {
             )
         );
         const updatedProducts = [...prevProducts, ...uniqueNewProducts];
+
         setHasMore(
           updatedProducts.length < 100 && uniqueNewProducts.length > 0
         );

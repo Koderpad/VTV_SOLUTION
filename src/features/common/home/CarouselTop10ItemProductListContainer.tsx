@@ -13,7 +13,10 @@ export const CarouselTop10ItemProductListContainer = () => {
       setIsLoading(true);
       try {
         const response = await getFilterProductPage(1, 10, "best-selling");
-        setProducts(response.productDTOs);
+        const activeProducts = response.productDTOs.filter(
+          (product) => product.status === "ACTIVE"
+        );
+        setProducts(activeProducts);
       } catch (error) {
         console.error("Error fetching products: ", error);
       } finally {

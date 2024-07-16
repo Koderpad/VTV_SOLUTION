@@ -47,7 +47,11 @@ export const SearchResultsContainer = () => {
         currentPage++;
       }
 
-      setProducts(allProducts);
+      const activeProducts = allProducts.filter(
+        (product) => product.status === "ACTIVE"
+      );
+
+      setProducts(activeProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
