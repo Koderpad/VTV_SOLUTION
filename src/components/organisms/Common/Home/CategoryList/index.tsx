@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [startIndex, setStartIndex] = useState(0);
-  const maxColumns = 4; // Số cột tối đa hiển thị
+  const maxColumns = 5; // Số cột tối đa hiển thị
   const visibleCategories = categories.slice(
     startIndex,
     startIndex + maxColumns * 2

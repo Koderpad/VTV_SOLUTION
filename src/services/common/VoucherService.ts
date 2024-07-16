@@ -8,7 +8,7 @@ import { ListVoucherResponse } from "@/utils/DTOs/common/Voucher/Response/ListVo
 import { VoucherResponse } from "@/utils/DTOs/common/Voucher/Response/VoucherResponse";
 import axios from "axios";
 
-// // const API_URL = "http://localhost:8585/api";
+// // const API_URL = "http://192.168.196.39:8585/api";
 
 export const getSystemVoucher = async (): Promise<ListVoucherResponse> => {
   const response = await axios.get(`${BASE_URL_VTC}/voucher/list-on-system`);

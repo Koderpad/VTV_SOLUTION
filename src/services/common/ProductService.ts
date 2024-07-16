@@ -4,7 +4,7 @@ import { ProductResponse } from "@/utils/DTOs/common/Product/Response/ProductRes
 import { BASE_URL_VTC } from "@/constants/urls";
 import { ProductPageResponse } from "@/utils/DTOs/manager/response/ProductPageResponse.ts";
 
-// const API_URL = "http://localhost:8585/api";
+// const API_URL = "http://192.168.196.39:8585/api";
 
 export const getProductDetail = async (
   productId: number

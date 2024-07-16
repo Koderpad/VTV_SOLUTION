@@ -50,21 +50,16 @@ export const LoginFormContainer = () => {
     // }
     if (roles.includes("MANAGER")) {
       navigate("/manager", { replace: true });
-    }
-    if (roles.includes("PROVIDER")) {
+    } else if (roles.includes("PROVIDER")) {
       navigate("/provider", { replace: true });
-    }
-    if (roles.includes("DELIVER_MANAGER")) {
+    } else if (roles.includes("DELIVER_MANAGER")) {
       navigate("/deliver_manager", { replace: true });
-    }
-    if (roles.includes("DELIVER")) {
+    } else if (roles.includes("DELIVER")) {
       navigate("/deliver", { replace: true });
-    }
-    if (roles.includes("VENDOR")) {
+    } else if (roles.includes("VENDOR")) {
       navigate("/vendor", { replace: true });
       return;
-    }
-    if (roles.includes("CUSTOMER")) {
+    } else if (roles.includes("CUSTOMER")) {
       navigate("/home", { replace: true });
     }
   };

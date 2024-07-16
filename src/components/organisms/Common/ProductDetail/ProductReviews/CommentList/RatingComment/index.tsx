@@ -91,11 +91,11 @@ export const RatingComment: React.FC<{
     <article className="flex flex-col max-w-xl mb-8">
       <div className="flex items-center mb-4 justify-between">
         <div className="flex items-center">
-          <img
+          {/* <img
             className="w-10 h-10 me-4 rounded-full"
             src={review.avatar || "/default-avatar.png"}
             alt=""
-          />
+          /> */}
           <div className="font-medium dark:text-white">
             <p>
               {review.username}
@@ -235,11 +235,11 @@ export const CommentReply: React.FC<{
     <div className="ml-14 mt-4">
       <div className="flex items-center mb-2 justify-between">
         <div className="flex items-center">
-          <img
+          {/* <img
             className="w-8 h-8 me-2 rounded-full"
             src={comment.avatar || "/default-avatar.png"}
             alt=""
-          />
+          /> */}
           <div className="font-medium dark:text-white">
             <p>
               {comment.shopName || comment.username}
