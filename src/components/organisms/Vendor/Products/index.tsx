@@ -8,7 +8,7 @@ import {
   useUpdateProductStatusMutation,
 } from "@/redux/features/vendor/product/productShopApiSlice";
 import { ProductDTO } from "@/utils/DTOs/vendor/product/Response/ProductResponse";
-import { Edit, Eye, EyeOff, Plus, RotateCcw } from "lucide-react";
+import { Edit, Eye, EyeOff, Percent, Plus, RotateCcw } from "lucide-react";
 
 const Products = () => {
   const [page, setPage] = useState(1);
@@ -20,6 +20,7 @@ const Products = () => {
     null,
   );
 
+  const [isBulkDiscountOpen, setIsBulkDiscountOpen] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -74,10 +75,10 @@ const Products = () => {
           await updateProductStatus({ productId, status: newStatus }).unwrap();
         }
       }
-      toast.success("Product status updated successfully");
+      toast.success("Thay đổi trạng thái thành công");
       refetch();
     } catch (err) {
-      toast.error("Failed to update product status");
+      toast.error(err.data.message);
     }
   };
 
@@ -293,7 +294,14 @@ const Products = () => {
         <Plus className="w-6 h-6" />
         Thêm sản phẩm mới
       </button>
-
+      <button
+        onClick={() => setIsBulkDiscountOpen(true)}
+        type="button"
+        className="py-3 px-4 inline-flex items-center gap-x-2 text-xl font-semibold rounded-full border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+      >
+        <Percent className="w-6 h-6" />
+        Điều chỉnh giá đồng loạt
+      </button>
       <div className="mb-4">
         <label htmlFor="status-select" className="mr-2">
           Lọc theo trạng thái:
@@ -413,9 +421,801 @@ const Products = () => {
 
       <div className="text-center mt-4">{renderPageButtons()}</div>
 
+      <BulkPriceAdjustmentDialog
+        isOpen={isBulkDiscountOpen}
+        onClose={() => setIsBulkDiscountOpen(false)}
+      />
       <ToastContainer position="bottom-right" />
     </div>
   );
 };
 
 export default Products;
+
+import React, { useMemo } from "react";
+import { Loader2 } from "lucide-react";
+import { useForm, Controller } from "react-hook-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import {
+  useUpdatePriceByProductIdsMutation,
+  useUpdatePercentPriceByProductIdsMutation,
+} from "@/redux/features/vendor/product/productShopApiSlice";
+
+const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
+  const [selectedProductIds, setSelectedProductIds] = useState({});
+  const [page, setPage] = useState(1);
+  const [errorProductName, setErrorProductName] = useState(null);
+  const size = 10;
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      adjustmentType: "percent",
+      adjustmentValue: "",
+    },
+  });
+
+  const adjustmentType = watch("adjustmentType");
+
+  const [updatePriceByProductIds] = useUpdatePriceByProductIdsMutation();
+  const [updatePercentPriceByProductIds] =
+    useUpdatePercentPriceByProductIdsMutation();
+
+  const { data: productPageResponse, isLoading } =
+    useGetPageProductByStatusQuery(
+      { page, size, status: "ACTIVE" },
+      { refetchOnMountOrArgChange: true },
+    );
+
+  const products = productPageResponse?.productDTOs || [];
+  const totalPages = productPageResponse?.totalPage || 1;
+
+  const totalProducts = useMemo(
+    () => productPageResponse?.totalElements || 0,
+    [productPageResponse],
+  );
+
+  const selectedCount = useMemo(
+    () => Object.values(selectedProductIds).flat().length,
+    [selectedProductIds],
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedProductIds({});
+      setPage(1);
+      setErrorProductName(null);
+    }
+  }, [isOpen]);
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedProductIds((prevSelected) => ({
+        ...prevSelected,
+        [page]: products.map((product) => product.productId),
+      }));
+    } else {
+      setSelectedProductIds((prevSelected) => {
+        const newSelected = { ...prevSelected };
+        delete newSelected[page];
+        return newSelected;
+      });
+    }
+  };
+
+  const handleSelectProduct = (productId) => {
+    setSelectedProductIds((prevSelected) => {
+      const pageSelected = prevSelected[page] || [];
+      if (pageSelected.includes(productId)) {
+        return {
+          ...prevSelected,
+          [page]: pageSelected.filter((id) => id !== productId),
+        };
+      } else {
+        return {
+          ...prevSelected,
+          [page]: [...pageSelected, productId],
+        };
+      }
+    });
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  // const extractProductName = (errorMessage) => {
+  //   const match = errorMessage.match(/sản phẩm (.*?) có mã/);
+  //   return match ? match[1] : null;
+  // };
+  const extractProductName = (errorMessage) => {
+    const match = errorMessage.match(/sản phẩm (.*?) có mã/);
+    return match ? match[1].trim() : null;
+  };
+  const onSubmit = async (data) => {
+    const allSelectedIds = Object.values(selectedProductIds).flat();
+    const request = {
+      productIds: allSelectedIds,
+      [data.adjustmentType === "percent" ? "percent" : "price"]: parseInt(
+        data.adjustmentValue,
+        10,
+      ),
+    };
+
+    try {
+      if (data.adjustmentType === "percent") {
+        await updatePercentPriceByProductIds(request).unwrap();
+      } else {
+        await updatePriceByProductIds(request).unwrap();
+      }
+      toast.success("Điều chỉnh giá thành công!");
+      onClose();
+    } catch (error) {
+      const errorMessage =
+        error.data?.message || "Có lỗi xảy ra khi điều chỉnh giá";
+      toast.error(errorMessage);
+      const productName = extractProductName(errorMessage);
+      setErrorProductName(productName);
+    }
+  };
+
+  const isAllSelected = useMemo(() => {
+    const pageSelected = selectedProductIds[page] || [];
+    return pageSelected.length === products.length && products.length > 0;
+  }, [selectedProductIds, page, products]);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Điều chỉnh giá đồng loạt</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <Controller
+              name="adjustmentType"
+              control={control}
+              rules={{ required: "Vui lòng chọn loại điều chỉnh giá" }}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="w-[240px]">
+                    {" "}
+                    {/* Đã thay đổi từ w-[180px] thành w-[240px] */}
+                    <SelectValue placeholder="Chọn loại điều chỉnh" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="percent">
+                      Điều chỉnh theo phần trăm
+                    </SelectItem>
+                    <SelectItem value="price">Điều chỉnh theo giá</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <Controller
+              name="adjustmentValue"
+              control={control}
+              rules={{
+                required: "Vui lòng nhập giá trị điều chỉnh",
+                validate: (value) => {
+                  const numValue = parseInt(value, 10);
+                  if (isNaN(numValue)) return "Giá trị phải là số nguyên";
+                  if (
+                    adjustmentType === "percent" &&
+                    (numValue <= 4 || numValue > 100)
+                  ) {
+                    return "Phần trăm điều chỉnh phải từ 5 đến 100";
+                  }
+                  return true;
+                },
+              }}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type="number"
+                  placeholder={
+                    adjustmentType === "percent"
+                      ? "Nhập % điều chỉnh (5 đến 100)"
+                      : "Nhập số tiền điều chỉnh"
+                  }
+                  className="border p-2 rounded flex-grow"
+                />
+              )}
+            />
+          </div>
+          {errors.adjustmentValue && (
+            <p className="text-red-500">{errors.adjustmentValue.message}</p>
+          )}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="selectAll"
+              checked={isAllSelected}
+              onCheckedChange={handleSelectAll}
+            />
+            <label
+              htmlFor="selectAll"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Chọn tất cả trên trang này
+            </label>
+            <span className="ml-auto text-sm text-gray-500">
+              Đã chọn {selectedCount}/{totalProducts} sản phẩm
+            </span>
+          </div>
+          {isLoading ? (
+            <div className="flex justify-center">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {products.map((product) => (
+                <div
+                  key={product.productId}
+                  className={`flex items-center space-x-2 ${
+                    errorProductName && product.name.trim() === errorProductName
+                      ? "bg-red-100"
+                      : ""
+                  }`}
+                >
+                  <Checkbox
+                    checked={(selectedProductIds[page] || []).includes(
+                      product.productId,
+                    )}
+                    onCheckedChange={() =>
+                      handleSelectProduct(product.productId)
+                    }
+                  />
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-10 h-10 object-cover"
+                  />
+                  <span>{product.productId}</span>
+                  <span>{product.name}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex justify-center space-x-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (pageNum) => (
+                <Button
+                  key={pageNum}
+                  type="button"
+                  variant={pageNum === page ? "default" : "outline"}
+                  onClick={() => handlePageChange(pageNum)}
+                >
+                  {pageNum}
+                </Button>
+              ),
+            )}
+          </div>
+        </form>
+        <DialogFooter>
+          <Button onClick={onClose} type="button" variant="outline">
+            Hủy
+          </Button>
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            type="submit"
+            disabled={selectedCount === 0}
+          >
+            Thực hiện
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// import React, { useMemo } from "react";
+// import { Loader2 } from "lucide-react";
+// import { useForm, Controller } from "react-hook-form";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+// } from "@/components/ui/dialog";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { Button } from "@/components/ui/button";
+// import {
+//   useUpdatePriceByProductIdsMutation,
+//   useUpdatePercentPriceByProductIdsMutation,
+// } from "@/redux/features/vendor/product/productShopApiSlice";
+//
+// const BulkDiscountDialog = ({ isOpen, onClose }) => {
+//   const [selectedProductIds, setSelectedProductIds] = useState({});
+//   const [page, setPage] = useState(1);
+//   const size = 10;
+//
+//   const {
+//     control,
+//     handleSubmit,
+//     watch,
+//     formState: { errors },
+//   } = useForm({
+//     defaultValues: {
+//       discountType: "percent",
+//       discountValue: "",
+//     },
+//   });
+//
+//   const discountType = watch("discountType");
+//
+//   const [updatePriceByProductIds] = useUpdatePriceByProductIdsMutation();
+//   const [updatePercentPriceByProductIds] =
+//     useUpdatePercentPriceByProductIdsMutation();
+//
+//   const { data: productPageResponse, isLoading } =
+//     useGetPageProductByStatusQuery(
+//       { page, size, status: "ACTIVE" },
+//       { refetchOnMountOrArgChange: true },
+//     );
+//
+//   const products = productPageResponse?.productDTOs || [];
+//   const totalPages = productPageResponse?.totalPage || 1;
+//
+//   const totalProducts = useMemo(
+//     () => productPageResponse?.totalElements || 0,
+//     [productPageResponse],
+//   );
+//
+//   const selectedCount = useMemo(
+//     () => Object.values(selectedProductIds).flat().length,
+//     [selectedProductIds],
+//   );
+//
+//   useEffect(() => {
+//     if (isOpen) {
+//       setSelectedProductIds({});
+//       setPage(1);
+//     }
+//   }, [isOpen]);
+//
+//   const handleSelectAll = (checked) => {
+//     if (checked) {
+//       setSelectedProductIds((prevSelected) => ({
+//         ...prevSelected,
+//         [page]: products.map((product) => product.productId),
+//       }));
+//     } else {
+//       setSelectedProductIds((prevSelected) => {
+//         const newSelected = { ...prevSelected };
+//         delete newSelected[page];
+//         return newSelected;
+//       });
+//     }
+//   };
+//
+//   const handleSelectProduct = (productId) => {
+//     setSelectedProductIds((prevSelected) => {
+//       const pageSelected = prevSelected[page] || [];
+//       if (pageSelected.includes(productId)) {
+//         return {
+//           ...prevSelected,
+//           [page]: pageSelected.filter((id) => id !== productId),
+//         };
+//       } else {
+//         return {
+//           ...prevSelected,
+//           [page]: [...pageSelected, productId],
+//         };
+//       }
+//     });
+//   };
+//
+//   const handlePageChange = (newPage) => {
+//     setPage(newPage);
+//   };
+//
+//   const onSubmit = async (data) => {
+//     const allSelectedIds = Object.values(selectedProductIds).flat();
+//     const request = {
+//       productIds: allSelectedIds,
+//       [data.discountType === "percent" ? "percent" : "price"]: parseInt(
+//         data.discountValue,
+//         10,
+//       ),
+//     };
+//
+//     try {
+//       if (data.discountType === "percent") {
+//         await updatePercentPriceByProductIds(request).unwrap();
+//       } else {
+//         await updatePriceByProductIds(request).unwrap();
+//       }
+//       toast.success("Giảm giá thành công!");
+//       onClose();
+//     } catch (error) {
+//       toast.error(error.data.message);
+//     }
+//   };
+//
+//   const isAllSelected = useMemo(() => {
+//     const pageSelected = selectedProductIds[page] || [];
+//     return pageSelected.length === products.length && products.length > 0;
+//   }, [selectedProductIds, page, products]);
+//
+//   return (
+//     <Dialog open={isOpen} onOpenChange={onClose}>
+//       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+//         <DialogHeader>
+//           <DialogTitle>Giảm giá đồng loạt</DialogTitle>
+//         </DialogHeader>
+//         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+//           <div className="flex items-center space-x-4">
+//             <Controller
+//               name="discountType"
+//               control={control}
+//               rules={{ required: "Vui lòng chọn loại giảm giá" }}
+//               render={({ field }) => (
+//                 <Select onValueChange={field.onChange} value={field.value}>
+//                   <SelectTrigger className="w-[180px]">
+//                     <SelectValue placeholder="Chọn loại giảm giá" />
+//                   </SelectTrigger>
+//                   <SelectContent>
+//                     <SelectItem value="percent">Giảm theo phần trăm</SelectItem>
+//                     <SelectItem value="price">Giảm theo giá</SelectItem>
+//                   </SelectContent>
+//                 </Select>
+//               )}
+//             />
+//             <Controller
+//               name="discountValue"
+//               control={control}
+//               rules={{
+//                 required: "Vui lòng nhập giá trị giảm giá",
+//                 validate: (value) => {
+//                   const numValue = parseInt(value, 10);
+//                   if (isNaN(numValue)) return "Giá trị phải là số nguyên";
+//                   if (
+//                     discountType === "percent" &&
+//                     (numValue < 0 || numValue > 100)
+//                   ) {
+//                     return "Phần trăm giảm giá phải từ 0 đến 100";
+//                   }
+//                   if (numValue < 0) return "Giá trị giảm giá không được âm";
+//                   return true;
+//                 },
+//               }}
+//               render={({ field }) => (
+//                 <input
+//                   {...field}
+//                   type="number"
+//                   placeholder={
+//                     discountType === "percent"
+//                       ? "Nhập % giảm giá (0-100)"
+//                       : "Nhập số tiền giảm"
+//                   }
+//                   className="border p-2 rounded"
+//                 />
+//               )}
+//             />
+//           </div>
+//           {errors.discountValue && (
+//             <p className="text-red-500">{errors.discountValue.message}</p>
+//           )}
+//           <div className="flex items-center space-x-2">
+//             <Checkbox
+//               id="selectAll"
+//               checked={isAllSelected}
+//               onCheckedChange={handleSelectAll}
+//             />
+//             <label
+//               htmlFor="selectAll"
+//               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+//             >
+//               Chọn tất cả trên trang này
+//             </label>
+//             <span className="ml-auto text-sm text-gray-500">
+//               Đã chọn {selectedCount}/{totalProducts} sản phẩm
+//             </span>
+//           </div>
+//           {isLoading ? (
+//             <div className="flex justify-center">
+//               <Loader2 className="h-6 w-6 animate-spin" />
+//             </div>
+//           ) : (
+//             <div className="space-y-2">
+//               {products.map((product) => (
+//                 <div
+//                   key={product.productId}
+//                   className="flex items-center space-x-2"
+//                 >
+//                   <Checkbox
+//                     checked={(selectedProductIds[page] || []).includes(
+//                       product.productId,
+//                     )}
+//                     onCheckedChange={() =>
+//                       handleSelectProduct(product.productId)
+//                     }
+//                   />
+//                   <img
+//                     src={product.image}
+//                     alt={product.name}
+//                     className="w-10 h-10 object-cover"
+//                   />
+//                   <span>{product.productId}</span>
+//                   <span>{product.name}</span>
+//                 </div>
+//               ))}
+//             </div>
+//           )}
+//           <div className="flex justify-center space-x-2">
+//             {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+//               (pageNum) => (
+//                 <Button
+//                   key={pageNum}
+//                   type="button"
+//                   variant={pageNum === page ? "default" : "outline"}
+//                   onClick={() => handlePageChange(pageNum)}
+//                 >
+//                   {pageNum}
+//                 </Button>
+//               ),
+//             )}
+//           </div>
+//         </form>
+//         <DialogFooter>
+//           <Button onClick={onClose} type="button" variant="outline">
+//             Hủy
+//           </Button>
+//           <Button
+//             onClick={handleSubmit(onSubmit)}
+//             type="submit"
+//             disabled={selectedCount === 0}
+//           >
+//             Thực hiện
+//           </Button>
+//         </DialogFooter>
+//       </DialogContent>
+//     </Dialog>
+//   );
+// };
+
+// import React, { useMemo } from "react";
+// import { Loader2 } from "lucide-react";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+// } from "@/components/ui/dialog";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { Button } from "@/components/ui/button";
+//
+// const BulkDiscountDialog = ({ isOpen, onClose }) => {
+//   const [selectedProductIds, setSelectedProductIds] = useState({});
+//   const [page, setPage] = useState(1);
+//   const [discountType, setDiscountType] = useState("percent");
+//   const [discountValue, setDiscountValue] = useState("");
+//   const size = 10;
+//
+//   const { data: productPageResponse, isLoading } =
+//     useGetPageProductByStatusQuery(
+//       { page, size, status: "ACTIVE" },
+//       { refetchOnMountOrArgChange: true },
+//     );
+//
+//   const products = productPageResponse?.productDTOs || [];
+//   const totalPages = productPageResponse?.totalPage || 1;
+//
+//   const totalProducts = useMemo(
+//     () => productPageResponse?.totalElements || 0,
+//     [productPageResponse],
+//   );
+//
+//   const selectedCount = useMemo(
+//     () => Object.values(selectedProductIds).flat().length,
+//     [selectedProductIds],
+//   );
+//
+//   useEffect(() => {
+//     if (isOpen) {
+//       setSelectedProductIds({});
+//       setPage(1);
+//       setDiscountType("percent");
+//       setDiscountValue("");
+//     }
+//   }, [isOpen]);
+//
+//   const handleSelectAll = (checked) => {
+//     if (checked) {
+//       setSelectedProductIds((prevSelected) => ({
+//         ...prevSelected,
+//         [page]: products.map((product) => product.productId),
+//       }));
+//     } else {
+//       setSelectedProductIds((prevSelected) => {
+//         const newSelected = { ...prevSelected };
+//         delete newSelected[page];
+//         return newSelected;
+//       });
+//     }
+//   };
+//
+//   const handleSelectProduct = (productId) => {
+//     setSelectedProductIds((prevSelected) => {
+//       const pageSelected = prevSelected[page] || [];
+//       if (pageSelected.includes(productId)) {
+//         return {
+//           ...prevSelected,
+//           [page]: pageSelected.filter((id) => id !== productId),
+//         };
+//       } else {
+//         return {
+//           ...prevSelected,
+//           [page]: [...pageSelected, productId],
+//         };
+//       }
+//     });
+//   };
+//
+//   const handlePageChange = (newPage) => {
+//     setPage(newPage);
+//   };
+//
+//   const handleApplyDiscount = () => {
+//     const allSelectedIds = Object.values(selectedProductIds).flat();
+//     const request =
+//       discountType === "percent"
+//         ? {
+//             productIds: allSelectedIds,
+//             percent: parseInt(discountValue, 10),
+//           }
+//         : {
+//             productIds: allSelectedIds,
+//             price: parseInt(discountValue, 10),
+//           };
+//
+//     console.log(
+//       discountType === "percent"
+//         ? "ChangePriceProductsByPercentRequest"
+//         : "ChangePriceProductsRequest",
+//       request,
+//     );
+//     onClose();
+//   };
+//
+//   const isAllSelected = useMemo(() => {
+//     const pageSelected = selectedProductIds[page] || [];
+//     return pageSelected.length === products.length && products.length > 0;
+//   }, [selectedProductIds, page, products]);
+//
+//   return (
+//     <Dialog open={isOpen} onOpenChange={onClose}>
+//       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+//         <DialogHeader>
+//           <DialogTitle>Giảm giá đồng loạt</DialogTitle>
+//         </DialogHeader>
+//         <div className="space-y-4">
+//           <div className="flex items-center space-x-4">
+//             <Select value={discountType} onValueChange={setDiscountType}>
+//               <SelectTrigger className="w-[180px]">
+//                 <SelectValue placeholder="Chọn loại giảm giá" />
+//               </SelectTrigger>
+//               <SelectContent>
+//                 <SelectItem value="percent">Giảm theo phần trăm</SelectItem>
+//                 <SelectItem value="price">Giảm theo giá</SelectItem>
+//               </SelectContent>
+//             </Select>
+//             <input
+//               type="number"
+//               value={discountValue}
+//               onChange={(e) => setDiscountValue(e.target.value)}
+//               placeholder={
+//                 discountType === "percent"
+//                   ? "Nhập % giảm giá"
+//                   : "Nhập số tiền giảm"
+//               }
+//               className="border p-2 rounded"
+//             />
+//           </div>
+//           <div className="flex items-center space-x-2">
+//             <Checkbox
+//               id="selectAll"
+//               checked={isAllSelected}
+//               onCheckedChange={handleSelectAll}
+//             />
+//             <label
+//               htmlFor="selectAll"
+//               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+//             >
+//               Chọn tất cả trên trang này
+//             </label>
+//             <span className="ml-auto text-sm text-gray-500">
+//               Đã chọn {selectedCount}/{totalProducts} sản phẩm
+//             </span>
+//           </div>
+//           {isLoading ? (
+//             <div className="flex justify-center">
+//               <Loader2 className="h-6 w-6 animate-spin" />
+//             </div>
+//           ) : (
+//             <div className="space-y-2">
+//               {products.map((product) => (
+//                 <div
+//                   key={product.productId}
+//                   className="flex items-center space-x-2"
+//                 >
+//                   <Checkbox
+//                     checked={(selectedProductIds[page] || []).includes(
+//                       product.productId,
+//                     )}
+//                     onCheckedChange={() =>
+//                       handleSelectProduct(product.productId)
+//                     }
+//                   />
+//                   <img
+//                     src={product.image}
+//                     alt={product.name}
+//                     className="w-10 h-10 object-cover"
+//                   />
+//                   <span>{product.productId}</span>
+//                   <span>{product.name}</span>
+//                 </div>
+//               ))}
+//             </div>
+//           )}
+//           <div className="flex justify-center space-x-2">
+//             {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+//               (pageNum) => (
+//                 <Button
+//                   key={pageNum}
+//                   variant={pageNum === page ? "default" : "outline"}
+//                   onClick={() => handlePageChange(pageNum)}
+//                 >
+//                   {pageNum}
+//                 </Button>
+//               ),
+//             )}
+//           </div>
+//         </div>
+//         <DialogFooter>
+//           <Button onClick={onClose} variant="outline">
+//             Hủy
+//           </Button>
+//           <Button onClick={handleApplyDiscount} disabled={selectedCount === 0}>
+//             Thực hiện
+//           </Button>
+//         </DialogFooter>
+//       </DialogContent>
+//     </Dialog>
+//   );
+// };

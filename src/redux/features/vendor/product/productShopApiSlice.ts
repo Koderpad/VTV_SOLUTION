@@ -1,4 +1,7 @@
 import { apiSlice } from "@/redux/api";
+import { ChangePriceProductsByPercentRequest } from "@/utils/DTOs/vendor/product/Request/ChangePriceProductsByPercentRequest";
+import { ChangePriceProductsRequest } from "@/utils/DTOs/vendor/product/Request/ChangePriceProductsRequest";
+import { ListProductResponse } from "@/utils/DTOs/vendor/product/Response/ListProductResponse";
 import { ProductPageResponse } from "@/utils/DTOs/vendor/product/Response/ProductPageResponse";
 import { ProductResponse } from "@/utils/DTOs/vendor/product/Response/ProductResponse";
 
@@ -58,6 +61,26 @@ export const productShopApiSlice = apiSlice.injectEndpoints({
         },
       },
     }),
+    updatePriceByProductIds: builder.mutation<
+      ListProductResponse,
+      ChangePriceProductsRequest
+    >({
+      query: (data) => ({
+        url: `/vendor/product/update/changes/price`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updatePercentPriceByProductIds: builder.mutation<
+      ListProductResponse,
+      ChangePriceProductsByPercentRequest
+    >({
+      query: (data) => ({
+        url: `/vendor/product/update/changes/price/percent`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -67,6 +90,8 @@ export const {
   useUpdateProductStatusMutation,
   useRestoreProductMutation,
   useUpdateProductMutation,
+  useUpdatePriceByProductIdsMutation,
+  useUpdatePercentPriceByProductIdsMutation,
 } = productShopApiSlice;
 
 // import { apiSlice } from "@/redux/api";
