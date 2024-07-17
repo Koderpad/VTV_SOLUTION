@@ -1,19 +1,52 @@
 import { Star } from "@/components/atoms/Icon/Star";
-import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
-import { useState } from "react";
+import {
+  ProductDTO,
+  ProductVariantDTO,
+} from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
+import { useState, useMemo } from "react";
 
 export const CardItem = ({ product }: { product: ProductDTO }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const imageList = [
-    product.image,
-    ...product.productVariantDTOs.map((variant) => variant.image),
-  ].filter((image) => image !== "");
+  const imageList = useMemo(
+    () =>
+      [
+        product.image,
+        ...product.productVariantDTOs.map((variant) => variant.image),
+      ].filter((image) => image !== ""),
+    [product],
+  );
 
-  // Hàm định dạng giá với dấu chấm phân cách
   const formatPrice = (price: number) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
+
+  const bestDiscount = useMemo(() => {
+    return product.productVariantDTOs.reduce((best, current) => {
+      const bestDiscount =
+        parseFloat(best.discountPercent) !== 0
+          ? -parseFloat(best.discountPercent)
+          : 0;
+      const currentDiscount =
+        parseFloat(current.discountPercent) !== 0
+          ? -parseFloat(current.discountPercent)
+          : 0;
+
+      console.log(bestDiscount, currentDiscount);
+
+      // If both discounts are 0%, compare by price (lower price is better)
+      if (bestDiscount === 0 && currentDiscount === 0) {
+        return current.price < best.price ? current : best;
+      }
+
+      // Otherwise, higher discount is better
+      return currentDiscount > bestDiscount ? current : best;
+    }, product.productVariantDTOs[0]);
+  }, [product.productVariantDTOs]);
+
+  const hasDiscount = parseFloat(bestDiscount.discountPercent) > 0;
+
+  const displayPrice = hasDiscount ? bestDiscount.price : product.minPrice;
 
   return (
     <div>
@@ -55,11 +88,21 @@ export const CardItem = ({ product }: { product: ProductDTO }) => {
             </h2>
           </div>
           <div className="flex flex-col items-start justify-between gap-4">
-            <div>
+            <div className="flex items-end gap-2">
               <h3 className="text-lg font-semibold text-black">
-                {formatPrice(product.minPrice)} -{" "}
-                {formatPrice(product.maxPrice)}đ
+                {formatPrice(displayPrice)}đ
               </h3>
+              {(hasDiscount ||
+                bestDiscount.originalPrice !== bestDiscount.price) && (
+                <>
+                  <span className="text-sm line-through text-gray-500">
+                    {formatPrice(bestDiscount.originalPrice)}đ
+                  </span>
+                  <span className="text-sm font-semibold text-red-500">
+                    {bestDiscount.discountPercent}
+                  </span>
+                </>
+              )}
             </div>
             <div className="flex items-center justify-center text-xs font-medium text-neutral-500">
               <Star typeStar="filled" />
@@ -81,17 +124,10 @@ export const CardItem = ({ product }: { product: ProductDTO }) => {
 // export const CardItem = ({ product }: { product: ProductDTO }) => {
 //   const [activeIndex, setActiveIndex] = useState(0);
 //
-//   // Tạo danh sách các hình ảnh từ ProductDTO và ProductVariantDTO, loại bỏ các hình ảnh rỗng
 //   const imageList = [
 //     product.image,
 //     ...product.productVariantDTOs.map((variant) => variant.image),
 //   ].filter((image) => image !== "");
-//
-//   // Hàm giới hạn độ dài tên sản phẩm
-//   const truncateName = (name: string, maxLength: number) => {
-//     if (name.length <= maxLength) return name;
-//     return name.slice(0, maxLength) + "...";
-//   };
 //
 //   // Hàm định dạng giá với dấu chấm phân cách
 //   const formatPrice = (price: number) => {
@@ -133,8 +169,8 @@ export const CardItem = ({ product }: { product: ProductDTO }) => {
 //             ))}
 //           </div>
 //           <div>
-//             <h2 className="text-base font-medium">
-//               {truncateName(product.name, 35)}
+//             <h2 className="text-base font-medium truncate" title={product.name}>
+//               {product.name}
 //             </h2>
 //           </div>
 //           <div className="flex flex-col items-start justify-between gap-4">
