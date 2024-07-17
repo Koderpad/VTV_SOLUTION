@@ -9,7 +9,7 @@ const CategoryList: React.FC = () => {
   const maxColumns = 5; // Số cột tối đa hiển thị
   const visibleCategories = categories.slice(
     startIndex,
-    startIndex + maxColumns * 2
+    startIndex + maxColumns * 2,
   );
   const navigate = useNavigate();
   const handlePrevClick = () => {
@@ -18,7 +18,7 @@ const CategoryList: React.FC = () => {
 
   const handleNextClick = () => {
     setStartIndex(
-      Math.min(startIndex + maxColumns, categories.length - maxColumns * 2)
+      Math.min(startIndex + maxColumns, categories.length - maxColumns * 2),
     );
   };
 
@@ -38,7 +38,7 @@ const CategoryList: React.FC = () => {
       <div className="relative">
         {startIndex > 0 && (
           <button
-            className="absolute z-50 -left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:scale-[1.5] transition-transform duration-200"
+            className="absolute z-20 -left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:scale-[1.5] transition-transform duration-200"
             onClick={handlePrevClick}
           >
             {"<"}
@@ -63,7 +63,7 @@ const CategoryList: React.FC = () => {
         </div>
         {startIndex + maxColumns * 2 < categories.length && (
           <button
-            className="absolute z-50 -right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:scale-[1.5] transition-transform duration-200"
+            className="absolute z-20 -right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:scale-[1.5] transition-transform duration-200"
             onClick={handleNextClick}
           >
             {">"}
