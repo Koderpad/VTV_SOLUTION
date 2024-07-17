@@ -68,15 +68,12 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ address, onClose }) => {
         phone,
         wardCode: wardCode,
       };
-      const response = await updateAddress(updatedAddress);
-
-      console.log("address response", response);
+      await updateAddress(updatedAddress).unwrap();
 
       toast.success("Cập nhật địa chỉ thành công!");
       onClose();
     } catch (error) {
-      console.error(error);
-      toast.error("Cập nhật địa chỉ thất bại. Vui lòng thử lại!");
+      toast.error(error.data.message);
     }
   };
 
@@ -150,39 +147,6 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ address, onClose }) => {
             placeholder="Nhập địa chỉ cụ thể của bạn"
           ></textarea>
         </div>
-        {/* <div className="flex items-center mb-4">
-          <div className="flex items-center">
-            <input
-              type="radio"
-              id="home"
-              name="type"
-              value="home"
-              className="text-indigo-500 focus:ring-indigo-500"
-              checked
-            />
-            <label
-              htmlFor="home"
-              className="text-gray-700 text-sm font-medium ml-2"
-            >
-              Nhà riêng
-            </label>
-          </div>
-          <div className="flex items-center ml-4">
-            <input
-              type="radio"
-              id="office"
-              name="type"
-              value="office"
-              className="text-indigo-500 focus:ring-indigo-500"
-            />
-            <label
-              htmlFor="office"
-              className="text-gray-700 text-sm font-medium ml-2"
-            >
-              Văn phòng
-            </label>
-          </div>
-        </div> */}
         <div className="flex justify-between">
           <button
             type="button"
