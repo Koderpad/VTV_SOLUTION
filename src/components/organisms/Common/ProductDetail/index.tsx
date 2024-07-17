@@ -520,13 +520,13 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
               <div className="mr-auto w-auto rounded-full bg-blue-600 p-2 text-sm text-white">
                 {selectedVariant ? (
                   <p>
-                    ${selectedVariant.price}
-                    <span className="ml-1 inline">VND</span>
+                    {selectedVariant.price}
+                    <span className="ml-1 inline">VNĐ</span>
                   </p>
                 ) : (
                   <p>
-                    ${data.productDTO.minPrice} - ${data.productDTO.maxPrice}
-                    <span className="ml-1 inline">VND</span>
+                    {data.productDTO.minPrice} - {data.productDTO.maxPrice}
+                    <span className="ml-1 inline">VNĐ</span>
                   </p>
                 )}
               </div>
