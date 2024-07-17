@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { cn } from "@/utils/cn";
 import {
   NavLink,
@@ -27,6 +27,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const purchasesStatus = {
   ALL: "ALL",
@@ -36,11 +37,11 @@ const purchasesStatus = {
   SHIPPING: "SHIPPING",
   DELIVERED: "DELIVERED",
   COMPLETED: "COMPLETED",
-  RETURNED: "RETURNED",
+  // RETURNED: "RETURNED",
   WAITING: "WAITING",
   CANCEL: "CANCEL",
   REFUNDED: "REFUNDED",
-  PAID: "PAID",
+  // PAID: "PAID",
   UNPAID: "UNPAID",
   FAIL: "FAIL",
 } as const;
@@ -53,10 +54,10 @@ const purchaseTabs = [
   { status: purchasesStatus.SHIPPING, name: "Đang giao" },
   { status: purchasesStatus.DELIVERED, name: "Đã giao" },
   { status: purchasesStatus.COMPLETED, name: "Hoàn thành" },
-  { status: purchasesStatus.RETURNED, name: "Đã trả lại" },
+  // { status: purchasesStatus.RETURNED, name: "Đã trả lại" },
   { status: purchasesStatus.CANCEL, name: "Đã hủy" },
-  { status: purchasesStatus.REFUNDED, name: "Đã hoàn tiền" },
-  { status: purchasesStatus.PAID, name: "Đã thanh toán" },
+  { status: purchasesStatus.REFUNDED, name: "Hoàn hàng" },
+  // { status: purchasesStatus.PAID, name: "Đã thanh toán" },
   { status: purchasesStatus.UNPAID, name: "Chưa thanh toán" },
   { status: purchasesStatus.WAITING, name: "Đang chờ" },
 ];
@@ -74,11 +75,11 @@ export const Orders: React.FC = () => {
   const { data: statusOrdersData, refetch: refetchStatusOrders } =
     useGetOrderListByStatusQuery(
       { status },
-      { skip: status === purchasesStatus.ALL }
+      { skip: status === purchasesStatus.ALL },
     );
   const { data: orderDetailData } = useGetOrderDetailQuery(
     selectedOrderId || "",
-    { skip: !selectedOrderId }
+    { skip: !selectedOrderId },
   );
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
 
@@ -134,11 +135,11 @@ export const Orders: React.FC = () => {
       SHIPPING: "Đang giao hàng",
       DELIVERED: "Đã giao hàng",
       COMPLETED: "Hoàn thành",
-      RETURNED: "Đã trả lại",
+      // RETURNED: "Đã trả lại",
       WAITING: "Đang chờ",
       CANCEL: "Đã hủy",
-      REFUNDED: "Đã hoàn tiền",
-      PAID: "Đã thanh toán",
+      REFUNDED: "Hoàn hàng",
+      // PAID: "Đã thanh toán",
       UNPAID: "Chưa thanh toán",
       FAIL: "Thất bại",
     };
@@ -229,6 +230,28 @@ export const Orders: React.FC = () => {
     );
   };
 
+  useEffect(() => {
+    if (status !== purchasesStatus.ALL && statusOrdersData) {
+      refetchAllOrders();
+    }
+  }, [status, statusOrdersData, refetchAllOrders]);
+
+  const orderStats = useMemo(() => {
+    console.log("allOrdersData", allOrdersData);
+    const stats: { [key: string]: { count: number; total: number } } = {};
+    purchaseTabs.forEach((tab) => {
+      stats[tab.status] = { count: 0, total: 0 };
+    });
+
+    allOrdersData?.orderDTOs.forEach((order: OrderDTO) => {
+      stats[order.status].count += 1;
+      stats[order.status].total += order.paymentTotal;
+      stats[purchasesStatus.ALL].count += 1;
+    });
+
+    return stats;
+  }, [allOrdersData]);
+
   return (
     <div className="container mx-auto px-4">
       <div className="flex flex-wrap justify-center mb-4">
@@ -241,15 +264,57 @@ export const Orders: React.FC = () => {
                 status: tab.status,
               }).toString(),
             }}
-            className={cn("px-4 py-2 m-1 rounded-full text-sm font-medium", {
-              "bg-blue-500 text-white": status === tab.status,
-              "bg-gray-200 text-gray-700 hover:bg-gray-300":
-                status !== tab.status,
-            })}
+            className={cn(
+              "px-4 py-2 m-1 rounded-full text-sm font-medium relative",
+              {
+                "bg-blue-500 text-white": status === tab.status,
+                "bg-gray-200 text-gray-700 hover:bg-gray-300":
+                  status !== tab.status,
+              },
+            )}
           >
             {tab.name}
+            {orderStats[tab.status].count > 0 && (
+              <Badge
+                variant="secondary"
+                className="absolute -top-2 -right-2 px-2 py-1 text-xs"
+              >
+                {orderStats[tab.status].count}
+              </Badge>
+            )}
           </Link>
         ))}
+      </div>
+      {/* <div className="flex flex-wrap justify-center mb-4"> */}
+      {/*   {purchaseTabs.map((tab) => ( */}
+      {/*     <Link */}
+      {/*       key={tab.status} */}
+      {/*       to={{ */}
+      {/*         pathname: "/vendor/orders", */}
+      {/*         search: createSearchParams({ */}
+      {/*           status: tab.status, */}
+      {/*         }).toString(), */}
+      {/*       }} */}
+      {/*       className={cn("px-4 py-2 m-1 rounded-full text-sm font-medium", { */}
+      {/*         "bg-blue-500 text-white": status === tab.status, */}
+      {/*         "bg-gray-200 text-gray-700 hover:bg-gray-300": */}
+      {/*           status !== tab.status, */}
+      {/*       })} */}
+      {/*     > */}
+      {/*       {tab.name} */}
+      {/*     </Link> */}
+      {/*   ))} */}
+      {/* </div> */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold mb-2">Thống kê</h2>
+        {status === purchasesStatus.ALL ? (
+          <p>Tổng số đơn hàng: {orderStats[purchasesStatus.ALL].count}</p>
+        ) : (
+          <>
+            <p>Tổng số đơn hàng: {orderStats[status].count}</p>
+            <p>Tổng tiền: {formatPrice(orderStats[status].total)} VNĐ</p>
+          </>
+        )}
       </div>
 
       <div className="space-y-4">
