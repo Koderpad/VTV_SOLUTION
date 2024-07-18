@@ -252,32 +252,33 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
         quantity: selectedQuantity,
       }).unwrap();
 
-      if (response && "data" in response) {
-        const responseData = response.data;
-
-        if (responseData.status === "Success") {
-          toast.success(`🦄 ${responseData.message}`, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Slide,
-          });
-        } else {
-          toast.error(
-            responseData.message ||
-              "Thêm vào giỏ hàng thất bại. Vui lòng thử lại.",
-          );
-        }
-      } else {
-        toast.error("Thêm vào giỏ hàng thất bại. Vui lòng thử lại.");
-      }
+      toast.success(response.message);
+      // if (response && "data" in response) {
+      //   const responseData = response.data;
+      //
+      //   if (responseData.status === "Success") {
+      //     toast.success(`🦄 ${responseData.message}`, {
+      //       position: "top-right",
+      //       autoClose: 5000,
+      //       hideProgressBar: false,
+      //       closeOnClick: true,
+      //       pauseOnHover: true,
+      //       draggable: true,
+      //       progress: undefined,
+      //       theme: "colored",
+      //       transition: Slide,
+      //     });
+      //   } else {
+      //     toast.error(
+      //       responseData.message ||
+      //         "Thêm vào giỏ hàng thất bại. Vui lòng thử lại.",
+      //     );
+      //   }
+      // } else {
+      //   toast.error("Thêm vào giỏ hàng thất bại. Vui lòng thử lại.");
+      // }
     } catch (error) {
-      console.error("Lỗi khi thêm vào giỏ hàng:", error);
+      // console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(error.data.message);
     } finally {
       refetch_();
