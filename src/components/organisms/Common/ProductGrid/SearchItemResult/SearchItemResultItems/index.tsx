@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
-import { CardItem } from "./CardItem";
 import {
   Pagination,
   PaginationContent,
@@ -11,6 +10,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { FilterContext } from "../../FilterContext";
+import { CardItem } from "@/components/molecules/CardItem";
 
 export const SearchItemResultItems = ({
   products,
