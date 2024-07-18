@@ -39,25 +39,25 @@ interface ProductDetailProps {
 
 const getAvailableVariants = (
   selectedAttributes: { [key: string]: string },
-  productVariants: ProductVariantDTO[],
+  productVariants: ProductVariantDTO[]
 ): ProductVariantDTO[] => {
   return productVariants.filter((variant) => {
     return variant.attributeDTOs.every(
       (attribute) =>
         selectedAttributes[attribute.name] === attribute.value ||
-        !selectedAttributes[attribute.name],
+        !selectedAttributes[attribute.name]
     );
   });
 };
 
 const getAvailableAttributeValues = (
   attributeName: string,
-  availableVariants: ProductVariantDTO[],
+  availableVariants: ProductVariantDTO[]
 ): string[] => {
   const attributeValues = new Set<string>();
   availableVariants.forEach((variant) => {
     const attribute = variant.attributeDTOs.find(
-      (attr) => attr.name === attributeName,
+      (attr) => attr.name === attributeName
     );
     if (attribute) {
       attributeValues.add(attribute.value);
@@ -67,12 +67,12 @@ const getAvailableAttributeValues = (
 };
 const getSelectedVariant = (
   selectedAttributes: { [key: string]: string },
-  productVariants: ProductVariantDTO[],
+  productVariants: ProductVariantDTO[]
 ): ProductVariantDTO | undefined => {
   return productVariants.find((variant) =>
     variant.attributeDTOs.every(
-      (attribute) => selectedAttributes[attribute.name] === attribute.value,
-    ),
+      (attribute) => selectedAttributes[attribute.name] === attribute.value
+    )
   );
 };
 
@@ -96,7 +96,7 @@ const FavoriteButton = ({ productId }: { productId: number }) => {
 
     if (favoriteProductData?.favoriteProductDTO) {
       deleteFavoriteProduct(
-        favoriteProductData.favoriteProductDTO.favoriteProductId,
+        favoriteProductData.favoriteProductDTO.favoriteProductId
       ).then(() => refetchFavoProduct());
     } else {
       addFavoriteProduct(productId).then(() => refetchFavoProduct());
@@ -142,7 +142,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
     useCreateOrderByProductVariantMutation();
 
   const isAuth: boolean = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated
   );
 
   const { refetch: refetch_ } = useGetListCartByUsernameQuery(undefined, {
@@ -153,7 +153,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
     new Set([
       data.productDTO.image,
       ...data.productDTO.productVariantDTOs.map((variant) => variant.image),
-    ]),
+    ])
   ).filter((image): image is string => !!image);
 
   // const attributeList = data.productDTO.productVariantDTOs.reduce<
@@ -177,12 +177,12 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   useEffect(() => {
     const availableVariants = getAvailableVariants(
       selectedAttributes,
-      data.productDTO.productVariantDTOs,
+      data.productDTO.productVariantDTOs
     );
     const selectedVariant = availableVariants.find((variant) =>
       variant.attributeDTOs.every(
-        (attribute) => selectedAttributes[attribute.name] === attribute.value,
-      ),
+        (attribute) => selectedAttributes[attribute.name] === attribute.value
+      )
     );
     if (selectedVariant) {
       setProductPrice(selectedVariant.price);
@@ -212,13 +212,13 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
   const handlePrevImage = () => {
     setSelectedImage((prevIndex) =>
-      prevIndex === 0 ? dataImage.length - 1 : prevIndex - 1,
+      prevIndex === 0 ? dataImage.length - 1 : prevIndex - 1
     );
   };
 
   const handleNextImage = () => {
     setSelectedImage((prevIndex) =>
-      prevIndex === dataImage.length - 1 ? 0 : prevIndex + 1,
+      prevIndex === dataImage.length - 1 ? 0 : prevIndex + 1
     );
   };
 
@@ -233,12 +233,12 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
 
     const availableVariants = getAvailableVariants(
       selectedAttributes,
-      data.productDTO.productVariantDTOs,
+      data.productDTO.productVariantDTOs
     );
     const selectedVariant = availableVariants.find((variant) =>
       variant.attributeDTOs.every(
-        (attribute) => selectedAttributes[attribute.name] === attribute.value,
-      ),
+        (attribute) => selectedAttributes[attribute.name] === attribute.value
+      )
     );
 
     if (!selectedVariant) {
@@ -288,12 +288,12 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   const handleRepurchase = async () => {
     const availableVariants = getAvailableVariants(
       selectedAttributes,
-      data.productDTO.productVariantDTOs,
+      data.productDTO.productVariantDTOs
     );
     const selectedVariant = availableVariants.find((variant) =>
       variant.attributeDTOs.every(
-        (attribute) => selectedAttributes[attribute.name] === attribute.value,
-      ),
+        (attribute) => selectedAttributes[attribute.name] === attribute.value
+      )
     );
 
     if (!selectedVariant) {
@@ -311,7 +311,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   }) => {
     try {
       const orderCreationResult = await createOrderByProductVariant(
-        productVariantIdsAndQuantities,
+        productVariantIdsAndQuantities
       );
       if ("data" in orderCreationResult) {
         // Handle successful order creation
@@ -321,7 +321,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
         const stateString = JSON.stringify(result);
         const encryptedState = AES.encrypt(
           stateString,
-          "vtv-secret-key-2024",
+          "vtv-secret-key-2024"
         ).toString();
         const urlSafeEncryptedState = encodeURIComponent(encryptedState);
         console.log("urlSafeEncryptedState: ", urlSafeEncryptedState);
@@ -375,9 +375,9 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
       (variant) =>
         Object.entries(selectedAttributes).every(([name, value]) =>
           variant.attributeDTOs.some(
-            (attr) => attr.name === name && attr.value === value,
-          ),
-        ),
+            (attr) => attr.name === name && attr.value === value
+          )
+        )
     );
     setAvailableVariants(filteredVariants);
 
@@ -407,8 +407,8 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
         availableVariants
           .flatMap((variant) => variant.attributeDTOs)
           .filter((attr) => attr.name === attributeName)
-          .map((attr) => attr.value),
-      ),
+          .map((attr) => attr.value)
+      )
     );
   };
 
@@ -516,7 +516,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   >((acc, variant) => {
     variant.attributeDTOs.forEach((attribute) => {
       const existingAttribute = acc.find(
-        (attr) => attr.name === attribute.name,
+        (attr) => attr.name === attribute.name
       );
       if (existingAttribute) {
         if (!existingAttribute.values.includes(attribute.value)) {
@@ -830,9 +830,9 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
           />
           <div className="ml-4">
             <h2 className="text-lg font-medium">{data.shopName}</h2>
-            <p className="text-sm text-neutral-500">
+            {/* <p className="text-sm text-neutral-500">
               Số đơn hàng: {data.countOrder}
-            </p>
+            </p> */}
           </div>
         </div>
         <div className="order-last mt-4 flex space-x-4">

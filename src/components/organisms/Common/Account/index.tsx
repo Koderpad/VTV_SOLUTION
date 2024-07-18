@@ -63,6 +63,28 @@ export const Account = () => {
                     Sản phẩm yêu thích
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="followed-shop"
+                    className={`hover:text-green-600 ${
+                      isActive("followed-shop")
+                        ? "text-green-600 font-bold"
+                        : ""
+                    }`}
+                  >
+                    Cửa hàng theo dõi
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="wallet"
+                    className={`hover:text-green-600 ${
+                      isActive("wallet") ? "text-green-600 font-bold" : ""
+                    }`}
+                  >
+                    Ví
+                  </Link>
+                </li>
                 {/* <li>
                   <Link
                     to="voucher-wallet"

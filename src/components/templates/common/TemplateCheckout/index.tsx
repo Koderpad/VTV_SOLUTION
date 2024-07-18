@@ -17,7 +17,9 @@ export const Header = () => {
         <div className="flex  items-center py-1 bg-blue-500 shadow-md max-h-24 max-w-full">
           {/* Logo */}
           <div className="flex pl-4 items-start justify-normal ">
-            <h1 className=" bottom-0 text-4xl text-white">VTV</h1>
+            <a href="/">
+              <h1 className=" bottom-0 text-4xl text-white">VTV</h1>
+            </a>
           </div>
           <div className="border-r border-white h-8 ml-4"></div>
           <div className="ml-4">

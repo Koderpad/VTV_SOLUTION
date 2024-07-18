@@ -107,6 +107,9 @@ import ProductDetailPage from "./pages/common/ProductDetailPage.tsx";
 import { setHasNewMessage } from "./redux/features/common/chat/chatSlice.ts";
 import CheckoutWithProductVariant from "./pages/common/CheckoutWithProductVariant.tsx";
 import VendorRegister from "./components/organisms/Common/VendorRegister/index.tsx";
+import { WalletPage } from "./pages/vendor/WalletPage.tsx";
+import { WalleCustomer } from "./components/organisms/Common/Account/Wallet/index.tsx";
+import { FollowedShop } from "./components/organisms/Common/Account/FollowedShop/index.tsx";
 //=============LAZY LOADING================
 const LoginPage = lazy(() => import("./pages/common/Login"));
 
@@ -551,6 +554,9 @@ function App() {
 
               {/* voucher */}
               <Route path="vouchers" element={<VouchersPage />} />
+
+              {/* wallet */}
+              <Route path="wallet" element={<WalletPage />} />
             </Route>
           </Route>
 
@@ -574,6 +580,9 @@ function App() {
               <Route path="history-purchase" element={<HistoryPurchase />} />
               <Route path="order/:id" element={<OrderDetail />} />
               <Route path="favorite-products" element={<FavoriteProducts />} />
+              <Route path="wallet" element={<WalleCustomer />} />
+              <Route path="followed-shop" element={<FollowedShop />} />
+
               {/* 
               <Route path="voucher-wallet" element={<VoucherList />} />
                */}

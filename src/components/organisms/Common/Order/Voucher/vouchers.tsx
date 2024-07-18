@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
+import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,11 @@ interface VouchersProps {
   selectedVouchers: number[] | undefined;
 }
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, "dd/MM/yyyy");
+};
+
 const Vouchers: React.FC<VouchersProps> = ({
   vouchers,
   onClose,
@@ -28,12 +34,10 @@ const Vouchers: React.FC<VouchersProps> = ({
   selectedVouchers,
 }) => {
   const [tempSelectedVoucher, setTempSelectedVoucher] = useState<number | null>(
-    selectedVouchers && selectedVouchers.length > 0
-      ? selectedVouchers[0]
-      : null,
+    selectedVouchers && selectedVouchers.length > 0 ? selectedVouchers[0] : null
   );
   const [lastCheckedVoucher, setLastCheckedVoucher] = useState<number | null>(
-    null,
+    null
   );
 
   useEffect(() => {
@@ -55,22 +59,22 @@ const Vouchers: React.FC<VouchersProps> = ({
   const handleConfirm = () => {
     if (tempSelectedVoucher) {
       const selectedVoucherObj = vouchers?.find(
-        (v) => v.voucherId === tempSelectedVoucher,
+        (v) => v.voucherId === tempSelectedVoucher
       );
       if (selectedVoucherObj) {
         onVoucherSelect_fix(
           selectedVoucherObj.voucherId,
-          selectedVoucherObj.code,
+          selectedVoucherObj.code
         );
       }
     } else if (lastCheckedVoucher) {
       const lastCheckedVoucherObj = vouchers?.find(
-        (v) => v.voucherId === lastCheckedVoucher,
+        (v) => v.voucherId === lastCheckedVoucher
       );
       if (lastCheckedVoucherObj) {
         onVoucherSelect_fix(
           lastCheckedVoucherObj.voucherId,
-          lastCheckedVoucherObj.code,
+          lastCheckedVoucherObj.code
         );
       }
     }
@@ -104,18 +108,44 @@ const Vouchers: React.FC<VouchersProps> = ({
                     handleVoucherSelect(voucher.voucherId, checked as boolean)
                   }
                 />
-                <div className="grid gap-1.5 leading-none">
+                {/* <div className="grid gap-1.5 leading-none">
                   <label
                     htmlFor={`voucher-${voucher.voucherId}`}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     <span className="font-bold">{voucher.name}</span>
                     <span className="mx-2">|</span>
-                    <span className="font-mono">{voucher.code}</span>
+                    <span className="font-mono">Code: {voucher.code}</span>
                   </label>
                   <p className="text-sm text-muted-foreground">
                     {voucher.quantity} | {voucher.discount} |{" "}
                     {voucher.description} | {voucher.endDate}
+                  </p>
+                </div> */}
+                <div className="p-4 border rounded shadow-sm bg-white">
+                  <label
+                    htmlFor={`voucher-${voucher.voucherId}`}
+                    className="block text-lg font-semibold leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    <div className="flex items-center mb-2">
+                      <span className="font-bold">{voucher.name}</span>
+                      <span className="mx-2">|</span>
+                      <span className="font-mono text-sm">
+                        Mã: {voucher.code}
+                      </span>
+                    </div>
+                  </label>
+                  <p className="text-sm text-gray-600">
+                    Số lượng:{" "}
+                    <span className="font-medium">{voucher.quantity}</span> |
+                    Giảm giá:{" "}
+                    <span className="font-medium">{voucher.discount}</span> | Mô
+                    tả:{" "}
+                    <span className="font-medium">{voucher.description}</span> |
+                    Hạn sử dụng:{" "}
+                    <span className="font-medium">
+                      {formatDate(voucher.endDate)}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -140,6 +170,7 @@ const Vouchers: React.FC<VouchersProps> = ({
 };
 
 export default Vouchers;
+
 // import React, { useState } from "react";
 // import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
 //

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { VoucherDTO } from "@/utils/DTOs/common/Voucher/Response/ListVoucherResponse";
-
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,6 +20,11 @@ interface VouchersProps {
   onVoucherSelect_fix: (voucherId: number, voucherCode: string) => void;
   selectedVouchers: number[] | undefined;
 }
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, "dd/MM/yyyy");
+};
 
 const Vouchers: React.FC<VouchersProps> = ({
   vouchers,
@@ -102,7 +107,7 @@ const Vouchers: React.FC<VouchersProps> = ({
                     handleVoucherSelect(voucher.voucherId, checked as boolean)
                   }
                 />
-                <div className="grid gap-1.5 leading-none">
+                {/* <div className="grid gap-1.5 leading-none">
                   <label
                     htmlFor={`voucher-${voucher.voucherId}`}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -114,6 +119,32 @@ const Vouchers: React.FC<VouchersProps> = ({
                   <p className="text-sm text-muted-foreground">
                     {voucher.quantity} | {voucher.discount} |{" "}
                     {voucher.description} | {voucher.endDate}
+                  </p>
+                </div> */}
+                <div className="p-4 border rounded shadow-sm bg-white">
+                  <label
+                    htmlFor={`voucher-${voucher.voucherId}`}
+                    className="block text-lg font-semibold leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    <div className="flex items-center mb-2">
+                      <span className="font-bold">{voucher.name}</span>
+                      <span className="mx-2">|</span>
+                      <span className="font-mono text-sm">
+                        Mã: {voucher.code}
+                      </span>
+                    </div>
+                  </label>
+                  <p className="text-sm text-gray-600">
+                    Số lượng:{" "}
+                    <span className="font-medium">{voucher.quantity}</span> |
+                    Giảm giá:{" "}
+                    <span className="font-medium">{voucher.discount}</span> | Mô
+                    tả:{" "}
+                    <span className="font-medium">{voucher.description}</span> |
+                    Hạn sử dụng:{" "}
+                    <span className="font-medium">
+                      {formatDate(voucher.endDate)}
+                    </span>
                   </p>
                 </div>
               </div>

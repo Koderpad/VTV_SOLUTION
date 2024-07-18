@@ -119,6 +119,10 @@ const OrderDetail = () => {
             <h2 className="text-xl font-bold mb-2">Thông tin vận chuyển</h2>
             <p>Phương thức vận chuyển: {orderDTO.shippingMethod}</p>
             <p>Trạng thái: {orderDTO.status}</p>
+            {/* note */}
+            <p>
+              Ghi chú: {orderDTO.note !== null ? orderDTO.note : "Không có"}
+            </p>
           </div>
         </div>
 
@@ -205,11 +209,20 @@ const OrderDetail = () => {
               </tr>
               <tr>
                 <td>Giảm giá</td>
-                <td className="text-right">
+                <td className="text-right text-red-600">
                   {formatPrice(orderDTO.discountShop + orderDTO.discountSystem)}{" "}
                   VNĐ
                 </td>
               </tr>
+              {/* tich tiem */}
+              {orderDTO.loyaltyPointHistoryDTO !== null && (
+                <tr>
+                  <td>Giảm giá từ điểm tích lũy</td>
+                  <td className="text-right text-red-600">
+                    {formatPrice(orderDTO.loyaltyPointHistoryDTO.point)} VNĐ
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td>Tổng thanh toán</td>
                 <td className="text-right font-bold">

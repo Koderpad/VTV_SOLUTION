@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   getCategoryListByShopId,
   getListProductByCategoryShopId,
@@ -22,6 +22,62 @@ import {
 } from "@/components/ui/pagination";
 import { AiOutlineDown, AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { CardItem } from "@/components/molecules/CardItem";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import {
+  useAddNewFollowedShopMutation,
+  useDeleteFollowedShopByIdMutation,
+  useGetListFollowedShopQuery,
+} from "@/redux/features/common/followed_shop/followedShopApiSlice";
+import { UserIcon } from "lucide-react";
+
+const FollowShopButton = ({ shopId }: { shopId: number }) => {
+  const navigate = useNavigate();
+  const isAuth = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const { data: followedShopsData, refetch: refetchFollowedShops } =
+    useGetListFollowedShopQuery(undefined, {
+      skip: !isAuth, // Skip the query if the user is not authenticated
+    });
+
+  const [addNewFollowedShop] = useAddNewFollowedShopMutation();
+  const [deleteFollowedShop] = useDeleteFollowedShopByIdMutation();
+
+  const isFollowing = followedShopsData?.followedShopDTOs.some(
+    (shop) => shop.shopId === shopId
+  );
+
+  const handleFollowClick = async () => {
+    if (!isAuth) {
+      navigate("/login");
+      return;
+    }
+
+    if (isFollowing) {
+      const followedShop = followedShopsData?.followedShopDTOs.find(
+        (shop) => shop.shopId === shopId
+      );
+      if (followedShop) {
+        await deleteFollowedShop(followedShop.followedShopId);
+      }
+    } else {
+      await addNewFollowedShop(shopId);
+    }
+    refetchFollowedShops();
+  };
+
+  return (
+    <button
+      className="flex items-center justify-center space-x-2 rounded-full border border-blue-600 px-4 py-2 text-blue-600 hover:bg-blue-100 transition duration-300"
+      onClick={handleFollowClick}
+    >
+      <UserIcon
+        className={`h-5 w-5 ${isFollowing ? "fill-blue-500 text-blue-500" : "text-blue-600"}`}
+      />
+      <span>{isFollowing ? "Đang theo dõi" : "Theo dõi"}</span>
+    </button>
+  );
+};
 
 const ShopDetail = () => {
   const { username } = useParams();
@@ -204,7 +260,18 @@ const ShopDetail = () => {
     <div className="py-8">
       {/* Shop Info */}
       <div className="mb-8 p-6 bg-white shadow rounded-lg">
-        <h2 className="text-2xl font-semibold mb-4">{shopData?.name}</h2>
+        <div className="flex items-center mb-4">
+          <img
+            src={shopData?.avatar}
+            alt={shopData?.shopUsername}
+            className="h-16 w-16 rounded-full object-cover"
+          />
+          <h2 className="text-2xl font-semibold ml-4">{shopData?.name}</h2>
+          <div className="ml-auto">
+            {shopData?.shopId && <FollowShopButton shopId={shopData?.shopId} />}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <span className="text-gray-500">Địa chỉ</span>

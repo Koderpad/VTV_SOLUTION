@@ -19,6 +19,7 @@ import {
 import StatisticsFeeOrder from "@/features/manager/manager/StatisticsFeeOrder.tsx";
 import { RevenuePage } from "./RevenuePage";
 import { useGetProfileShopQuery } from "@/redux/features/vendor/shop/shopApiSlice";
+import { Wallet } from "lucide-react";
 
 export const DashboardVendor = () => {
   const [selectedTitle, setSelectedTitle] = useState<string>("");
@@ -69,6 +70,9 @@ export const DashboardVendor = () => {
     }
     if (currentPath === "categories") {
       setSelectedTitle("Categories");
+    }
+    if (currentPath === "wallet") {
+      setSelectedTitle("ManagerWallet");
     }
   }, [location.pathname]);
 
@@ -223,6 +227,21 @@ export const DashboardVendor = () => {
                     <FontAwesomeIcon icon={faList} size="sm" color="#666" />
                     <div className="ml-2" />
                     Quản lý đơn hàng
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="wallet"
+                    className={`flex font-medium text-gray-600 hover:text-green-400 p-2 rounded-lg ${
+                      selectedTitle === "ManagerWallet"
+                        ? "bg-gray-100 hover:bg-green-100"
+                        : "hover:bg-green-100"
+                    }`}
+                    onClick={() => handleTitleClick("ManagerWallet")}
+                  >
+                    <Wallet color="#666" />
+                    <div className="ml-2" />
+                    Quản lý ví
                   </Link>
                 </li>
                 <li>
