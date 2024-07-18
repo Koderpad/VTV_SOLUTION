@@ -420,16 +420,20 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
       const { price, originalPrice, discountPercent } = selectedVariant;
       if (price === originalPrice || discountPercent === "0%") {
         return (
-          <span className="text-2xl font-bold">{formatPrice(price)} VNĐ</span>
+          <span className="text-2xl text-red-600 font-bold">
+            {formatPrice(price)} VNĐ
+          </span>
         );
       } else {
         return (
           <div>
-            <span className="text-2xl font-bold">{formatPrice(price)} VNĐ</span>
-            <span className="ml-2 text-lg line-through text-gray-500">
+            <span className="text-2xl text-red-600 font-bold">
+              {formatPrice(price)} VNĐ
+            </span>
+            <span className="ml-2 text-lg text-gray-500 line-through ">
               {formatPrice(originalPrice)} VNĐ
             </span>
-            <span className="ml-2 text-red-500">-{discountPercent}</span>
+            <span className="text-xl ml-2 text-red-500">{discountPercent}</span>
           </div>
         );
       }
@@ -438,13 +442,13 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
       const maxPrice = Math.max(...availableVariants.map((v) => v.price));
       if (minPrice === maxPrice) {
         return (
-          <span className="text-2xl font-bold">
+          <span className="text-2xl text-red-600 font-bold">
             {formatPrice(minPrice)} VNĐ
           </span>
         );
       } else {
         return (
-          <span className="text-2xl font-bold">
+          <span className="text-2xl text-red-600 font-bold">
             {formatPrice(minPrice)} - {formatPrice(maxPrice)} VNĐ
           </span>
         );
@@ -488,7 +492,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
             type="number"
             name="quantity"
             id="quantity"
-            className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
+            className=" focus:ring-indigo-500 focus:border-indigo-500 border border-indigo-500 flex-1 block w-full rounded-none rounded-l-md sm:text-xl "
             value={selectedQuantity}
             onChange={handleQuantityChange}
             onBlur={() => {
@@ -498,7 +502,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
             min={1}
             max={selectedVariant.quantity}
           />
-          <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+          <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-lg">
             / {selectedVariant.quantity} sản phẩm có sẵn
           </span>
         </div>
@@ -679,9 +683,9 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
           <div className="basis-full  lg:basis-2/6">
             {/* Product name and price */}
             <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
+              <h1 className="text-2xl leading-6 font-bold text-gray-900">
                 {data.productDTO.name}
-              </h3>
+              </h1>
               {renderPrice()}
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:p-0">

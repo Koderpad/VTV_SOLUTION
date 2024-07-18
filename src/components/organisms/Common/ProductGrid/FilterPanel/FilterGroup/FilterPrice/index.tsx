@@ -15,7 +15,7 @@ export const FilterPrice = () => {
       <div className="flex flex-col gap-3 px-2.5 pb-2.5">
         <div className="flex items-center gap-3">
           <label htmlFor="fromPrice" className="text-sm font-medium">
-            From:
+            Từ:
           </label>
           <input
             id="fromPrice"
@@ -28,7 +28,7 @@ export const FilterPrice = () => {
         </div>
         <div className="flex items-center gap-3">
           <label htmlFor="toPrice" className="text-sm font-medium">
-            To:
+            Đến:
           </label>
           <input
             id="toPrice"
