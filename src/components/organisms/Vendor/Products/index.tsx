@@ -15,7 +15,7 @@ const Products = () => {
   const [status, setStatus] = useState<
     "ACTIVE" | "INACTIVE" | "DELETED" | "CANCEL" | "LOCKED"
   >("ACTIVE");
-  const size = 25;
+  const size = 200;
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
   );
@@ -255,6 +255,14 @@ const Products = () => {
                   <span className="font-semibold">Giá:</span> {variant.price}
                 </p>
                 <p>
+                  <span className="font-semibold">Giá gốc:</span>{" "}
+                  {variant.originalPrice}
+                </p>
+                <p>
+                  <span className="font-semibold">Giảm giá:</span>{" "}
+                  {variant.discountPercent}
+                </p>
+                <p>
                   <span className="font-semibold">Số lượng:</span>{" "}
                   {variant.quantity}
                 </p>
@@ -333,7 +341,7 @@ const Products = () => {
         <thead>
           <tr>
             <th className="px-4 py-2">STT</th>
-            <th className="px-4 py-2">Mã sản phẩm</th>
+            {/* <th className="px-4 py-2">Mã sản phẩm</th> */}
             <th className="px-4 py-2">Tên</th>
             <th className="px-4 py-2">Hình ảnh</th>
             <th className="px-4 py-2">Số lượng bán</th>
@@ -350,7 +358,7 @@ const Products = () => {
               } hover:bg-blue-100 cursor-pointer`}
             >
               <td className="border px-4 py-2">{index + 1}</td>
-              <td className="border px-4 py-2">{product.productId}</td>
+              {/* <td className="border px-4 py-2">{product.productId}</td> */}
               <td className="border px-4 py-2">{product.name}</td>
               <td className="border px-4 py-2">
                 <img
@@ -387,12 +395,12 @@ const Products = () => {
                   {selectedProductId === product.productId ? (
                     <>
                       <EyeOff className="w-4 h-4 mr-1" />
-                      Ẩn chi tiết
+                      {/* Ẩn chi tiết */}
                     </>
                   ) : (
                     <>
                       <Eye className="w-4 h-4 mr-1" />
-                      Xem chi tiết
+                      {/* Xem chi tiết */}
                     </>
                   )}
                 </button>
@@ -408,7 +416,7 @@ const Products = () => {
                   className="ml-2 py-2 px-3 text-sm font-semibold rounded-full border border-transparent bg-blue-600 text-white hover:bg-blue-700"
                 >
                   <Edit className="w-4 h-4 mr-1" />
-                  Chỉnh sửa
+                  {/* Chỉnh sửa */}
                 </button>
                 {/* {renderStatusUpdateButton(product)} */}
               </td>
