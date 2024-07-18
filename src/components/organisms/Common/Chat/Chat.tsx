@@ -81,9 +81,15 @@ const Chat: React.FC = () => {
                       ? room.senderUsername
                       : room.receiverUsername}
                   </span>
-                  <span className="ml-2 text-gray-500">{room.lastMessage}</span>
+                  {/* <span className="ml-2 text-gray-500">{room.lastMessage}</span> */}
+                  <span className="ml-2 text-gray-500 truncate">
+                    {room.lastMessage}
+                  </span>
                 </div>
-                <span className="text-sm text-gray-400">{room.lastDate}</span>
+                {/* <span className="text-sm text-gray-400">{room.lastDate}</span> */}
+                <span className="text-sm text-gray-400">
+                  {new Date(room.lastDate).toLocaleTimeString()}
+                </span>
               </li>
             ))}
           </ul>

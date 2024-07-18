@@ -22,10 +22,37 @@ interface ChatRoomProps {
   receiverUsername: string;
 }
 
+const useShopAvatar = (username: string) => {
+  const [avatar, setAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchShopAvatar = async () => {
+      try {
+        const shopData = await getShopByUsername(username);
+        setAvatar(shopData.shopDTO.avatar);
+      } catch (error) {
+        console.error("Error fetching shop avatar:", error);
+        setAvatar(null);
+      }
+    };
+
+    fetchShopAvatar();
+    // if (username.endsWith(".shop")) {
+    //   fetchShopAvatar();
+    // } else {
+    //   setAvatar(null); // Set default avatar for non-shop users
+    // }
+  }, [username]);
+
+  return avatar;
+};
+
 const ChatRoom: React.FC<ChatRoomProps> = ({
   roomChatId,
   receiverUsername,
 }) => {
+  // const avatar = useShopAvatar(receiverUsername);
+
   const dispatch = useDispatch();
   const token = useSelector((state: RootState) => state.auth.token);
   const username = useSelector((state: RootState) => state.auth.user?.username);
@@ -171,7 +198,16 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-white border-b border-gray-200 p-4 flex items-center">
+      <div className="bg-white border-b border-gray-200 flex items-center">
+        {/* {avatar ? (
+          <img
+            src={avatar}
+            alt={`${receiverUsername}'s avatar`}
+            className="w-10 h-10 rounded-full mr-3"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gray-300 mr-3"></div> // Placeholder for default avatar
+        )} */}
         <h2 className="text-lg font-semibold">{receiverUsername}</h2>
       </div>
       <div
@@ -181,9 +217,15 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       >
         <div ref={loadingRef}>
           {isLoadingMore && (
-            <div className="text-center py-2">Loading more messages...</div>
+            <div className="text-center text-gray-500 py-2">
+              Đang tải thêm tin nhắn...
+            </div>
           )}
-          {!hasMore && <div className="text-center py-2">No more messages</div>}
+          {!hasMore && (
+            <div className="text-center text-gray-500 py-2">
+              Không có tin nhắn nào để hiển thị
+            </div>
+          )}
         </div>
         <ChatMessages
           messages={messages}
