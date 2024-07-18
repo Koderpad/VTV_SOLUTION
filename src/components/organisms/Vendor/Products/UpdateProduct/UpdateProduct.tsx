@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { UpdateProductBasicInfo } from "./UpdateProductBasicInfo";
 import { toast, ToastContainer } from "react-toastify";
@@ -11,11 +11,13 @@ import { handleApiCall } from "@/utils/HandleAPI/common/handleApiCall";
 import { ProductResponse } from "@/utils/DTOs/vendor/product/Response/ProductResponse";
 import { fetchProductDetail } from "@/services/common/ProductService";
 import { UpdateProductSalesInfo } from "./UpdateProductSalesInfo";
+import { Button } from "@/components/ui/button";
 
 export const UpdateProduct = () => {
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
   const [updateProduct] = useUpdateProductMutation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const methods = useForm<ProductRequest>({
     defaultValues: {
@@ -145,6 +147,8 @@ export const UpdateProduct = () => {
     console.log("Data to update: ", data);
     const formData = convertProductRequestToFormData(data);
 
+    setIsLoading(true);
+
     handleApiCall<ProductResponse, ServerError>({
       callbackFn: async () => {
         return await updateProduct({
@@ -176,6 +180,8 @@ export const UpdateProduct = () => {
           `Cập nhật sản phẩm thất bại: ${error || "Đã xảy ra lỗi không xác định"}`
         );
       },
+    }).finally(() => {
+      setIsLoading(false);
     });
   };
 
@@ -199,13 +205,17 @@ export const UpdateProduct = () => {
                   id="container-right btn-group"
                   className="flex justify-end p-4 w-full gap-10"
                 >
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={() => navigate("/vendor/products")}
+                    disabled={isLoading}
                   >
                     Hủy
-                  </button>
-                  <button type="submit">Cập nhật</button>
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Đang cập nhật..." : "Cập nhật"}
+                  </Button>
                 </div>
               </div>
             </div>

@@ -8,19 +8,31 @@ import {
   useUpdateProductStatusMutation,
 } from "@/redux/features/vendor/product/productShopApiSlice";
 import { ProductDTO } from "@/utils/DTOs/vendor/product/Response/ProductResponse";
-import { Edit, Eye, EyeOff, Percent, Plus, RotateCcw } from "lucide-react";
+import {
+  Edit,
+  Eye,
+  EyeOff,
+  Percent,
+  Plus,
+  RotateCcw,
+  Search,
+} from "lucide-react";
 
-const Products = () => {
+const Products: React.FC = () => {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<
     "ACTIVE" | "INACTIVE" | "DELETED" | "CANCEL" | "LOCKED"
   >("ACTIVE");
   const size = 200;
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
-    null,
+    null
   );
-
   const [isBulkDiscountOpen, setIsBulkDiscountOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<
+    "newest" | "priceLowToHigh" | "priceHighToLow"
+  >("newest");
+
   const navigate = useNavigate();
 
   const {
@@ -32,7 +44,7 @@ const Products = () => {
     { page, size, status },
     {
       refetchOnMountOrArgChange: true,
-    },
+    }
   );
   const [updateProductStatus] = useUpdateProductStatusMutation();
   const [restoreProduct] = useRestoreProductMutation();
@@ -41,23 +53,42 @@ const Products = () => {
     refetch();
   }, [status, page, refetch]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const allProducts = productPageResponse?.productDTOs || [];
 
-  if (error) {
-    toast.error("Error fetching data");
-    return <div>Error loading products</div>;
-  }
+  const filteredAndSortedProducts = useMemo(() => {
+    let result = allProducts.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-  const products = productPageResponse?.productDTOs || [];
+    switch (sortBy) {
+      case "newest":
+        result.sort((a, b) => b.productId - a.productId);
+        break;
+      case "priceLowToHigh":
+        result.sort((a, b) => {
+          const aPrice = Math.min(...a.productVariantDTOs.map((v) => v.price));
+          const bPrice = Math.min(...b.productVariantDTOs.map((v) => v.price));
+          return aPrice - bPrice;
+        });
+        break;
+      case "priceHighToLow":
+        result.sort((a, b) => {
+          const aPrice = Math.max(...a.productVariantDTOs.map((v) => v.price));
+          const bPrice = Math.max(...b.productVariantDTOs.map((v) => v.price));
+          return bPrice - aPrice;
+        });
+        break;
+    }
+
+    return result;
+  }, [allProducts, searchTerm, sortBy]);
 
   const handlePageClick = (pageNumber: number) => {
     setPage(pageNumber);
   };
 
   const handleStatusChange = (
-    newStatus: "ACTIVE" | "INACTIVE" | "DELETED" | "CANCEL" | "LOCKED",
+    newStatus: "ACTIVE" | "INACTIVE" | "DELETED" | "CANCEL" | "LOCKED"
   ) => {
     setStatus(newStatus);
     setPage(1);
@@ -68,7 +99,7 @@ const Products = () => {
       if (newStatus === "DELETED") {
         await updateProductStatus({ productId, status: newStatus }).unwrap();
       } else {
-        const product = products.find((p) => p.productId === productId);
+        const product = allProducts.find((p) => p.productId === productId);
         if (product?.status === "DELETED") {
           await restoreProduct(productId).unwrap();
         } else {
@@ -131,7 +162,7 @@ const Products = () => {
 
     const pages = Array.from(
       { length: endPage - startPage + 1 },
-      (_, index) => startPage + index,
+      (_, index) => startPage + index
     );
 
     return (
@@ -176,8 +207,8 @@ const Products = () => {
       return null;
     }
 
-    const selectedProduct = products.find(
-      (product) => product.productId === selectedProductId,
+    const selectedProduct = allProducts.find(
+      (product) => product.productId === selectedProductId
     );
 
     if (!selectedProduct) {
@@ -290,58 +321,94 @@ const Products = () => {
     );
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    toast.error("Error fetching data");
+    return <div>Error loading products</div>;
+  }
+
   return (
     <div className="container mx-auto mt-8">
-      <button
-        onClick={() => {
-          navigate("/vendor/product/new");
-        }}
-        type="button"
-        className="mb-4 py-3 px-4 inline-flex items-center gap-x-2 text-xl font-semibold rounded-full border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-      >
-        <Plus className="w-6 h-6" />
-        Thêm sản phẩm mới
-      </button>
-      <button
-        onClick={() => setIsBulkDiscountOpen(true)}
-        type="button"
-        className="py-3 px-4 inline-flex items-center gap-x-2 text-xl font-semibold rounded-full border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-      >
-        <Percent className="w-6 h-6" />
-        Điều chỉnh giá đồng loạt
-      </button>
-      <div className="mb-4">
-        <label htmlFor="status-select" className="mr-2">
-          Lọc theo trạng thái:
-        </label>
-        <select
-          id="status-select"
-          value={status}
-          onChange={(e) =>
-            handleStatusChange(
-              e.target.value as
-                | "ACTIVE"
-                | "INACTIVE"
-                | "DELETED"
-                | "CANCEL"
-                | "LOCKED",
-            )
-          }
-          className="p-2 border rounded"
+      <div className="flex justify-between items-center mb-4">
+        <button
+          onClick={() => navigate("/vendor/product/new")}
+          type="button"
+          className="py-3 px-4 inline-flex items-center gap-x-2 text-xl font-semibold rounded-full border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
         >
-          <option value="ACTIVE">Hoạt động</option>
-          <option value="INACTIVE">Không hoạt động</option>
-          <option value="DELETED">Đã xóa</option>
-          <option value="CANCEL">Đã hủy</option>
-          <option value="LOCKED">Đã khóa</option>
-        </select>
+          <Plus className="w-6 h-6" />
+          Thêm sản phẩm mới
+        </button>
+        <button
+          onClick={() => setIsBulkDiscountOpen(true)}
+          type="button"
+          className="py-3 px-4 inline-flex items-center gap-x-2 text-xl font-semibold rounded-full border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+        >
+          <Percent className="w-6 h-6" />
+          Điều chỉnh giá đồng loạt
+        </button>
+      </div>
+
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center">
+          <label htmlFor="status-select" className="mr-2">
+            Lọc theo trạng thái:
+          </label>
+          <select
+            id="status-select"
+            value={status}
+            onChange={(e) =>
+              handleStatusChange(
+                e.target.value as
+                  | "ACTIVE"
+                  | "INACTIVE"
+                  | "DELETED"
+                  | "CANCEL"
+                  | "LOCKED"
+              )
+            }
+            className="p-2 border rounded"
+          >
+            <option value="ACTIVE">Hoạt động</option>
+            <option value="INACTIVE">Không hoạt động</option>
+            <option value="DELETED">Đã xóa</option>
+            <option value="CANCEL">Đã hủy</option>
+            <option value="LOCKED">Đã khóa</option>
+          </select>
+        </div>
+        <div className="flex items-center">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Tìm kiếm sản phẩm..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="p-2 pl-8 border rounded w-64"
+            />
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          </div>
+          <select
+            value={sortBy}
+            onChange={(e) =>
+              setSortBy(
+                e.target.value as "newest" | "priceLowToHigh" | "priceHighToLow"
+              )
+            }
+            className="ml-4 p-2 border rounded"
+          >
+            <option value="newest">Mới nhất</option>
+            <option value="priceLowToHigh">Giá tăng dần</option>
+            <option value="priceHighToLow">Giá giảm dần</option>
+          </select>
+        </div>
       </div>
 
       <table className="table-auto w-full border-collapse border border-green-800">
         <thead>
           <tr>
             <th className="px-4 py-2">STT</th>
-            {/* <th className="px-4 py-2">Mã sản phẩm</th> */}
             <th className="px-4 py-2">Tên</th>
             <th className="px-4 py-2">Hình ảnh</th>
             <th className="px-4 py-2">Số lượng bán</th>
@@ -350,7 +417,7 @@ const Products = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
+          {filteredAndSortedProducts.map((product, index) => (
             <tr
               key={product.productId}
               className={`${
@@ -358,17 +425,15 @@ const Products = () => {
               } hover:bg-blue-100 cursor-pointer`}
             >
               <td className="border px-4 py-2">{index + 1}</td>
-              {/* <td className="border px-4 py-2">{product.productId}</td> */}
               <td className="border px-4 py-2">{product.name}</td>
               <td className="border px-4 py-2">
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-12 h-12"
+                  className="w-12 h-12 object-cover"
                 />
               </td>
               <td className="border px-4 py-2">{product.sold}</td>
-              {/* <td className="border px-4 py-2">{product.status}</td> */}
               <td className="border px-4 py-2">
                 {renderStatusUpdateButton(product)}
               </td>
@@ -379,29 +444,20 @@ const Products = () => {
                       setSelectedProductId(
                         selectedProductId === product.productId
                           ? null
-                          : product.productId,
+                          : product.productId
                       );
                     } else {
                       toast.error(
-                        "Sản phẩm đã bị khóa, không thể xem chi tiết",
+                        "Sản phẩm đã bị khóa, không thể xem chi tiết"
                       );
                     }
                   }}
                   className="py-2 px-3 text-sm font-semibold rounded-full border border-transparent bg-blue-600 text-white hover:bg-blue-700"
                 >
-                  {/* {selectedProductId === product.productId */}
-                  {/*   ? "Ẩn chi tiết" */}
-                  {/*   : "Xem chi tiết"} */}
                   {selectedProductId === product.productId ? (
-                    <>
-                      <EyeOff className="w-4 h-4 mr-1" />
-                      {/* Ẩn chi tiết */}
-                    </>
+                    <EyeOff className="w-4 h-4" />
                   ) : (
-                    <>
-                      <Eye className="w-4 h-4 mr-1" />
-                      {/* Xem chi tiết */}
-                    </>
+                    <Eye className="w-4 h-4" />
                   )}
                 </button>
                 <button
@@ -415,10 +471,8 @@ const Products = () => {
                   type="button"
                   className="ml-2 py-2 px-3 text-sm font-semibold rounded-full border border-transparent bg-blue-600 text-white hover:bg-blue-700"
                 >
-                  <Edit className="w-4 h-4 mr-1" />
-                  {/* Chỉnh sửa */}
+                  <Edit className="w-4 h-4" />
                 </button>
-                {/* {renderStatusUpdateButton(product)} */}
               </td>
             </tr>
           ))}
@@ -491,7 +545,7 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
   const { data: productPageResponse, isLoading } =
     useGetPageProductByStatusQuery(
       { page, size, status: "ACTIVE" },
-      { refetchOnMountOrArgChange: true },
+      { refetchOnMountOrArgChange: true }
     );
 
   const products = productPageResponse?.productDTOs || [];
@@ -499,12 +553,12 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
 
   const totalProducts = useMemo(
     () => productPageResponse?.totalElements || 0,
-    [productPageResponse],
+    [productPageResponse]
   );
 
   const selectedCount = useMemo(
     () => Object.values(selectedProductIds).flat().length,
-    [selectedProductIds],
+    [selectedProductIds]
   );
 
   useEffect(() => {
@@ -565,7 +619,7 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
       productIds: allSelectedIds,
       [data.adjustmentType === "percent" ? "percent" : "price"]: parseInt(
         data.adjustmentValue,
-        10,
+        10
       ),
     };
 
@@ -685,7 +739,7 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
                 >
                   <Checkbox
                     checked={(selectedProductIds[page] || []).includes(
-                      product.productId,
+                      product.productId
                     )}
                     onCheckedChange={() =>
                       handleSelectProduct(product.productId)
@@ -713,7 +767,7 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
                 >
                   {pageNum}
                 </Button>
-              ),
+              )
             )}
           </div>
         </form>
