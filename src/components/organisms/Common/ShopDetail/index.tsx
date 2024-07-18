@@ -353,7 +353,7 @@ const ShopDetail = () => {
               <span className="text-gray-500 mr-1">Sắp xếp theo</span>
               <div className="flex flex-grow items-center h-8">
                 <section className="flex w-auto h-full ml-2 gap-3">
-                  {["popular", "newest", "sales"].map((item) => (
+                  {["newest", "sales"].map((item) => (
                     <button
                       type="button"
                       className={`px-3 h-full ${
@@ -362,13 +362,11 @@ const ShopDetail = () => {
                       onClick={() => setSortBy(item)}
                     >
                       <span className="text-black h-8">
-                        {item === "popular"
-                          ? "Phổ biến"
-                          : item === "newest"
-                            ? "Mới nhất"
-                            : item === "sales"
-                              ? "Bán chạy"
-                              : ""}
+                        {item === "newest"
+                          ? "Mới nhất"
+                          : item === "sales"
+                            ? "Bán chạy"
+                            : ""}
                       </span>
                     </button>
                   ))}

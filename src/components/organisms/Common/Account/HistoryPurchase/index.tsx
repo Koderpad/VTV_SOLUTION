@@ -93,10 +93,10 @@ const purchaseTabs = [
   { status: purchasesStatus.SHIPPING, name: "Đang giao" },
   { status: purchasesStatus.DELIVERED, name: "Đã giao" },
   { status: purchasesStatus.COMPLETED, name: "Hoàn thành" },
-  { status: purchasesStatus.RETURNED, name: "Đã trả lại" },
+  // { status: purchasesStatus.RETURNED, name: "Đã trả lại" },
   { status: purchasesStatus.CANCEL, name: "Đã hủy" },
-  { status: purchasesStatus.REFUNDED, name: "Đã hoàn tiền" },
-  { status: purchasesStatus.PAID, name: "Đã thanh toán" },
+  { status: purchasesStatus.REFUNDED, name: "Hoàn hàng" },
+  // { status: purchasesStatus.PAID, name: "Đã thanh toán" },
   { status: purchasesStatus.UNPAID, name: "Chưa thanh toán" },
   { status: purchasesStatus.WAITING, name: "Đang chờ" },
 ];
@@ -779,11 +779,11 @@ const RatingComment = ({
     <article className="flex flex-col max-w-xl">
       <div className="flex items-center mb-4 justify-between">
         <div className="flex items-center">
-          <img
+          {/* <img
             className="w-10 h-10 me-4 rounded-full"
             src={review.avatar || "/path/to/default-avatar.png"}
             alt=""
-          />
+          /> */}
           <div className="font-medium dark:text-white">
             <p>
               {review.username}{" "}
@@ -791,7 +791,8 @@ const RatingComment = ({
                 dateTime={review.createdAt}
                 className="block text-sm text-gray-500 dark:text-gray-400"
               >
-                Reviewed on {new Date(review.createdAt).toLocaleDateString()}
+                Đã đánh giá vào{" "}
+                {new Date(review.createdAt).toLocaleDateString()}
               </time>
             </p>
           </div>
@@ -923,11 +924,11 @@ const CommentReply = ({
     <div className="ml-14 mt-4">
       <div className="flex items-center mb-2 justify-between">
         <div className="flex items-center">
-          <img
+          {/* <img
             className="w-8 h-8 me-2 rounded-full"
             src={comment.avatar || "/path/to/default-avatar.png"}
             alt=""
-          />
+          /> */}
           <div className="font-medium dark:text-white">
             <p>
               {comment.shopName || comment.username}
@@ -968,7 +969,9 @@ const CommentReply = ({
         )}
       </div>
       <p className="text-sm text-gray-500">{comment.content}</p>
-      <p className="text-xs text-gray-400">{comment.createDate}</p>
+      <p className="text-xs text-gray-400">
+        {new Date(comment.createDate).toLocaleDateString()}
+      </p>
     </div>
   );
 };
@@ -1005,13 +1008,13 @@ const CommentForm = ({
           className="px-4 py-2 mr-2 font-bold text-white bg-gray-500 rounded-full hover:bg-gray-700"
           onClick={onCancel}
         >
-          Cancel
+          Hủy
         </button>
         <button
           type="submit"
           className="px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700"
         >
-          Submit
+          Gửi
         </button>
       </div>
     </form>

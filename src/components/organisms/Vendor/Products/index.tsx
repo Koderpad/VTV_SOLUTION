@@ -227,6 +227,22 @@ const Products: React.FC = () => {
       <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center overflow-auto">
         <div className="bg-white p-4 rounded-md w-full md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-auto">
           <h2 className="text-2xl font-bold mb-2">Chi tiết Sản phẩm</h2>
+          {/* <button
+            type="button"
+            className="bg-gray-500 text-white px-2 mr-2 py-1 rounded-md mb-4"
+            onClick={() => navigate(`/product/${selectedProductId}`)}
+          >
+            Đến trang chi tiết sản phẩm
+          </button> */}
+          <button
+            type="button"
+            className="bg-gray-500 text-white px-2 mr-2 py-1 rounded-md mb-4"
+            onClick={() =>
+              window.open(`/product/${selectedProductId}`, "_blank")
+            }
+          >
+            Đến trang chi tiết sản phẩm
+          </button>
           <button
             className="bg-blue-500 text-white px-2 py-1 rounded-md mb-4"
             onClick={() => setSelectedProductId(null)}

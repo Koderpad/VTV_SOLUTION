@@ -56,7 +56,7 @@ export const Cart = ({ handleCreateOrder }: CartProps) => {
   return (
     <div className="bg-gray-100 min-h-screen py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-semibold mb-8">Shopping Cart</h1>
+        <h1 className="text-3xl font-semibold mb-8">Giỏ hàng của bạn</h1>
         <div className="space-y-6">
           {data.listCartByShopDTOs.map((item: any) => (
             <ShopSection

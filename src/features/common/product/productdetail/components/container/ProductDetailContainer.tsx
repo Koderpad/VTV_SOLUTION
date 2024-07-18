@@ -18,7 +18,7 @@ export const ProductDetailContainer = () => {
     fetchData();
   }, [productId]);
 
-  if (!productId || !product) {
+  if (!productId || !product || product.productDTO.status !== "ACTIVE") {
     return (
       <div className="flex justify-center items-center h-screen">
         <p className="text-2xl text-gray-400">Sản phẩm không tồn tại</p>

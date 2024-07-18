@@ -440,14 +440,14 @@ const AddProductsDialog: React.FC<AddProductsDialogProps> = ({
                       );
                     }}
                   />
-                  <Label htmlFor={`product-${product.productId}`}>
-                    {product.name}
-                  </Label>
                   <img
                     src={product.image}
                     alt={product.name}
                     style={{ width: "50px", height: "50px" }}
                   />
+                  <Label htmlFor={`product-${product.productId}`}>
+                    {product.name}
+                  </Label>
                 </div>
               ))
             )}
@@ -567,14 +567,14 @@ const DeleteProductsDialog: React.FC<DeleteProductsDialogProps> = ({
                       );
                     }}
                   />
-                  <Label htmlFor={`product-${product.productId}`}>
-                    {product.name}
-                  </Label>
                   <img
                     src={product.image}
                     alt={product.name}
                     style={{ width: "50px", height: "50px" }}
                   />
+                  <Label htmlFor={`product-${product.productId}`}>
+                    {product.name}
+                  </Label>
                 </div>
               ))
             )}

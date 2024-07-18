@@ -4,6 +4,8 @@ import {
 } from "@/redux/features/common/cart/cartApiSlice";
 import { Cart } from "@/utils/DTOs/common/Cart/Response/ListCartResponse";
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface CartItemProps {
   cart: Cart;
@@ -38,10 +40,11 @@ export const CartItem: React.FC<CartItemProps> = ({
       await updateCart({
         cartId: cart.cartId,
         quantity: change,
-      });
+      }).unwrap();
       onRefresh();
     } catch (e) {
-      console.log("error", e);
+      toast.error(e.data.message);
+      // console.log("error", e);
       setQuantity(quantity); // Revert if update fails
     }
   };
@@ -128,6 +131,7 @@ export const CartItem: React.FC<CartItemProps> = ({
           Xóa
         </button>
       </td>
+      <ToastContainer />
     </tr>
   );
 };

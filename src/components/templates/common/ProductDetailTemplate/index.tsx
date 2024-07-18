@@ -1,12 +1,15 @@
 import { ProductReviews } from "@/components/organisms/Common/ProductDetail/ProductReviews";
 import { ProductDetailContainer } from "@/features/common/product/productdetail/components/container/ProductDetailContainer";
 import { TemplateV1 } from "../TemplateV1";
+import { SimilarProductsCarouselContainer } from "@/features/common/shared/SimilarProductsCarouselContainer";
 
 export const ProductDetailTemplate = () => {
   return (
     <TemplateV1>
       <ProductDetailContainer />
       <ProductReviews />
+      <span className="mt-4 text-3xl font-bold"> Sản phẩm tương tự </span>
+      <SimilarProductsCarouselContainer />
     </TemplateV1>
   );
 };

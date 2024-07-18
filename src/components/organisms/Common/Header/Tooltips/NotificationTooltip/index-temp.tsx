@@ -10,6 +10,7 @@ import { NotificationDTO } from "@/utils/DTOs/common/Notification/Response/Notif
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const NotificationTooltip = () => {
   const notifications: NotificationDTO[] = useSelector(
@@ -22,6 +23,8 @@ export const NotificationTooltip = () => {
     string | null
   >(null);
 
+  const navigate = useNavigate();
+
   const handleNotificationClick = async (notification: NotificationDTO) => {
     if (!notification.seen) {
       await readNotification(notification.notificationId).unwrap();
@@ -30,6 +33,19 @@ export const NotificationTooltip = () => {
     if (notification.body.includes("uuid")) {
       const uuid = extractUUIDFromBody(notification.body);
       window.location.href = `http://localhost:5173/user/account/order/${uuid}`;
+    }
+  };
+
+  const handleNotification = (notification: string) => {
+    const uuidRegex =
+      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+    const match = notification.match(uuidRegex);
+
+    if (match) {
+      const uuid = match[0];
+      navigate(`/user/account/order/${uuid}`);
+    } else {
+      console.error("UUID không được tìm thấy trong thông báo");
     }
   };
 
@@ -76,6 +92,11 @@ export const NotificationTooltip = () => {
                       className="flex-1 cursor-pointer"
                     >
                       <div className="font-bold">{notification.title}</div>
+                      <button
+                        type="button"
+                        onClick={() => handleNotification(notification.body)}
+                        className="text-blue-600 hover:text-orange-500"
+                      >{`>>Đơn hàng`}</button>
                       <div className="text-xs text-gray-500 mb-1">
                         {formatDistanceToNow(new Date(notification.createAt), {
                           addSuffix: true,
