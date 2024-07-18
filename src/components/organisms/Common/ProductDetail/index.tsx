@@ -128,6 +128,13 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
     useState(1);
   const [productPrice, setProductPrice] = useState(data.productDTO.minPrice);
 
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [availableVariants, setAvailableVariants] = useState<
+    ProductVariantDTO[]
+  >(data.productDTO.productVariantDTOs);
+
+  const [selectedVariant, setSelectedVariant] =
+    useState<ProductVariantDTO | null>(null);
   const navigate = useNavigate();
   const [addNewCart] = useAddNewCartMutation();
 
@@ -149,23 +156,23 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
     ]),
   ).filter((image): image is string => !!image);
 
-  const attributeList = data.productDTO.productVariantDTOs.reduce<
-    { name: string; values: string[] }[]
-  >((acc, variant) => {
-    variant.attributeDTOs.forEach((attribute) => {
-      const existingAttribute = acc.find(
-        (attr) => attr.name === attribute.name,
-      );
-      if (existingAttribute) {
-        if (!existingAttribute.values.includes(attribute.value)) {
-          existingAttribute.values.push(attribute.value);
-        }
-      } else {
-        acc.push({ name: attribute.name, values: [attribute.value] });
-      }
-    });
-    return acc;
-  }, []);
+  // const attributeList = data.productDTO.productVariantDTOs.reduce<
+  //   { name: string; values: string[] }[]
+  // >((acc, variant) => {
+  //   variant.attributeDTOs.forEach((attribute) => {
+  //     const existingAttribute = acc.find(
+  //       (attr) => attr.name === attribute.name,
+  //     );
+  //     if (existingAttribute) {
+  //       if (!existingAttribute.values.includes(attribute.value)) {
+  //         existingAttribute.values.push(attribute.value);
+  //       }
+  //     } else {
+  //       acc.push({ name: attribute.name, values: [attribute.value] });
+  //     }
+  //   });
+  //   return acc;
+  // }, []);
 
   useEffect(() => {
     const availableVariants = getAvailableVariants(
@@ -184,20 +191,20 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
     }
   }, [selectedAttributes, data.productDTO]);
 
-  const selectedVariant = getSelectedVariant(
-    selectedAttributes,
-    data.productDTO.productVariantDTOs,
-  );
-  const handleAttributeClick = (attributeName: string, value: string) => {
-    setSelectedAttributes((prevSelectedAttributes) => {
-      if (prevSelectedAttributes[attributeName] === value) {
-        const { [attributeName]: _, ...rest } = prevSelectedAttributes;
-        return rest;
-      } else {
-        return { ...prevSelectedAttributes, [attributeName]: value };
-      }
-    });
-  };
+  // const selectedVariant = getSelectedVariant(
+  //   selectedAttributes,
+  //   data.productDTO.productVariantDTOs,
+  // );
+  // const handleAttributeClick = (attributeName: string, value: string) => {
+  //   setSelectedAttributes((prevSelectedAttributes) => {
+  //     if (prevSelectedAttributes[attributeName] === value) {
+  //       const { [attributeName]: _, ...rest } = prevSelectedAttributes;
+  //       return rest;
+  //     } else {
+  //       return { ...prevSelectedAttributes, [attributeName]: value };
+  //     }
+  //   });
+  // };
 
   const handleImageClick = (index: number) => {
     setSelectedImage(index);
@@ -242,8 +249,8 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
     try {
       const response = await addNewCart({
         productVariantId: selectedVariant.productVariantId,
-        quantity: selectedQuantity_ForAddToCart,
-      });
+        quantity: selectedQuantity,
+      }).unwrap();
 
       if (response && "data" in response) {
         const responseData = response.data;
@@ -271,7 +278,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
       }
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      toast.error("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+      toast.error(error.data.message);
     } finally {
       refetch_();
     }
@@ -293,8 +300,7 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
       return;
     }
     const additionalProps: AdditionalProps = {
-      [selectedVariant?.productVariantId.toString() || ""]:
-        selectedQuantity_ForAddToCart,
+      [selectedVariant?.productVariantId.toString() || ""]: selectedQuantity,
     };
     await handleCreateOrder(additionalProps);
     console.log(additionalProps);
@@ -358,6 +364,165 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
+
+  useEffect(() => {
+    updateAvailableVariants();
+  }, [selectedAttributes]);
+
+  const updateAvailableVariants = () => {
+    const filteredVariants = data.productDTO.productVariantDTOs.filter(
+      (variant) =>
+        Object.entries(selectedAttributes).every(([name, value]) =>
+          variant.attributeDTOs.some(
+            (attr) => attr.name === name && attr.value === value,
+          ),
+        ),
+    );
+    setAvailableVariants(filteredVariants);
+
+    if (filteredVariants.length === 1) {
+      setSelectedVariant(filteredVariants[0]);
+    } else {
+      setSelectedVariant(null);
+    }
+  };
+
+  const handleAttributeClick = (name: string, value: string) => {
+    setSelectedAttributes((prev) => {
+      if (prev[name] === value) {
+        // If the same value is clicked, remove it
+        const { [name]: _, ...rest } = prev;
+        return rest;
+      } else {
+        // Otherwise, update or add the new value
+        return { ...prev, [name]: value };
+      }
+    });
+  };
+
+  const getAvailableAttributeValues = (attributeName: string) => {
+    return Array.from(
+      new Set(
+        availableVariants
+          .flatMap((variant) => variant.attributeDTOs)
+          .filter((attr) => attr.name === attributeName)
+          .map((attr) => attr.value),
+      ),
+    );
+  };
+
+  const formatPrice = (price: number) => {
+    return price.toLocaleString("vi-VN");
+  };
+
+  const renderPrice = () => {
+    if (selectedVariant) {
+      const { price, originalPrice, discountPercent } = selectedVariant;
+      if (price === originalPrice || discountPercent === "0%") {
+        return (
+          <span className="text-2xl font-bold">{formatPrice(price)} VNĐ</span>
+        );
+      } else {
+        return (
+          <div>
+            <span className="text-2xl font-bold">{formatPrice(price)} VNĐ</span>
+            <span className="ml-2 text-lg line-through text-gray-500">
+              {formatPrice(originalPrice)} VNĐ
+            </span>
+            <span className="ml-2 text-red-500">-{discountPercent}</span>
+          </div>
+        );
+      }
+    } else {
+      const minPrice = Math.min(...availableVariants.map((v) => v.price));
+      const maxPrice = Math.max(...availableVariants.map((v) => v.price));
+      if (minPrice === maxPrice) {
+        return (
+          <span className="text-2xl font-bold">
+            {formatPrice(minPrice)} VNĐ
+          </span>
+        );
+      } else {
+        return (
+          <span className="text-2xl font-bold">
+            {formatPrice(minPrice)} - {formatPrice(maxPrice)} VNĐ
+          </span>
+        );
+      }
+    }
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!selectedVariant) return;
+
+    const value = e.target.value;
+    // Allow empty input for better UX
+    if (value === "") {
+      setSelectedQuantity(0);
+      return;
+    }
+
+    const numValue = parseInt(value, 10);
+    if (isNaN(numValue) || numValue < 1) {
+      setSelectedQuantity(1);
+    } else if (numValue > selectedVariant.quantity) {
+      setSelectedQuantity(selectedVariant.quantity);
+    } else {
+      setSelectedQuantity(numValue);
+    }
+  };
+
+  const renderQuantityInput = () => {
+    if (!selectedVariant) return null;
+
+    return (
+      <div className="mt-4">
+        <label
+          htmlFor="quantity"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Số lượng
+        </label>
+        <div className="mt-1 flex rounded-md shadow-sm">
+          <input
+            type="number"
+            name="quantity"
+            id="quantity"
+            className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
+            value={selectedQuantity}
+            onChange={handleQuantityChange}
+            onBlur={() => {
+              // Ensure a valid value on blur
+              if (selectedQuantity === 0) setSelectedQuantity(1);
+            }}
+            min={1}
+            max={selectedVariant.quantity}
+          />
+          <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+            / {selectedVariant.quantity} sản phẩm có sẵn
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+  const attributeList = data.productDTO.productVariantDTOs.reduce<
+    { name: string; values: string[] }[]
+  >((acc, variant) => {
+    variant.attributeDTOs.forEach((attribute) => {
+      const existingAttribute = acc.find(
+        (attr) => attr.name === attribute.name,
+      );
+      if (existingAttribute) {
+        if (!existingAttribute.values.includes(attribute.value)) {
+          existingAttribute.values.push(attribute.value);
+        }
+      } else {
+        acc.push({ name: attribute.name, values: [attribute.value] });
+      }
+    });
+    return acc;
+  }, []);
 
   const renderContent = (content: string, showFull: boolean, type: string) => {
     const words = content.trim().split(/\s+/);
@@ -513,78 +678,62 @@ export const ProductDetail = ({ data }: ProductDetailProps) => {
           <div className="mx-1 h-full w-px bg-neutral-200"></div>
           <div className="basis-full  lg:basis-2/6">
             {/* Product name and price */}
-            <div className="mb-6 flex flex-col border-b pb-6">
-              <h1 className="mb-2 text-3xl font-medium">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
                 {data.productDTO.name}
-              </h1>
-              <div className="mr-auto w-auto rounded-full bg-blue-600 p-2 text-sm text-white">
-                {selectedVariant ? (
-                  <p>
-                    {selectedVariant.price}
-                    <span className="ml-1 inline">VNĐ</span>
-                  </p>
-                ) : (
-                  <p>
-                    {data.productDTO.minPrice} - {data.productDTO.maxPrice}
-                    <span className="ml-1 inline">VNĐ</span>
-                  </p>
-                )}
-              </div>
+              </h3>
+              {renderPrice()}
             </div>
-            {/* Product attributes */}
-            {attributeList.map(({ name, values }) => (
-              <dl key={name} className="mb-8">
-                <dt className="mb-4 text-sm uppercase tracking-wide">{name}</dt>
-                <dd className="flex flex-wrap gap-3">
-                  {values.map((value) => {
-                    const availableVariants = getAvailableVariants(
-                      selectedAttributes,
-                      data.productDTO.productVariantDTOs,
-                    );
-                    console.log("Available Variants: ", availableVariants);
-                    const isAvailable = getAvailableAttributeValues(
-                      name,
-                      availableVariants,
-                    ).includes(value);
-                    console.log(
-                      "Get Available Attribute Values: ",
-                      getAvailableAttributeValues(name, availableVariants),
-                    );
-                    console.log("Is Available: ", isAvailable);
-                    const isSelected = selectedAttributes[name] === value;
+            <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+              <dl className="sm:divide-y sm:divide-gray-200">
+                {attributeList.map(({ name, values }) => (
+                  <div
+                    key={name}
+                    className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+                  >
+                    <dt className="text-sm font-medium text-gray-500">
+                      {name}
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      <div className="flex flex-wrap gap-2">
+                        {values.map((value) => {
+                          const isAvailable =
+                            getAvailableAttributeValues(name).includes(value);
+                          const isSelected = selectedAttributes[name] === value;
 
-                    return (
-                      <button
-                        key={value}
-                        aria-disabled={!isAvailable}
-                        title={`${name} ${value}${
-                          !isAvailable ? " (Hết hàng)" : ""
-                        }`}
-                        className={`flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm ${
-                          !isAvailable
-                            ? "dark:border-neutral-800 relative z-10 cursor-not-allowed overflow-hidden text-neutral-500 ring-1 ring-neutral-300 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-neutral-300 before:transition-transform"
-                            : isSelected
-                              ? "cursor-default ring-2 ring-blue-600"
-                              : "ring-1 ring-transparent transition duration-300 ease-in-out hover:scale-110 hover:ring-blue-600"
-                        }`}
-                        onClick={() =>
-                          isAvailable && handleAttributeClick(name, value)
-                        }
-                      >
-                        {value}
-                      </button>
-                    );
-                  })}
-                </dd>
+                          return (
+                            <button
+                              key={value}
+                              onClick={() =>
+                                isAvailable && handleAttributeClick(name, value)
+                              }
+                              className={`px-3 py-1 rounded-full text-sm ${
+                                isSelected
+                                  ? "bg-blue-600 text-white"
+                                  : isAvailable
+                                    ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              }`}
+                              disabled={!isAvailable}
+                            >
+                              {value}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </dd>
+                  </div>
+                ))}
               </dl>
-            ))}
+            </div>
             {/* Quantity input */}
             <div className="mb-8">
-              <InputQuantity
-                quantity={selectedQuantity_ForAddToCart}
-                setQuantity={setSelectedQuantity_ForAddToCart}
-                minQuantity={1}
-              />
+              {/* <InputQuantity */}
+              {/*   quantity={selectedQuantity_ForAddToCart} */}
+              {/*   setQuantity={setSelectedQuantity_ForAddToCart} */}
+              {/*   minQuantity={1} */}
+              {/* /> */}
+              {renderQuantityInput()}
             </div>
             {/* Add to cart button */}
             {/* <button */}
