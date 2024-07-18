@@ -607,7 +607,6 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger className="w-[240px]">
                     {" "}
-                    {/* Đã thay đổi từ w-[180px] thành w-[240px] */}
                     <SelectValue placeholder="Chọn loại điều chỉnh" />
                   </SelectTrigger>
                   <SelectContent>
@@ -666,7 +665,7 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
               Chọn tất cả trên trang này
             </label>
             <span className="ml-auto text-sm text-gray-500">
-              Đã chọn {selectedCount}/{totalProducts} sản phẩm
+              Đã chọn {selectedCount} sản phẩm
             </span>
           </div>
           {isLoading ? (
@@ -695,9 +694,9 @@ const BulkPriceAdjustmentDialog = ({ isOpen, onClose }) => {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-10 h-10 object-cover"
+                    className="w-16 h-16 object-cover"
                   />
-                  <span>{product.productId}</span>
+                  {/* <span>{product.productId}</span> */}
                   <span>{product.name}</span>
                 </div>
               ))}

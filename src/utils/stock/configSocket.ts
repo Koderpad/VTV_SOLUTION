@@ -6,6 +6,7 @@ import {
   addFailedMessage,
 } from "@/redux/features/common/chat/chatSlice";
 import { ChatMessageRequest } from "../DTOs/chat/Request/ChatMessageRequest";
+import { HOST_ } from "@/constants/urls";
 
 let stompClient: Client | null = null;
 let connectPromise: Promise<void> | null = null;
@@ -22,7 +23,7 @@ export const initSocket = (authToken: string): Promise<void> => {
 
   if (connectPromise) return connectPromise;
 
-  const host = "localhost";
+  const host = HOST_;
   const port = 8585;
   const url = `ws://${host}:${port}/ws-stomp?token=${token}`;
 

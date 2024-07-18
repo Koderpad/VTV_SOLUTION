@@ -1,8 +1,9 @@
 // api.ts
+import { BASE_URL_VTC } from "@/constants/urls";
 import { ListProvinceResponse } from "@/utils/DTOs/common/ProfileCustomer/Response/ListProvinceResponse";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8585/api/location";
+const API_BASE_URL = `${BASE_URL_VTC}/location`;
 
 export const getProvinces = async (): Promise<ListProvinceResponse> => {
   try {
@@ -18,7 +19,7 @@ export const getProvinces = async (): Promise<ListProvinceResponse> => {
 export const getDistrictsByProvinceCode = async (provinceCode: string) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/district/get-all-by-province-code/${provinceCode}`,
+      `${API_BASE_URL}/district/get-all-by-province-code/${provinceCode}`
     );
     return response.data;
   } catch (error) {
@@ -30,7 +31,7 @@ export const getDistrictsByProvinceCode = async (provinceCode: string) => {
 export const getWardsByDistrictCode = async (districtCode: string) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/ward/get-all-by-district-code/${districtCode}`,
+      `${API_BASE_URL}/ward/get-all-by-district-code/${districtCode}`
     );
     return response.data;
   } catch (error) {
@@ -42,7 +43,7 @@ export const getWardsByDistrictCode = async (districtCode: string) => {
 export const getAddressByWardCode = async (wardCode: string) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/ward/full-address/${wardCode}`,
+      `${API_BASE_URL}/ward/full-address/${wardCode}`
     );
     return response.data;
   } catch (error) {

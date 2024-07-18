@@ -1,7 +1,8 @@
+import { BASE_URL_VTC } from "@/constants/urls";
 import { CategoriesResponse } from "@/utils/DTOs/common/Category/Response/CategoriesResponse";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8585/api/category";
+const API_BASE_URL = `${BASE_URL_VTC}/category`;
 
 export const getAllParentCategory = async (): Promise<CategoriesResponse> => {
   try {

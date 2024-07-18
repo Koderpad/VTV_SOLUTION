@@ -1,6 +1,7 @@
+import { BASE_URL_VTC } from "@/constants/urls";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8585/api/shipping";
+const API_BASE_URL = `${BASE_URL_VTC}/shipping`;
 
 export const getShippingProvidersByWard = async (
   wardCodeCustomer: string,

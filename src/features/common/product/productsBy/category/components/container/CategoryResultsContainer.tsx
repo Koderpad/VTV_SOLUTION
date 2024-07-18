@@ -1,5 +1,6 @@
 import { FilterContext } from "@/components/organisms/Common/ProductGrid/FilterContext";
 import { SearchItemResultItems } from "@/components/organisms/Common/ProductGrid/SearchItemResult/SearchItemResultItems";
+import { BASE_URL_VTC } from "@/constants/urls";
 import { ProductDTO } from "@/utils/DTOs/common/Product/Response/ListProductPageResponse";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -22,7 +23,7 @@ export const CategoryResultsContainer = () => {
 
         while (currentPage <= totalPages) {
           const response = await fetch(
-            `http://localhost:8585/api/product/by-category/${categoryId}?page=${currentPage}&size=200`
+            `${BASE_URL_VTC}/product/by-category/${categoryId}?page=${currentPage}&size=200`
           );
           const data = await response.json();
 
