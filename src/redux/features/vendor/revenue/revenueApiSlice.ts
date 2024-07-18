@@ -1,4 +1,5 @@
 import { apiSlice } from "@/redux/api";
+import { RevenueProductResponse } from "@/utils/DTOs/vendor/revenue/Response/RevenueProductResponse";
 import { StatisticsOrdersResponse } from "@/utils/DTOs/vendor/revenue/Response/StatisticsOrdersResponse";
 import { StatisticsProductsResponse } from "@/utils/DTOs/vendor/revenue/Response/StatisticsProductsResponse";
 
@@ -24,10 +25,25 @@ export const revenueApiSlice = apiSlice.injectEndpoints({
         params: { startDate, endDate },
       }),
     }),
+    getRevenueProductResponseByProductIdAndDate: builder.query<
+      RevenueProductResponse,
+      {
+        productId: number;
+        startDate: string;
+        endDate: string;
+      }
+    >({
+      query: ({ productId, startDate, endDate }) => ({
+        url: `/vendor/shop/revenue/product/${productId}`,
+        method: "GET",
+        params: { startDate, endDate },
+      }),
+    }),
   }),
 });
 
 export const {
   useGetRevenueStatisticsByStatusQuery,
   useGetTopProductsRevenueQuery,
+  useGetRevenueProductResponseByProductIdAndDateQuery,
 } = revenueApiSlice;
