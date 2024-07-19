@@ -63,15 +63,15 @@ const AddForm: React.FC<AddFormProps> = ({ handleCloseForm, showForm }) => {
         wardCode: wardCode,
       };
       console.log("address before ADD: ", address);
-      const response = await addAddress(address);
+      const response = await addAddress(address).unwrap();
 
       console.log("address response", response);
 
-      toast.success("Thêm địa chỉ thành công!");
+      toast.success(response.message);
       handleCloseForm();
     } catch (error) {
       console.error(error);
-      toast.error("Thêm địa chỉ thất bại. Vui lòng thử lại!");
+      toast.error(error.data.message);
     }
   };
 

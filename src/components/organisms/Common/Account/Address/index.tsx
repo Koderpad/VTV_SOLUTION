@@ -15,7 +15,11 @@ import {
 const Address = () => {
   const [showForm, setShowForm] = useState(false);
   // const [listAddress, setListAddress] = useState([]);
-  const { data, error, isLoading, refetch } = useGetAllAddressQuery();
+  // const { data, error, isLoading, refetch } = useGetAllAddressQuery();
+
+  const { data, error, isLoading, refetch } = useGetAllAddressQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [updateStatusAddress, { isLoading: updateStatusAddressLoading }] =
     useUpdateStatusAddressMutation();
@@ -70,11 +74,65 @@ const Address = () => {
     }
   };
 
-  const handleDeleteAddress = (addressId: number) => {
-    const newListAddressDTO = addressDTOList.filter(
-      (address) => address.addressId !== addressId
-    );
-    setAddressDTOList(newListAddressDTO);
+  // const handleDeleteAddress = (addressId: number) => {
+  //   const newListAddressDTO = addressDTOList.filter(
+  //     (address) => address.addressId !== addressId
+  //   );
+  //   setAddressDTOList(newListAddressDTO);
+  // };
+
+  // const handleDeleteAddress = async (addressId: number) => {
+  //   try {
+  //     const reqData: AddressStatusRequest = {
+  //       addressId: addressId,
+  //       status: AddressStatus.DELETED,
+  //     };
+  //     const res = await updateStatusAddress(reqData).unwrap();
+  //     console.log("Xóa thành công: ", res.message);
+  //     // Refetch data after successful deletion
+  //     refetch();
+  //   } catch (error) {
+  //     console.error("Lỗi khi xóa địa chỉ:", error);
+  //     alert("Có lỗi xảy ra khi xóa địa chỉ. Vui lòng thử lại.");
+  //   }
+  // };
+
+  // const handleDeleteAddress = async (addressId: number) => {
+  //   try {
+  //     const reqData: AddressStatusRequest = {
+  //       addressId: addressId,
+  //       status: AddressStatus.DELETED,
+  //     };
+  //     await updateStatusAddress(reqData).unwrap();
+  //     console.log("Xóa thành công");
+
+  //     // Update local state immediately
+  //     setAddressDTOList((prevList) =>
+  //       prevList.filter((address) => address.addressId !== addressId)
+  //     );
+
+  //     // Refetch data to ensure consistency with the server
+  //     refetch();
+  //   } catch (error) {
+  //     console.error("Lỗi khi xóa địa chỉ:", error);
+  //     alert("Có lỗi xảy ra khi xóa địa chỉ. Vui lòng thử lại.");
+  //   }
+  // };
+
+  const handleDeleteAddress = async (addressId: number) => {
+    try {
+      const reqData: AddressStatusRequest = {
+        addressId: addressId,
+        status: AddressStatus.DELETED,
+      };
+      const res = await updateStatusAddress(reqData).unwrap();
+      console.log("Xóa thành công: ", res.message);
+      // Refetch data after successful deletion
+      refetch();
+    } catch (error) {
+      console.error("Lỗi khi xóa địa chỉ:", error);
+      alert("Có lỗi xảy ra khi xóa địa chỉ. Vui lòng thử lại.");
+    }
   };
 
   const handleUpdateAddress = (addressId: number) => {
@@ -154,6 +212,15 @@ const Address = () => {
                   >
                     Xóa
                   </button> */}
+                        {/* <button
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                          type="button"
+                          onClick={() =>
+                            handleDeleteAddress(addressDTO.addressId)
+                          }
+                        >
+                          Xóa
+                        </button> */}
                         <button
                           className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                           type="button"
