@@ -23,7 +23,7 @@ export const CartContainer = () => {
         const stateString = JSON.stringify(result);
         const encryptedState = AES.encrypt(
           stateString,
-          "vtv-secret-key-2024"
+          "vtv-secret-key-2024",
         ).toString();
         const urlSafeEncryptedState = encodeURIComponent(encryptedState);
         console.log("urlSafeEncryptedState: ", urlSafeEncryptedState);
@@ -39,7 +39,7 @@ export const CartContainer = () => {
             serverError.message === "Thông báo: Khách hàng chưa có địa chỉ nào."
           ) {
             alert(serverError.message);
-            // navigate("/user/account/address");
+            navigate("/user/account/address");
           } else {
             alert(`Lỗi từ server: ${serverError.message}`);
           }
