@@ -14,21 +14,21 @@ const SuggestedProductList = () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
     try {
-      const response = await getFilterProductPage(page, 10, "random");
+      const response = await getFilterProductPage(page, 50, "random");
       const newProducts = response.productDTOs.filter(
-        (product) => product.status === "ACTIVE"
+        (product) => product.status === "ACTIVE",
       );
       setProducts((prevProducts) => {
         const uniqueNewProducts = newProducts.filter(
           (newProduct) =>
             !prevProducts.some(
-              (prevProduct) => prevProduct.productId === newProduct.productId
-            )
+              (prevProduct) => prevProduct.productId === newProduct.productId,
+            ),
         );
         const updatedProducts = [...prevProducts, ...uniqueNewProducts];
 
         setHasMore(
-          updatedProducts.length < 100 && uniqueNewProducts.length > 0
+          updatedProducts.length < 100 && uniqueNewProducts.length > 0,
         );
         return updatedProducts.slice(0, 100); // Ensure we never exceed 100 products
       });
